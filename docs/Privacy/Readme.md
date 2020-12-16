@@ -1,7 +1,5 @@
-here we talk about better privacy
+#TODO
 
-| name | age |
-|-------|-----|
-| alice | 20 |
-| bob | 21 |
-| carla | 22 |
+## See also
+
+- 3 modes of [signup in Mastodon](https://docs.joinmastodon.org/user/signup/)
