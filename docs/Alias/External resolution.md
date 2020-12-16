@@ -4,7 +4,7 @@ When an [external user](../Stakeholders/External%20user.md) who knows an [intern
 
 ## Rough spec
 
-It's done with HTTPS requests following the WebFinger spec and `acct:` spec. The **input** is the full alias and the **output** is an [ssb-tunnel](https://github.com/ssbc/ssb-tunnel) `tunnel` address.
+It's done with HTTPS requests following the WebFinger spec and `acct:` spec. The **input** is the [full alias](Full%20alias%20string.md) and the **output** is an [ssb-tunnel](https://github.com/ssbc/ssb-tunnel) `tunnel` address.
 
 ## Detailed spec #TODO
 
