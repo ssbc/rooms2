@@ -1,6 +1,6 @@
 # Alias
 
-An alias (also known as "room alias") is a string that identifies an [internal user](Internal%20user.md), designed to be short and human-friendly, similar to [email addresses](https://en.wikipedia.org/wiki/Email_address) and [Mastodon WebFinger addresses](https://docs.joinmastodon.org/spec/webfinger/).
+An alias (also known as "room alias") is a string that identifies an [internal user](../Stakeholders/Internal%20user.md), designed to be short and human-friendly, similar to [email addresses](https://en.wikipedia.org/wiki/Email_address) and [Mastodon WebFinger addresses](https://docs.joinmastodon.org/spec/webfinger/).
 
 ## Example
 
@@ -8,8 +8,9 @@ Suppose Alice is an internal user of the room "Scuttlebutt EU". The room's domai
 
 ## Stakeholders
 
-- [Internal user](Internal%20user.md) may or may not have an alias
-- [Room admin](Room%20admin.md) has access to all aliases registered in the room
+- [Internal user](../Stakeholders/Internal%20user.md) may or may not have an alias
+- [Room admin](../Stakeholders/Room%20admin.md) has access to all aliases registered in the room
+- [External user](../Stakeholders/External%20user.md)
 
 ## Components
 

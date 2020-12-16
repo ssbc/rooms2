@@ -4,9 +4,9 @@
 
 ## Stakeholders
 
-- [Room admin](Room%20admin.md)
-- [External user](External%20user.md)
-- [Internal user](Internal%20user.md)
+- [Room admin](../Stakeholders/Room%20admin.md)
+- [External user](../Stakeholders/External%20user.md)
+- [Internal user](../Stakeholders/Internal%20user.md)
 
 ## Components
 

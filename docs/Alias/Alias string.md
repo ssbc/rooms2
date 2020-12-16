@@ -1,6 +1,6 @@
 # Alias string
 
-An [internal user](Internal%20user.md)'s alias, also known as "alias string", is used to uniquely (unique within the room server only) identify that internal user. This string is useful only within the current room, i.e. relevant only for the [room's admin](Room%20admin.md) and other [internal users](Internal%20user.md). If we want to support [external users](External%20user.md), we need [full alias strings](Full%20alias%20string.md).
+An [internal user](../Stakeholders/Internal%20user.md)'s alias, also known as "alias string", is used to uniquely (unique within the room server only) identify that internal user. This string is useful only within the current room, i.e. relevant only for the [room's admin](../Stakeholders/Room%20admin.md) and other [internal users](../Stakeholders/Internal%20user.md). If we want to support [external users](../Stakeholders/External%20user.md), we need [full alias strings](Full%20alias%20string.md).
 
 ## Example
 

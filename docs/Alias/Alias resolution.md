@@ -1,12 +1,12 @@
 # Alias resolution
 
-When an [external user](External%20user.md) who knows an [internal user](Internal%20user.md) with an alias wishes to send a [friend requests](docs/Friend%20requests/Readme.md), they must first *resolve the full alias*.
+When an [external user](../Stakeholders/External%20user.md) who knows an [internal user](../Stakeholders/Internal%20user.md) with an alias wishes to send a [friend requests](../Friend%20requests/Readme.md), they must first *resolve the full alias*.
 
 ## Rough spec
 
 ## Detailed spec
 
-#TODO Make UML diagram, see [sequenceDiagram example](sequenceDiagram%20example.md).
+#TODO Make UML diagram, see [sequenceDiagram example](../Misc/sequenceDiagram%20example.md).
 
 ## See also
 
