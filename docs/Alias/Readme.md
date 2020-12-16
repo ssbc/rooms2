@@ -17,6 +17,7 @@ Suppose Alice is an internal user of the room "Scuttlebutt EU". The room's domai
 - [Internal user](../Stakeholders/Internal%20user.md) may [register](Registration.md) an alias or perform [internal alias resolution](Internal%20resolution.md)
 - [External user](../Stakeholders/External%20user.md) may perform [external alias resolution](External%20resolution.md)
 - [Room admin](../Stakeholders/Room%20admin.md) has read/write access to the [alias database](Alias%20database.md)
+- [Moderator](../Stakeholders/Moderator.md) can remove an alias entry from the [alias database](Alias%20database.md)
 
 ## Components
 

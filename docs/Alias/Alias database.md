@@ -45,3 +45,9 @@ But the admin **can**:
 
 - Remove any registered key-value pairs from the database, essentially removing an alias
 - Register signed aliases for fake users it has created itself
+
+### Malicious [moderator](../Stakeholders/Moderator.md)
+
+Similar considerations as with the room admin, but less powers. The malicious moderator *cannot* do the actions that the room admin cannot do (otherwise moderators would have more power than admins), but the one thing moderators can do is:
+
+- Remove any registered key-value pairs from the database, essentially removing an alias
