@@ -14,10 +14,10 @@ Suppose Alice is an internal user of the room "Scuttlebutt EU". The room's domai
 
 Composed of the following substrings, in this order
 
-- `@`
-- userpart, e.g. `alice`
-- `@`
-- room's domain, e.g. `scuttlebutt.eu`
+1. `@`
+1. userpart, e.g. `alice`
+1. `@`
+1. room's domain, e.g. `scuttlebutt.eu`
 
 ## Detailed spec #TODO
 

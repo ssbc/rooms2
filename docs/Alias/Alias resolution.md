@@ -4,9 +4,9 @@ When an [external user](../Stakeholders/External%20user.md) who knows an [intern
 
 ## Rough spec
 
-## Detailed spec
+## Detailed spec #TODO
 
-#TODO Make UML diagram, see [sequenceDiagram example](../Misc/sequenceDiagram%20example.md).
+TODO Make UML diagram, see [sequenceDiagram example](../Misc/sequenceDiagram%20example.md).
 
 ## See also
 
