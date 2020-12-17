@@ -1,6 +1,6 @@
-# Moderator dashboard
+# Web Dashboard
 
-This is a WWW interface that allows [moderators](../Stakeholders/Moderator.md) to [sign-in](Sign-in%20with%20SSB.md) and perform some privileged actions.
+This is a WWW interface that allows [moderators](../Stakeholders/Moderator.md) to [sign-in](Sign-in%20with%20SSB.md) and perform some privileged actions. [Internal users](../Stakeholders/Internal%20user.md) can also sign-in and perform basic actions such as [create invites for other users to join](Joining.md).
 
 ## Rough spec
 
@@ -15,6 +15,12 @@ The dashboard grants [moderators](../Stakeholders/Moderator.md) with features an
 - Revoke aliases by removing an entry from the [Alias database](../Alias/Alias%20database.md)
 - Change the [privacy mode](../Privacy/Modes.md) of the room
 - View other technical measurements such as bandwidth used, storage used by the databases, etc
+
+The dashboard grants [internal users](../Stakeholders/Internal%20user.md) basic features such as:
+
+- Register an alias for themselves
+- Revoke an alias for themselves
+- Create an invite for [external users](../Stakeholders/External%20user.md) to [join the room](Joining.md) if the room is running in [Community mode](../Privacy/Modes.md)
 
 ## Detailed spec #TODO
 
