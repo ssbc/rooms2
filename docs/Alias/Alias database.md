@@ -36,10 +36,10 @@ TODO Make UML diagram, see [sequenceDiagram example](../Misc/sequenceDiagram%20e
 
 The room admin can freely read or write to this database, they can create new entries, and so forth. If they modify an entry and thus break the validation of the signatures, other SSB users can detect this when verifying the signatures.
 
-Thus the admin **cannot**:
+Thus the admin **cannot** effectively:
 
 - Register a signed alias on behalf of an [internal user](../Stakeholders/Internal%20user.md)
-- Effectively modify a registered alias made by [internal users](../Stakeholders/Internal%20user.md)
+- Modify a registered alias made by [internal users](../Stakeholders/Internal%20user.md)
 
 But the admin **can**:
 

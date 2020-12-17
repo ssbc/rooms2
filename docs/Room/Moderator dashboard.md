@@ -1,12 +1,14 @@
 # Moderator dashboard
 
-This is a WWW interface that allows [moderators](../Stakeholders/Moderator.md) to [sign-in](Moderator%20sign-in.md) and perform some privileged actions.
+This is a WWW interface that allows [moderators](../Stakeholders/Moderator.md) to [sign-in](Sign-in%20with%20SSB.md) and perform some privileged actions.
 
 ## Rough spec
 
 The dashboard grants [moderators](../Stakeholders/Moderator.md) with features and powers such as:
 
-- Block SSB IDs from becoming [internal users](../Stakeholders/Internal%20user.md)
+- Block SSB IDs from becoming connecting with this room, meaning two things:
+  - If they were an [internal user](../Stakeholders/Internal%20user.md), they get demoted to [external user](../Stakeholders/External%20user.md)
+  - Even as [external user](../Stakeholders/External%20user.md), the room server will reject new attempts of secret-handshake connections, meaning that blocked users cannot even perform [alias resolution](../Alias/Resolution.md) anymore
 - Unblock SSB IDs that are blocked
 - Nominate other internal users to become moderators too
 - View the list of aliases according to the [Alias database](../Alias/Alias%20database.md)

@@ -1,4 +1,4 @@
-# Moderator sign-in
+# Sign-in with SSB
 
 To access the [WWW dashboard interface](Moderator%20dashboard.md), moderators can use "sign-in with SSB ID".
 

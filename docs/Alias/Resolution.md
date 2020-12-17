@@ -1,10 +1,10 @@
 # Alias resolution
 
-When an [internal user](../Stakeholders/Internal%20user.md) who knows another [internal user's](../Stakeholders/Internal%20user.md) [alias](Alias%20string.md) wishes to [connect](../Room/Tunneled%20connection.md) with them, they can perform resolution via muxrpc.
+When an SSB user ([external](../Stakeholders/External%20user.md) or [internal](../Stakeholders/Internal%20user.md)) is connected to the room, and knows of another [internal user's](../Stakeholders/Internal%20user.md) [alias](Alias%20string.md), they can perform *resolution* via muxrpc. After resolution is completed successfully, they obtain the target user's SSB ID and can use it to start a [tunneled connection](../Room/Tunneled%20connection.md).
 
 ## Rough spec
 
-1. An internal user acting as a client calls a specific [muxrpc](https://github.com/ssb-js/muxrpc/) API `resolveAlias(alias)`
+1. An SSB user acting as a client calls a specific [muxrpc](https://github.com/ssb-js/muxrpc/) API `resolveAlias(alias)` on the room server
     - `alias` is a supposed to be a string, a candidate [alias string](Alias%20string.md)
 1. The room checks whether that `alias` is valid (see spec in [Alias string](Alias%20string.md))
 	1. If it is invalid, reply with an error
@@ -25,4 +25,4 @@ TODO Make UML diagram, see [sequenceDiagram example](../Misc/sequenceDiagram%20e
 
 ### Malicious [room admin](../Stakeholders/Room%20admin.md)
 
-The room admin could track which internal users are interested in connecting with other internal users, i.e. **social interest metadata**, which could be used to create a draft of a social graph.
+The room admin could track which SSB users are interested in connecting with internal users, i.e. they can gather **social interest metadata**, which could be used to create a draft of a social graph.
