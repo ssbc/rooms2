@@ -1,6 +1,6 @@
 # External alias resolution
 
-When an [external user](../Stakeholders/External%20user.md) who knows an [internal user](../Stakeholders/Internal%20user.md) with an alias wishes to send a [friend request](../Friend%20requests/Readme.md), they must first *resolve the full alias*.
+When an [external user](../Stakeholders/External%20user.md) who knows an [internal user](../Stakeholders/Internal%20user.md) with an alias wishes to [connect](../Room/Tunneled%20connection.md) with them, they must first *resolve the full alias*.
 
 ## Rough spec
 

@@ -12,9 +12,9 @@ The dashboard grants [moderators](../Stakeholders/Moderator.md) with features an
 - View the list of aliases according to the [Alias database](../Alias/Alias%20database.md)
 - Revoke aliases by removing an entry from the [Alias database](../Alias/Alias%20database.md)
 - Change the [privacy mode](../Privacy/Modes.md) of the room
-- View other technical measurements such as bandwidth used, size of the [Friend request inbox](../Friend requests/Friend%20request%20inbox.md), etc
+- View other technical measurements such as bandwidth used, storage used by the databases, etc
 
-## Detailed spec #TODO 
+## Detailed spec #TODO
 
 - List and describe all actions and rights that moderators have.
 - Display low-fidelity mockups of the pages in this WWW dashboard
