@@ -9,3 +9,5 @@ The database should contain these data points:
 - Which [privacy mode](../Privacy/Modes.md) is selected
 - List of SSB IDs of [moderators](../Stakeholders/Moderator.md)
 - List of blocked SSB IDs
+- Name of the room (a short string)
+- Description for the room (not too long string)
