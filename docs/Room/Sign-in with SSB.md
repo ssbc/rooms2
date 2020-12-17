@@ -1,6 +1,6 @@
 # Sign-in with SSB
 
-To access the [WWW dashboard interface](Web%20Dashboard.md), moderators can use "sign-in with SSB ID".
+To access the [WWW dashboard interface](Web%20Dashboard.md), [internal users](../Stakeholders/Internal%20user.md) (including [moderators](../Stakeholders/Moderator.md)) can use "sign-in with SSB ID".
 
 ## Rough spec
 
