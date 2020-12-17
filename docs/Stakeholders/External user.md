@@ -1,3 +1,3 @@
 # External user
 
-SSB user who accesses the room server but is considered *external* because they have not yet been invited to this room (i.e. do not possess a [room invite](../Room/Room%20invite.md)).
+Any SSB user who is not an [internal user](Internal%20user.md) of the room (i.e. do not have a usable tunnel address referencing the room), but may still interact with the room server in meaningful ways, such as doing [tunneled connections](../Room/Tunneled%20connection.md) or [external resolution](../Alias/External%20resolution.md).
