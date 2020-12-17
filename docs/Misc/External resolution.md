@@ -1,5 +1,7 @@
 # External alias resolution
 
+(DEPRECATED DOCUMENT BUT KEPT HERE FOR ARCHIVAL PURPOSES)
+
 When an [external user](../Stakeholders/External%20user.md) who knows an [internal user](../Stakeholders/Internal%20user.md) with an alias wishes to [connect](../Room/Tunneled%20connection.md) with them, they must first *resolve the full alias*.
 
 ## Rough spec

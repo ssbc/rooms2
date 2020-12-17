@@ -1,4 +1,4 @@
-# Internal alias resolution
+# Alias resolution
 
 When an [internal user](../Stakeholders/Internal%20user.md) who knows another [internal user's](../Stakeholders/Internal%20user.md) [alias](Alias%20string.md) wishes to [connect](../Room/Tunneled%20connection.md) with them, they can perform resolution via muxrpc.
 
