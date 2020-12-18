@@ -17,6 +17,10 @@ If the alias `alice` is registered at the room `scuttlebutt.eu` for a certain `f
   - The button links to `ssb://roomalias/scuttlebutt.eu/alice` (debatable format! #TODO)
 - The page automatically redirects to `ssb://roomalias/scuttlebutt.eu/alice`
 
+## Open questions
+
+- Is this endpoint disabled when the room's [privacy mode](../Setup/Privacy%20modes.md) is *Community* or *Restricted*?
+
 ## Detailed spec #TODO
 
 TODO Make UML diagram, see [sequenceDiagram example](../Misc/sequenceDiagram%20example.md).

@@ -12,6 +12,7 @@ A redesign of [room servers](https://github.com/staltz/ssb-room) with [user alia
   - [Config database](docs/Setup/Config%20database.md)
 - [Participation](docs/Participation/Readme.md)
   - [Joining](docs/Participation/Joining.md)
+  - [Invite web endpoint](docs/Participation/Invite%20endpoint.md)
   - Tunnel addresses #TODO
   - [Tunneled authentication](docs/Participation/Tunneled%20authentication.md)
   - [Tunneled connection](docs/Participation/Tunneled%20connection.md)
@@ -21,5 +22,6 @@ A redesign of [room servers](https://github.com/staltz/ssb-room) with [user alia
   - [Alias string](docs/Alias/Alias%20string.md)
   - [Registration](docs/Alias/Registration.md)
   - [Resolution](docs/Alias/Resolution.md)
-  - [Web endpoint](docs/Alias/Web%20endpoint.md)
+  - Revocation #TODO
+  - [Alias web endpoint](docs/Alias/Web%20endpoint.md)
   - [Alias database](docs/Alias/Alias%20database.md)
