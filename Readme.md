@@ -21,5 +21,5 @@ A redesign of [room servers](https://github.com/staltz/ssb-room) with [user alia
   - [Alias string](docs/Alias/Alias%20string.md)
   - [Registration](docs/Alias/Registration.md)
   - [Resolution](docs/Alias/Resolution.md)
-  - External resolution? #TODO
+  - [Web endpoint](docs/Alias/Web%20endpoint.md)
   - [Alias database](docs/Alias/Alias%20database.md)
