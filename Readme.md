@@ -12,11 +12,14 @@ A redesign of [room servers](https://github.com/staltz/ssb-room) with [user alia
   - [Config database](docs/Setup/Config%20database.md)
 - [Participation](docs/Participation/Readme.md)
   - [Joining](docs/Participation/Joining.md)
+  - Tunnel addresses #TODO
   - [Tunneled authentication](docs/Participation/Tunneled%20authentication.md)
   - [Tunneled connection](docs/Participation/Tunneled%20connection.md)
+  - Internal user registry database #TODO
 - [User aliases](docs/Alias/Readme.md)
   - [Full alias string](docs/Alias/Full%20alias%20string.md)
   - [Alias string](docs/Alias/Alias%20string.md)
   - [Registration](docs/Alias/Registration.md)
   - [Resolution](docs/Alias/Resolution.md)
+  - External resolution? #TODO
   - [Alias database](docs/Alias/Alias%20database.md)

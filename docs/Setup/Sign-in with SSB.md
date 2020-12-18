@@ -9,8 +9,8 @@ To access the [WWW dashboard interface](Web%20Dashboard.md), [internal users](..
 | Is connected to the room via secret-handshake and muxrpc | Recognizes the client as an [internal user](../Stakeholders/Internal%20user.md) |
 | Presses a button in the SSB app "Open web dashboard" | |
 | Generates a challenge code `cc` | |
-| SSB app redirects to login endpoint at the room and passes the challenge as a a request param, `/login?challenge=${cc}` | |
-| | Receives challenge `cc`, solves it as `sr`. Generates a challenge `sc` and sends `sr+sc` to the client via muxrpc |
+| SSB app redirects to login endpoint at the room and passes the challenge as a a request param, `/login?feedid=${sbot.id}&challenge=${cc}` | |
+| | Receives challenge `cc`, solves it as `sr`. Generates a challenge `sc` and sends `sr+sc` to the client `feedid` via muxrpc |
 | Receives solution `sr`, if it's incorrect, don't do anything (and let the login HTTP request fail with a timeout). Else, solve `sc` as `cr`, and send it to the room via muxrpc. | |
 | | Receives solution `cr`, if it's incorrect, respond the login HTTP request with a failure. Else, redirect to the logged-in view of the dashboard `/manage` |
 | | Something about tokens and cookies to keep the client signed in #TODO |
