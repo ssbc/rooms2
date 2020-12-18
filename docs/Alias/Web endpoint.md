@@ -4,7 +4,7 @@ Once an alias is [registered](Registration.md), it will also enable any web user
 
 The goal of this page is primarily to improve SSB onboarding when the visitor being onboarded does not yet have an SSB ID. This web endpoint is very valuable for new SSB users being invited by an [internal user](../Stakeholders/Internal%20user.md).
 
-**Prior art:** This endpoint should be in many ways similar to the [Telegram](https://telegram.org/) `https://t.me/example` service for the username `@example`, also capable of redirecting the web visitor to `tg://resolve?domain=example`, which Telegram apps know how to parse and open the target user's profile screen.
+**Prior art:** This endpoint should be in many ways similar to the [Telegram](https://telegram.org/) `https://t.me/example` service for the username `@example`, also capable of redirecting the web visitor to a scheme `tg` URI `tg://resolve?domain=example`, which Telegram apps know how to parse and open the target user's profile screen.
 
 ## Rough spec
 
