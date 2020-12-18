@@ -9,8 +9,8 @@ Suppose Alice is an internal user of the room "Scuttlebutt EU". The room's domai
 ## Rough spec
 
 - [Internal users](../Stakeholders/Internal%20user.md) can [register](Registration.md) aliases
-- [External users](../Stakeholders/External%20user.md) can [resolve](Resolution.md) a [full alias](Full%20alias%20string.md) in order to [connect](../Room/Tunneled%20connection.md) with the target internal user
-- [Internal users](../Stakeholders/Internal%20user.md) can [resolve](Resolution.md) an [alias](Alias%20string.md) in order to [connect](../Room/Tunneled%20connection.md) with the target internal user
+- [External users](../Stakeholders/External%20user.md) can [resolve](Resolution.md) a [full alias](Full%20alias%20string.md) in order to [connect](../Participation/Tunneled%20connection.md) with the target internal user
+- [Internal users](../Stakeholders/Internal%20user.md) can [resolve](Resolution.md) an [alias](Alias%20string.md) in order to [connect](../Participation/Tunneled%20connection.md) with the target internal user
 
 ## Stakeholders
 

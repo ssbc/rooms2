@@ -13,14 +13,14 @@ The dashboard grants [moderators](../Stakeholders/Moderator.md) with features an
 - Nominate other internal users to become moderators too
 - View the list of aliases according to the [Alias database](../Alias/Alias%20database.md)
 - Revoke aliases by removing an entry from the [Alias database](../Alias/Alias%20database.md)
-- Change the [privacy mode](../Privacy/Modes.md) of the room
+- Change the [privacy mode](../Setup/Privacy%20modes.md) of the room
 - View other technical measurements such as bandwidth used, storage used by the databases, etc
 
 The dashboard grants [internal users](../Stakeholders/Internal%20user.md) basic features such as:
 
 - Register an alias for themselves
 - Revoke an alias for themselves
-- Create an invite for [external users](../Stakeholders/External%20user.md) to [join the room](Joining.md) if the room is running in [Community mode](../Privacy/Modes.md)
+- Create an invite for [external users](../Stakeholders/External%20user.md) to [join the room](../Participation/Joining.md) if the room is running in [Community mode](../Setup/Privacy%20modes.md)
 
 ## Detailed spec #TODO
 

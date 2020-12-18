@@ -4,9 +4,9 @@
 
 ## Rough spec
 
-The joining process is different for each [Privacy mode](../Privacy/Modes.md):
+The joining process is different for each [Privacy mode](../Setup/Privacy%20modes.md):
 
-- **Open:** 
+- **Open:**
   1. An [external user](../Stakeholders/External%20user.md), Alice, acquires the open *invite code* either through the room's public website or via other means
   1. Alice consumes the invite code in her SSB app that supports being a room client
   1. The room accepts the connection from Alice and immediately grants her an [ssb-tunnel](https://github/ssbc/ssb-tunnel) address

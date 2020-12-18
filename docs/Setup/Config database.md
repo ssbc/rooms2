@@ -6,7 +6,7 @@ The configuration database holds basic administrative data, readable only by [ad
 
 The database should contain these data points:
 
-- Which [privacy mode](../Privacy/Modes.md) is selected
+- Which [privacy mode](../Setup/Privacy%20modes.md) is selected
 - List of SSB IDs of [moderators](../Stakeholders/Moderator.md)
 - List of blocked SSB IDs
 - Name of the room (a short string)
