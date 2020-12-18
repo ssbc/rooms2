@@ -8,7 +8,7 @@ An [internal user](../Stakeholders/Internal%20user.md) who does not have an alia
 
 1. An internal user with SSB ID `feedid` calls a specific [muxrpc](https://github.com/ssb-js/muxrpc/) API `registerAlias(alias, sig)`
     - `alias` is a supposed to be a string, a candidate [alias string](Alias%20string.md)
-    - `sig` is a cryptographic signature covering both `alias` and `feedId`
+    - `sig` is a cryptographic signature covering `roomId`, `feedId`, and `alias`
 1. The room checks whether that `alias` is valid (see spec in [Alias string](Alias%20string.md))
 	1. If it is invalid, reply with an error
 	1. Else, proceed (below)

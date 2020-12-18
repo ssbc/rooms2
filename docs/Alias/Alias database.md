@@ -19,14 +19,31 @@ This can be a simple persistent key-value store, such as Leveldb.
 
 - Each **Key** is an [alias string](Alias%20string.md)
 - Each **Value** is a string that encodes two things:
-  - [SSB identities](https://ssbc.github.io/scuttlebutt-protocol-guide/#keys-and-identities) of [internal users](../Stakeholders/Internal%20user.md)
-  - A cryptographic signature that covers **both** the alias string and the SSB ID
+  - [SSB identity](https://ssbc.github.io/scuttlebutt-protocol-guide/#keys-and-identities) of the [internal user](../Stakeholders/Internal%20user.md)
+  - A cryptographic signature that covers **all these**
+    - the room server's ID, i.e. `roomid`
+    - the SSB ID, i.e. `userid`
+    - alias string, i.e. `useralias`
 
-The purpose of a cryptographic signature on the combined alias & SSB ID is to make sure that the [Room admin](../Stakeholders/Room%20admin.md) cannot tamper with the database to delegitimize its contents. This means that each key-value pair is certainly authored by the declared SSB ID, that is, neither the key (the alias) nor the value (the SSB ID) was modified by the Room admin.
+The signature is applied on the following string: `=alias-registration:${roomid}:${userid}:${useralias}`, example (without spaces nor newlines):
+
+```
+=alias-registration:@51w4nYL0k7mRzDGw20KQqCjt35
+y8qLiBNtWk3MX7ppo=.ed25519:@FlieaFef19uJ6jhHwv2
+CSkFrDLYKJd/SuIS71A5Y2as=.ed25519:alice
+```
+
+where
+
+- `roomid` is `@51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo=.ed25519`
+- `userid` is `@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519`
+- `useralias` is `alice`
+
+The purpose of a cryptographic signature on the combined `roomid` & `userid` & `useralias` is to make sure that the [Room admin](../Stakeholders/Room%20admin.md) cannot tamper with the database to delegitimize its contents. This means that each key-value pair is certainly authored by the declared SSB ID, that is, neither the key (the alias) nor the value (the SSB ID) was modified by the Room admin.
 
 ## Detailed spec #TODO
 
-Detail how the signature should happen, with a derived key perhaps?
+No need for derived keys, said keks.
 
 TODO Make UML diagram, see [sequenceDiagram example](../Misc/sequenceDiagram%20example.md).
 
