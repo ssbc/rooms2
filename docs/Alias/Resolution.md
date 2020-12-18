@@ -4,6 +4,8 @@ When an SSB user ([external](../Stakeholders/External%20user.md) or [internal](.
 
 ## Rough spec
 
+#TODO what if the alias is a [full alias string](Full%20alias%20string.md), how do we resolve the host domain part to the Room's SSB ID? Or even better, resolve to its multiserver address?
+
 1. An SSB user acting as a client calls a specific [muxrpc](https://github.com/ssb-js/muxrpc/) API `resolveAlias(alias)` on the room server
     - `alias` is a supposed to be a string, a candidate [alias string](Alias%20string.md)
 1. The room checks whether that `alias` is valid (see spec in [Alias string](Alias%20string.md))

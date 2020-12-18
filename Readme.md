@@ -10,6 +10,7 @@ A redesign of [room servers](https://github.com/staltz/ssb-room) with [user alia
   - [Sign-in with SSB](docs/Setup/Sign-in%20with%20SSB.md)
   - [Web Dashboard](docs/Setup/Web%20Dashboard.md)
   - [Config database](docs/Setup/Config%20database.md)
+  - Audit feed? #TODO
 - [Participation](docs/Participation/Readme.md)
   - [Joining](docs/Participation/Joining.md)
   - [Invite web endpoint](docs/Participation/Invite%20endpoint.md)
