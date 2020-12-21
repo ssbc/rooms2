@@ -14,7 +14,7 @@ A redesign of [room servers](https://github.com/staltz/ssb-room) with [user alia
 - [Participation](docs/Participation/Readme.md)
   - [Joining](docs/Participation/Joining.md)
   - [Invite web endpoint](docs/Participation/Invite%20endpoint.md)
-  - Tunnel addresses #TODO
+  - [Tunnel addresses](docs/Participation/Tunnel%20addresses.md)
   - [Tunneled authentication](docs/Participation/Tunneled%20authentication.md)
   - [Tunneled connection](docs/Participation/Tunneled%20connection.md)
   - Internal user registry database #TODO
