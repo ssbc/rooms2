@@ -22,8 +22,8 @@ A redesign of [room servers](https://github.com/staltz/ssb-room) with [user alia
   - [Full alias string](docs/Alias/Full%20alias%20string.md)
   - [Alias string](docs/Alias/Alias%20string.md)
   - [Registration](docs/Alias/Registration.md)
+  - [Revocation](docs/Alias/Revocation.md)
   - [Host resolution](docs/Alias/Host%20resolution.md)
   - [Alias resolution](docs/Alias/Alias%20resolution.md)
-  - Revocation #TODO
   - [Alias web endpoint](docs/Alias/Web%20endpoint.md)
   - [Alias database](docs/Alias/Alias%20database.md)

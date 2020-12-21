@@ -15,7 +15,7 @@ Suppose Alice is an internal user of the room "Scuttlebutt EU". The room's domai
 
 ## Stakeholders
 
-- [Internal user](../Stakeholders/Internal%20user.md) may [register](Registration.md) an alias or perform [alias resolution](Alias%20resolution.md)
+- [Internal user](../Stakeholders/Internal%20user.md) may [register](Registration.md) an alias or [revoke](Revocation.md) it, as well as perform [alias resolution](Alias%20resolution.md)
 - [External user](../Stakeholders/External%20user.md) performs [host resolution](Host%20resolution.md) and [alias resolution](Alias%20resolution.md)
 - [Room admin](../Stakeholders/Room%20admin.md) has read/write access to the [alias database](Alias%20database.md)
 - [Moderator](../Stakeholders/Moderator.md) can remove an alias entry from the [alias database](Alias%20database.md)
@@ -25,6 +25,7 @@ Suppose Alice is an internal user of the room "Scuttlebutt EU". The room's domai
 - [Full alias string](Full%20alias%20string.md)
 - [Alias string](Alias%20string.md)
 - [Registration](Registration.md)
+- [Revocation](Revocation.md)
 - [Host resolution](Host%20resolution.md)
 - [Alias resolution](Alias%20resolution.md)
 - [Web endpoint](Web%20endpoint.md)
