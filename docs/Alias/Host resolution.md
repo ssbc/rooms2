@@ -50,3 +50,7 @@ TODO Make UML diagram, see [sequenceDiagram example](../Misc/sequenceDiagram%20e
 ### Malicious [room admin](../Stakeholders/Room%20admin.md)
 
 The room admin receiving `.well-known` requests could log and track IP addresses, session duration, and other metadata from HTTPS clients.
+
+Another possibility is that the room could have been modified by the room admin or by a MITM attacker (e.g. in the TLS connection) to spoof the response, providing another multiserver address, or spoofing only the SHS portion of the multiserver address.
+
+That said, SSB peers often remember previously used multiserver addresses, so peers who use the original `multiserverAddress` prior to the spoof attack will be unable to establish a valid [tunneled connection](Tunneled%20connection.md) to peers who use the spoofed `multiserverAddress`, because the outer connections wrapping the tunneled connection will refer to different SHS keys.
