@@ -15,7 +15,7 @@ When [joining](Joining.md) a *Community* room or *Restricted* room, [internal us
 1. Once a web visitor opens that link, then they are presented with the SSB URI `ssb://joinroom/${multiserverAddress}/${inviteCode}`
     1. If the operating system detects an installed SSB app that recognizes the `ssb://` scheme, the SSB app handles this URI
 	1. Else, the website at displays instructions how to install an SSB app
-	    - Should there be an app store URL which further redirects to this SSB URI? #TODO
+	    - For instance, there could be an app store URL (see [this technical possibility](https://stackoverflow.com/questions/28744167/android-deep-linking-use-the-same-link-for-the-app-and-the-play-store)) to install Manyverse which further redirects to this SSB URI, maybe may have to rely on a fixed URL (for Manyverse to register in its manifest) such as `join.manyver.se`. Same idea for other mobile apps, say "Imaginary App" using the fixed URL "join.imaginary.app". Desktop apps are different as they can be installed without an app store (or not?).
 1. The SSB app knows how to transform the SSB URI into muxrpc methods, and then proceeds to perform the [joining protocol](Joining.md)
 
 ## Detailed spec #TODO

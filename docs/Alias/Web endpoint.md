@@ -19,7 +19,7 @@ If the alias `alice` is registered at the room `scuttlebutt.eu` for a certain `f
 
 ## Open questions
 
-- Is this endpoint disabled when the room's [privacy mode](../Setup/Privacy%20modes.md) is *Community* or *Restricted*?
+- Is this endpoint disabled when the room's [privacy mode](../Setup/Privacy%20modes.md) is *Community* or *Restricted*? #TODO
 
 ## Detailed spec #TODO
 

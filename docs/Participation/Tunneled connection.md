@@ -1,10 +1,24 @@
 # Tunneled connection
 
-#TODO summary here
+A tunneled connection is an indirect connection between two peers assisted by an intermediary peer. Ideally, two peers could always connect with each other directly, but often they have (potentially unstable) IP addresses behind NATs and firewalls, making it difficult to consistently and reliably establish connections. The purpose of the intermediary peer is to improve connection reliability, because these intermediary peer can be privileged nodes with internet-public IP address, such as from hosting services. 
 
 ## Rough spec
 
-Read more at [ssb-tunnel](https://github.com/ssbc/ssb-tunnel). #TODO summarize it here.
+Tunneled connections in SSB originated from the proof-of-concept [ssb-tunnel](https://github.com/ssbc/ssb-tunnel) module. Suppose A and B are clients of a intermediary server M. Peer A creates a conventional [handshake](https://ssbc.github.io/scuttlebutt-protocol-guide/#handshake) connection to M, and waits to receive tunnel connections. Peer B creates a conventional secret handshake connection to M, and then requests a tunneled connection to A through that conventional connection (B-M). Then, M calls A, creating a tunneled connection where one end is attached to A and the other end is attached to B's request. Finally, B uses the secret handshake to authenticate A.
+
+Notice that for the intermediary M, peer A is the server and B is the client (client calls, server answers) but M is just the portal. The tunneled connection is inside the outer (conventional) connections, which means it is encrypted twice with [box stream](https://ssbc.github.io/scuttlebutt-protocol-guide/#box-stream). This means A and B can mutually authenticate each other, and M cannot see the content of their connection.
+
+Diagram:
+
+```
+,---,      ,---,     ,---,
+|   |----->|   |<----|   |
+| A |<=====| M |<====| B |
+|   |----->|   |<----|   |
+`---`      `---`     `---`
+```
+
+The arrows represent the direction of the connection – from the client, pointing to the server. Notice the M<=B connection is the same direction as the M<-B outer connection, but the A<=M connection is the opposite direction as the A->M outer connection.
 
 ## Detailed spec #TODO
 
