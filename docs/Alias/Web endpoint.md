@@ -11,7 +11,7 @@ The goal of this page is primarily to improve SSB onboarding when the visitor be
 If the alias `alice` is registered at the room `scuttlebutt.eu` for a certain `feedId`, then the room's HTTP endpoint `https://scuttlebutt.eu/alice` will respond with a web site which: 
 
 - Displays the alias `alice`
-- Displays the [resolved](Resolution.md) SSB ID `feedId` and signature `sig`
+- Displays the [resolved](Alias%20resolution.md) SSB ID `feedId` and signature `sig`
 - Informs users how to install an SSB app that can correctly consume room aliases
 - Renders a "Connect with me" button
   - The button links to `ssb://roomalias/scuttlebutt.eu/alice` (debatable format! #TODO)
@@ -33,4 +33,4 @@ A web visitor, either human or bot, could attempt brute force visiting all possi
 
 ### Malicious [room admin](../Stakeholders/Room%20admin.md)
 
-The room admin could tamper with the [alias database](Alias%20database.md) and provide fake information on this web endpoint, e.g. that a certain alias was claimed by a certain users. Although the [database signature](Alias%20database.md) exists to prevent this type of tampering, it is only verified when performing muxrpc [resolution](Resolution.md). For web visitors who only want to know which SSB ID corresponds to an alias, and only that, these visitors must trust the room administrator, who could provide inauthentic information.
+The room admin could tamper with the [alias database](Alias%20database.md) and provide fake information on this web endpoint, e.g. that a certain alias was claimed by a certain users. Although the [database signature](Alias%20database.md) exists to prevent this type of tampering, it is only verified when performing muxrpc [resolution](Alias%20resolution.md). For web visitors who only want to know which SSB ID corresponds to an alias, and only that, these visitors must trust the room administrator, who could provide inauthentic information.

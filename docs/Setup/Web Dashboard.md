@@ -8,7 +8,7 @@ The dashboard grants [moderators](../Stakeholders/Moderator.md) with features an
 
 - Block SSB IDs from becoming connecting with this room, meaning two things:
   - If they were an [internal user](../Stakeholders/Internal%20user.md), they get demoted to [external user](../Stakeholders/External%20user.md)
-  - Even as [external user](../Stakeholders/External%20user.md), the room server will reject new attempts of secret-handshake connections, meaning that blocked users cannot even perform [alias resolution](../Alias/Resolution.md) anymore
+  - Even if they were an [external user](../Stakeholders/External%20user.md), the room server will reject new attempts of secret-handshake connections, meaning that blocked users cannot even perform [alias resolution](../Alias/Alias%20resolution.md) anymore
 - Unblock SSB IDs that are blocked
 - Nominate other internal users to become moderators too
 - View the list of aliases according to the [Alias database](../Alias/Alias%20database.md)
