@@ -1,4 +1,4 @@
-A redesign of [room servers](https://github.com/staltz/ssb-room) with [user aliases](docs/Alias/Readme.md) and [better privacy](docs/Setup/Privacy%20modes.md)
+A redesign of [room servers](https://github.com/staltz/ssb-room) with [user aliases](docs/Alias/Readme.md) and [better privacy](docs/Setup/Privacy%20modes.md). The basic definition of a room is any SSB peer that supports the [required components](docs/Setup/Components.md) for rooms.
 
 - [Stakeholders](docs/Stakeholders/Readme.md)
   - [Administrator](docs/Stakeholders/Room%20admin.md)
