@@ -17,7 +17,8 @@ A redesign of [room servers](https://github.com/staltz/ssb-room) with [user alia
   - [Tunnel addresses](docs/Participation/Tunnel%20addresses.md)
   - [Tunneled authentication](docs/Participation/Tunneled%20authentication.md)
   - [Tunneled connection](docs/Participation/Tunneled%20connection.md)
-  - Internal user registry database #TODO
+  - Room authentication (checking the internal user registry) #TODO
+  - [Internal user registry](docs/Participation/Internal%20user%20registry.md)
 - [User aliases](docs/Alias/Readme.md)
   - [Full alias string](docs/Alias/Full%20alias%20string.md)
   - [Alias string](docs/Alias/Alias%20string.md)

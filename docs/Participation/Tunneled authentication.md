@@ -12,7 +12,7 @@ Thus tunneled authentication **requires mutual follows** ("friendship") before e
 
 When a denial of connection occurs, the peer that received the connection should be able to see (and thus locally log): (1) SSB ID of the intermediary peer (room) used, (2) SSB ID of the origin peer behind the intermediary, (3) (MAYBE) the address ([tunnel address](Tunnel%20addresses.md) or [full alias string](../Alias/Full%20alias%20string.md)) of the origin peer.
 
-The user that received the denied connection can then see this fact in their SSB app, and then they can make a conscious choice to (1) follow the origin peer, or (2) connect to the origin peer (if (3) from the previous paragraph existed), or both.
+The user that received the denied connection can then see this fact in their SSB app, and then they can make a conscious choice to either (1) follow the origin peer, or (2) connect to the origin peer (if (3) from the previous paragraph existed), or both.
 
 ## Detailed spec #TODO
 
