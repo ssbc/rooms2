@@ -8,10 +8,11 @@ A room server is defined by several components, which are systems that enable fe
 - [Tunnel addresses](../Participation/Tunnel%20addresses.md)
 - [Privacy modes](../Setup/Privacy%20modes.md) (at least the *Open* mode)
 - [Joining](../Participation/Joining.md) (for at least the *Open* mode)
-- [Internal user authentication](../Participation/Internal%20user%20authentication.md) (for at least the *Open* mode)
 
 ## Optional
 
+- Other [Privacy modes](../Setup/Privacy%20modes.md) and respective ways of [joining](../Participation/Joining.md)
+- [Internal user authentication](../Participation/Internal%20user%20authentication.md)
 - [Tunneled authentication](../Participation/Tunneled%20authentication.md)
 - [Invite endpoint](../Participation/Invite%20endpoint.md)
 - [Web Dashboard](Web%20Dashboard.md) and [Sign-in with SSB](Sign-in%20with%20SSB.md)
