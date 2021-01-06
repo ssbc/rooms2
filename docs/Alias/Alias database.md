@@ -13,7 +13,7 @@ The following is a mock up of a key-value store:
 | `carla` | `@dRE+jzKo0VWX6JbcSVATyOvFlbjCNwPWNzQLkTGenac=.ed25519` plus signature |
 | `daniel` | `@SMMgb4bZAgRgtAPdMw4loQeZL9lQgsRDi+xin0ZDzAg=.ed25519` plus signature |
 
-## Rough spec
+## Specification
 
 This can be a simple persistent key-value store, such as Leveldb.
 
@@ -40,12 +40,6 @@ where
 - `useralias` is `alice`
 
 The purpose of a cryptographic signature on the combined `roomid` & `userid` & `useralias` is to make sure that the [Room admin](../Stakeholders/Room%20admin.md) cannot tamper with the database to delegitimize its contents. This means that each key-value pair is certainly authored by the declared SSB ID, that is, neither the key (the alias) nor the value (the SSB ID) was modified by the Room admin.
-
-## Detailed spec #TODO
-
-No need for derived keys, said keks.
-
-TODO Make UML diagram, see [sequenceDiagram example](../Misc/sequenceDiagram%20example.md).
 
 ## Security considerations
 

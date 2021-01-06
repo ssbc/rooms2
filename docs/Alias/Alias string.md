@@ -10,10 +10,6 @@ Suppose Alice is an internal user of the room "Scuttlebutt EU". Alice's alias co
 - `alice1994`
 - `aLiCee`
 
-## Rough spec
+## Specification
 
-Alphanumerics, uppercase and lowercase. Perhaps `-` and `.` could be allowed.
-
-## Detailed spec #TODO
-
-Maybe this spec should be the same as `userpart` in [RFC 7565 Section 7](https://tools.ietf.org/html/rfc7565#section-7)?
+Alphanumerics, uppercase and lowercase. Perhaps `-` and `.` could be allowed. This should be the same as `userpart` in [RFC 7565 Section 7](https://tools.ietf.org/html/rfc7565#section-7).

@@ -2,7 +2,7 @@
 
 In rooms where the [privacy mode](../Setup/Privacy%20modes.md) is not *open*, not all SSB users who connect to the room are [internal users](../Stakeholders/Internal%20user.md). The room thus needs a way to authenticate the user before granting them a [tunnel address](Tunnel%20addresses.md).
 
-## Rough spec
+## Specification
 
 When the room receives a secret-handshake incoming connection from Alice, it checks the [internal user registry](Internal%20user%20registry.md), looking for entry in the registry corresponding to Alice's ID. If there is an entry, the room allows the incoming connection to stay alive, and grants Alice a [tunnel address](Tunnel%20addresses.md). Otherwise, the room allows the connection but does not grant Alice a tunnel address.
 

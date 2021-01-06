@@ -6,7 +6,7 @@ An alias (also known as "room alias") is a string that identifies an [internal u
 
 Suppose Alice is an internal user of the room "Scuttlebutt EU". The room's domain is `scuttlebutt.eu` and Alice's [alias](Alias%20string.md) is `alice`. Alice's [full alias](Full%20alias%20string.md) is thus `@alice@scuttlebutt.eu`, and her [web endpoint](Web%20endpoint.md) is `https://scuttlebutt.eu/alice`.
 
-## Rough spec
+## Specification
 
 - [Internal users](../Stakeholders/Internal%20user.md) can [register](Registration.md) aliases
 - [Internal users](../Stakeholders/Internal%20user.md) who know a target user's [alias](Alias%20string.md) can [resolve it](Alias%20resolution.md) in order to [connect](../Participation/Tunneled%20connection.md) with the target internal user

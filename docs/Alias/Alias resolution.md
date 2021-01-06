@@ -2,7 +2,7 @@
 
 When an SSB user ([external](../Stakeholders/External%20user.md) or [internal](../Stakeholders/Internal%20user.md)) is connected to the room, and knows of another [internal user's](../Stakeholders/Internal%20user.md) [alias](Alias%20string.md), they can perform *resolution* via muxrpc. After resolution is completed successfully, they obtain the target user's SSB ID and can use it to start a [tunneled connection](../Participation/Tunneled%20connection.md).
 
-## Rough spec
+## Specification
 
 If the input is a [full alias string](Full%20alias%20string.md), then first perform [host resolution](Host%20resolution.md) on the room server. Once the room's `multiserverAddress` is known, the SSB user creates a muxrpc connection with the room, and picks the `alias` part of the full alias string to perform the following algorithm:
 
@@ -18,10 +18,6 @@ If the input is a [full alias string](Full%20alias%20string.md), then first perf
 1. The client now in possession of the **value** will deconstruct the `feedId` and the `sig`
 1. The client verifies that the signature `sig` authentically matches `feedId` and `alias`
 1. The client can now use `feedId` to initiate a [tunneled connection](../Participation/Tunneled%20connection.md) with `feedId`
-
-## Detailed spec #TODO
-
-TODO Make UML diagram, see [sequenceDiagram example](../Misc/sequenceDiagram%20example.md).
 
 ## Security considerations
 

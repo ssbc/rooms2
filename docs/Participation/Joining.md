@@ -2,7 +2,7 @@
 
 "Joining a room" means the process where an [external user](../Stakeholders/External%20user.md) becomes an [internal user](../Stakeholders/Internal%20user.md).
 
-## Rough spec
+## Specification
 
 The joining process is different for each [Privacy mode](../Setup/Privacy%20modes.md):
 

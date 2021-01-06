@@ -2,7 +2,7 @@
 
 This is a WWW interface that allows [moderators](../Stakeholders/Moderator.md) to [sign-in](Sign-in%20with%20SSB.md) and perform some privileged actions. [Internal users](../Stakeholders/Internal%20user.md) can also sign-in and perform basic actions such as [create invites for other users to join](Joining.md).
 
-## Rough spec
+## Specification
 
 The dashboard grants [moderators](../Stakeholders/Moderator.md) with features and powers such as:
 
@@ -21,11 +21,6 @@ The dashboard grants [internal users](../Stakeholders/Internal%20user.md) basic 
 - Register an alias for themselves
 - Revoke an alias for themselves
 - Create an invite for [external users](../Stakeholders/External%20user.md) to [join the room](../Participation/Joining.md) if the room is running in [Community mode](../Setup/Privacy%20modes.md)
-
-## Detailed spec #TODO
-
-- List and describe all actions and rights that moderators have.
-- Display low-fidelity mockups of the pages in this WWW dashboard
 
 ## Security considerations
 

@@ -2,7 +2,7 @@
 
 When an [internal user](../Stakeholders/Internal%20user.md) who has [registered](Registration.md) no longer wishes to have that alias associated with them anymore, they can perform *alias revocation* to remove that alias from the [alias database](Alias%20database.md).
 
-## Rough spec (web dashboard)
+## Specification
 
 1. An internal user with SSB ID `feedId` and a room server with SSB ID `roomId` are connected to each other via secret-handshake. We assume the internal user has [registered](Registration.md) `alias` in the past
 1. The internal user [signs into](../Setup/Sign-in%20with%20SSB.md) the room's [web dashboard](../Setup/Web%20Dashboard.md)
@@ -14,10 +14,6 @@ When an [internal user](../Stakeholders/Internal%20user.md) who has [registered]
 1. The room replies back to the client on the web dashboard with "success"
 1. (Optional) The room replies back to the internal user via muxrpc to inform successful alias revocation (how? #TODO)
 1. (Optional) The internal user publishes an SSB msg of type `about` with a field listing all its aliases for various rooms, where this specific `alias` is no longer listed (how? #TODO)
-
-## Detailed spec #TODO
-
-TODO Make UML diagram, see [sequenceDiagram example](../Misc/sequenceDiagram%20example.md).
 
 ## Security considerations
 

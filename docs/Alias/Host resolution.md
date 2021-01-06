@@ -17,7 +17,7 @@ And it should respond with the JSON
 {"multiserverAddress":"net:scuttlebutt.eu:8008~shs:51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo="}
 ```
 
-## Rough spec
+## Specification
 
 The room should be serving **HTTPS** connections, and one of its HTTPS resources must be `/.well-known/ssb-room.json`. That resource should provide a JSON response with the following JSON schema:
 
@@ -40,10 +40,6 @@ The room should be serving **HTTPS** connections, and one of its HTTPS resources
 ```
 
 The client (external user) picks the `multiserverAddress` property of the responded JSON and uses that as the address to create a muxrpc connection with the room. 
-
-## Detailed spec #TODO
-
-TODO Make UML diagram, see [sequenceDiagram example](../Misc/sequenceDiagram%20example.md).
 
 ## Security considerations
 

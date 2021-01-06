@@ -8,7 +8,7 @@ When [joining](Joining.md) a *Community* room or *Restricted* room, [internal us
 1. User opens that link in a browser, which redirects to `ssb://joinroom/net:scuttlebutt.eu:8008~shs:51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo=/39c0ac1850ec9af14f1bb73`
 1. User's operating system opens that SSB URI in an SSB app, which then communicates with the room server via muxrpc, read more in [Joining](Joining.md)
 
-## Rough spec
+## Specification
 
 1. Suppose the room is hosted at domain `roomHost` and it has generated an invite `inviteCode`
 1. The invite link is `https://${roomHost}/join?invite=${inviteCode}`
@@ -17,10 +17,6 @@ When [joining](Joining.md) a *Community* room or *Restricted* room, [internal us
 	1. Else, the website at displays instructions how to install an SSB app
 	    - For instance, there could be an app store URL (see [this technical possibility](https://stackoverflow.com/questions/28744167/android-deep-linking-use-the-same-link-for-the-app-and-the-play-store)) to install Manyverse which further redirects to this SSB URI, maybe may have to rely on a fixed URL (for Manyverse to register in its manifest) such as `join.manyver.se`. Same idea for other mobile apps, say "Imaginary App" using the fixed URL "join.imaginary.app". Desktop apps are different as they can be installed without an app store (or not?).
 1. The SSB app knows how to transform the SSB URI into muxrpc methods, and then proceeds to perform the [joining protocol](Joining.md)
-
-## Detailed spec #TODO
-
-TODO Make UML diagram, see [sequenceDiagram example](../Misc/sequenceDiagram%20example.md).
 
 ## Security considerations
 

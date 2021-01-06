@@ -6,7 +6,7 @@ The goal of this page is primarily to improve SSB onboarding when the visitor be
 
 **Prior art:** This endpoint should be in many ways similar to the [Telegram](https://telegram.org/) `https://t.me/example` service for the username `@example`, also capable of redirecting the web visitor to a scheme `tg` URI `tg://resolve?domain=example`, which Telegram apps know how to parse and open the target user's profile screen.
 
-## Rough spec
+## Specification
 
 If the alias `alice` is registered at the room `scuttlebutt.eu` for a certain `feedId`, then the room's HTTP endpoint `https://scuttlebutt.eu/alice` will respond with a web site which: 
 
@@ -20,10 +20,6 @@ If the alias `alice` is registered at the room `scuttlebutt.eu` for a certain `f
 ## Open questions
 
 - Is this endpoint disabled when the room's [privacy mode](../Setup/Privacy%20modes.md) is *Community* or *Restricted*? #TODO
-
-## Detailed spec #TODO
-
-TODO Make UML diagram, see [sequenceDiagram example](../Misc/sequenceDiagram%20example.md).
 
 ## Security considerations
 

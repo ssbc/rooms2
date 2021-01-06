@@ -10,7 +10,7 @@ Suppose Alice is an internal user of the room "Scuttlebutt EU". The room's domai
 - `@alice1994@scuttlebutt.eu`
 - `@aLiCee@scuttlebutt.eu`
 
-## Rough spec
+## Specification
 
 Composed of the following substrings, in this order
 
@@ -19,6 +19,6 @@ Composed of the following substrings, in this order
 1. `@`
 1. room's domain, e.g. `scuttlebutt.eu`
 
-## Detailed spec #TODO
+## Related work
 
-Maybe this spec should be the same as [RFC 7565 Section 7](https://tools.ietf.org/html/rfc7565#section-7)? See also [Mastodon's WebFinger](https://docs.joinmastodon.org/spec/webfinger/). We should maybe consider document the leading `@`.
+This should be the same as [RFC 7565 Section 7](https://tools.ietf.org/html/rfc7565#section-7). See also [Mastodon's WebFinger](https://docs.joinmastodon.org/spec/webfinger/).

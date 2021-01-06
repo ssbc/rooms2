@@ -2,7 +2,7 @@
 
 To access the [WWW dashboard interface](Web%20Dashboard.md), [internal users](../Stakeholders/Internal%20user.md) (including [moderators](../Stakeholders/Moderator.md)) can use "sign-in with SSB ID".
 
-## Rough spec
+## Specification
 
 | Client (internal user) | Server (room) |
 |----------------------|---------------|
@@ -13,10 +13,6 @@ To access the [WWW dashboard interface](Web%20Dashboard.md), [internal users](..
 | | Receives challenge `cc`, solves it as `sr`. Generates a challenge `sc` and sends `sr+sc` to the client `feedid` via muxrpc |
 | Receives solution `sr`, if it's incorrect, don't do anything (and let the login HTTP request fail with a timeout). Else, solve `sc` as `cr`, and send it to the room via muxrpc. | |
 | | Receives solution `cr`, if it's incorrect, respond the login HTTP request with a failure. Else, redirect to the logged-in view of the dashboard `/manage` |
-
-## Detailed spec #TODO
-
-TODO Make UML diagram, see [sequenceDiagram example](../Misc/sequenceDiagram%20example.md).
 
 - HTTPS please #TODO
 - How is the challenge exactly generated? #TODO
