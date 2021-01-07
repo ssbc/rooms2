@@ -1,8 +1,8 @@
-# Config database
+## Config database
 
 The configuration database holds basic administrative data, readable only by [admins](../Stakeholders/Room%20admin.md) and (indirectly via the [dashboard](Web%20Dashboard.md)) by [moderators](../Stakeholders/Moderator.md).
 
-## Specification
+### Specification
 
 The database should contain these data points:
 

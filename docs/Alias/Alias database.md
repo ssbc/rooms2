@@ -1,8 +1,8 @@
-# Alias database
+## Alias database
 
 This is a database that stores all aliases that were [registered](Registration.md) by internal users.
 
-## Example
+### Example
 
 The following is a mock up of a key-value store:
 
@@ -13,7 +13,7 @@ The following is a mock up of a key-value store:
 | `carla` | `@dRE+jzKo0VWX6JbcSVATyOvFlbjCNwPWNzQLkTGenac=.ed25519` plus signature |
 | `daniel` | `@SMMgb4bZAgRgtAPdMw4loQeZL9lQgsRDi+xin0ZDzAg=.ed25519` plus signature |
 
-## Specification
+### Specification
 
 This can be a simple persistent key-value store, such as Leveldb.
 
@@ -41,9 +41,9 @@ where
 
 The purpose of a cryptographic signature on the combined `roomid` & `userid` & `useralias` is to make sure that the [Room admin](../Stakeholders/Room%20admin.md) cannot tamper with the database to delegitimize its contents. This means that each key-value pair is certainly authored by the declared SSB ID, that is, neither the key (the alias) nor the value (the SSB ID) was modified by the Room admin.
 
-## Security considerations
+### Security considerations
 
-### Malicious [room admin](../Stakeholders/Room%20admin.md)
+#### Malicious [room admin](../Stakeholders/Room%20admin.md)
 
 The room admin can freely read or write to this database, they can create new entries, and so forth. If they modify an entry and thus break the validation of the signatures, other SSB users can detect this when verifying the signatures.
 
@@ -57,7 +57,7 @@ But the admin **can**:
 - Remove any registered key-value pairs from the database, essentially removing an alias
 - Register signed aliases for fake users it has created itself
 
-### Malicious [moderator](../Stakeholders/Moderator.md)
+#### Malicious [moderator](../Stakeholders/Moderator.md)
 
 Similar considerations as with the room admin, but less powers. The malicious moderator *cannot* do the actions that the room admin cannot do (otherwise moderators would have more power than admins), but the one thing moderators can do is:
 

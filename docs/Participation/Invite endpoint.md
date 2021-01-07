@@ -1,14 +1,14 @@
-# Invite endpoint
+## Invite endpoint
 
 When [joining](Joining.md) a *Community* room or *Restricted* room, [internal users](../Stakeholders/Internal%20user.md) create invites. The invite code is originally just random bytes encoded as hex, but can be transformed into an *invite link*, i.e. an HTTPS endpoint URL on the room server.
 
-## Example
+### Example
 
 1. Invite link is `https://scuttlebutt.eu/join?invite=39c0ac1850ec9af14f1bb73`
 1. User opens that link in a browser, which redirects to `ssb://joinroom/net:scuttlebutt.eu:8008~shs:51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo=/39c0ac1850ec9af14f1bb73`
 1. User's operating system opens that SSB URI in an SSB app, which then communicates with the room server via muxrpc, read more in [Joining](Joining.md)
 
-## Specification
+### Specification
 
 1. Suppose the room is hosted at domain `roomHost` and it has generated an invite `inviteCode`
 1. The invite link is `https://${roomHost}/join?invite=${inviteCode}`
@@ -18,8 +18,8 @@ When [joining](Joining.md) a *Community* room or *Restricted* room, [internal us
 	    - For instance, there could be an app store URL (see [this technical possibility](https://stackoverflow.com/questions/28744167/android-deep-linking-use-the-same-link-for-the-app-and-the-play-store)) to install Manyverse which further redirects to this SSB URI, maybe may have to rely on a fixed URL (for Manyverse to register in its manifest) such as `join.manyver.se`. Same idea for other mobile apps, say "Imaginary App" using the fixed URL "join.imaginary.app". Desktop apps are different as they can be installed without an app store (or not?).
 1. The SSB app knows how to transform the SSB URI into muxrpc methods, and then proceeds to perform the [joining protocol](Joining.md)
 
-## Security considerations
+### Security considerations
 
-### Malicious web visitor
+#### Malicious web visitor
 
 A web visitor, either human or bot, could attempt brute force visiting all possible invite endpoints, in order to force themselves to become an [internal user](../Stakeholders/Internal%20user.md). However, this could easily be mitigated by rate limiting requests by the same IP address.

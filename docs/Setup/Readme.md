@@ -1,4 +1,3 @@
-- [Privacy modes](Privacy%20modes.md)
-- [Sign-in with SSB](Sign-in%20with%20SSB.md)
-- [Web Dashboard](Web%20Dashboard.md)
-- [Config database](Config%20database.md)
+# Setup
+
+There are different ways a room server can be configured.

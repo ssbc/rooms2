@@ -1,8 +1,8 @@
-# Sign-in with SSB
+## Sign-in with SSB
 
 To access the [WWW dashboard interface](Web%20Dashboard.md), [internal users](../Stakeholders/Internal%20user.md) (including [moderators](../Stakeholders/Moderator.md)) can use "sign-in with SSB ID".
 
-## Specification
+### Specification
 
 | Client (internal user) | Server (room) |
 |----------------------|---------------|

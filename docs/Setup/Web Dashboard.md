@@ -1,8 +1,8 @@
-# Web Dashboard
+## Web Dashboard
 
 This is a WWW interface that allows [moderators](../Stakeholders/Moderator.md) to [sign-in](Sign-in%20with%20SSB.md) and perform some privileged actions. [Internal users](../Stakeholders/Internal%20user.md) can also sign-in and perform basic actions such as [create invites for other users to join](Joining.md).
 
-## Specification
+### Specification
 
 The dashboard grants [moderators](../Stakeholders/Moderator.md) with features and powers such as:
 
@@ -22,9 +22,9 @@ The dashboard grants [internal users](../Stakeholders/Internal%20user.md) basic 
 - Revoke an alias for themselves
 - Create an invite for [external users](../Stakeholders/External%20user.md) to [join the room](../Participation/Joining.md) if the room is running in [Community mode](../Setup/Privacy%20modes.md)
 
-## Security considerations
+### Security considerations
 
-### Malicious [moderator](../Stakeholders/Moderator.md)
+#### Malicious [moderator](../Stakeholders/Moderator.md)
 
 Moderators obviously hold some power, and this power may be abused through unfair blocks, unfair revoking of aliases. In many cases, fairness is subjective, and is understood to be an essential compromise of having moderation to begin with. So in this section we will focus our attention on unusual security issues with moderation.
 

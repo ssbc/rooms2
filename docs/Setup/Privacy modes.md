@@ -1,8 +1,8 @@
-# Privacy modes
+## Privacy modes
 
 A room server should allow the [room admin](../Stakeholders/Room%20admin.md) or a [moderator](../Stakeholders/Moderator.md) to configure which users can become [internal user](../Stakeholders/Internal%20user.md).
 
-## Specification
+### Specification
 
 There are three strategies recommended as policies to [join](../Participation/Joining.md) the room, known as privacy modes:
 
