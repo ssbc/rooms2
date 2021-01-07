@@ -11,19 +11,19 @@ A redesign of [room servers](https://github.com/staltz/ssb-room) with [user alia
     *   [External user](#external-user)
     *   [Moderator](#moderator)
 *   [Setup](#setup)
-    *   [Privacy modes](#privacy-modes)
-    *   [Sign-in with SSB](#sign-in-with-ssb)
-    *   [Web Dashboard](#web-dashboard)
-    *   [Config database](#config-database)
     *   [Components](#components)
+    *   [Privacy modes](#privacy-modes)
+    *   [Config database](#config-database)
+    *   [Web Dashboard](#web-dashboard)
+    *   [Sign-in with SSB](#sign-in-with-ssb)
 *   [Participation](#participation)
     *   [Joining](#joining)
+    *   [Internal user registry](#internal-user-registry)
+    *   [Internal user authentication](#internal-user-authentication)
     *   [Invite endpoint](#invite-endpoint)
     *   [Tunnel addresses](#tunnel-addresses)
-    *   [Internal user authentication](#internal-user-authentication)
-    *   [Tunneled authentication](#tunneled-authentication)
     *   [Tunneled connection](#tunneled-connection)
-    *   [Internal user registry](#internal-user-registry)
+    *   [Tunneled authentication](#tunneled-authentication)
 *   [Alias](#alias)
     *   [Full alias string](#full-alias-string)
     *   [Alias string](#alias-string)
@@ -38,11 +38,6 @@ A redesign of [room servers](https://github.com/staltz/ssb-room) with [user alia
 ## Stakeholders
 
 Persons or organizations that are involved or engaged in or around room servers. They may hold responsibilities or powers, and may cause harm to other stakeholders when their responsibilities or powers are abused. They hold interest in engaging with other stakeholders while managing the risk for harm associated with engagement. Harm mitigation such as [Privacy modes](../Setup/Privacy%20modes.md) is important when discussing stakeholders.
-
-*   [Room admin](Room%20admin.md)
-*   [Moderator](Moderator.md)
-*   [Internal user](Internal%20user.md)
-*   [External user](External%20user.md)
 
 
 ### Room admin
@@ -80,6 +75,27 @@ Moderators can use [Moderator sign-in](../Setup/Sign-in%20with%20SSB.md) to acce
 There are different ways a room server can be configured.
 
 
+### Components
+
+A room server is defined by several components, which are systems that enable features, some of these are optional and some are required.
+
+#### Required
+
+*   [Tunneled connection](../Participation/Tunneled%20connection.md)
+*   [Tunnel addresses](../Participation/Tunnel%20addresses.md)
+*   [Privacy modes](../Setup/Privacy%20modes.md) (at least the *Open* mode)
+*   [Joining](../Participation/Joining.md) (for at least the *Open* mode)
+
+#### Optional
+
+*   Other [Privacy modes](../Setup/Privacy%20modes.md) and respective ways of [joining](../Participation/Joining.md)
+*   [Internal user authentication](../Participation/Internal%20user%20authentication.md)
+*   [Tunneled authentication](../Participation/Tunneled%20authentication.md)
+*   [Invite endpoint](../Participation/Invite%20endpoint.md)
+*   [Web Dashboard](Web%20Dashboard.md) and [Sign-in with SSB](Sign-in%20with%20SSB.md)
+*   [Aliases](../Alias/Readme.md) (requires "Web Dashboard" and "Sign-in with SSB")
+
+
 ### Privacy modes
 
 A room server should allow the [room admin](../Stakeholders/Room%20admin.md) or a [moderator](../Stakeholders/Moderator.md) to configure which users can become [internal user](../Stakeholders/Internal%20user.md).
@@ -95,26 +111,19 @@ There are three strategies recommended as policies to [join](../Participation/Jo
 **Joining:** To become a member of the room, peers need to [join the room](../Participation/Joining.md).
 
 
-### Sign-in with SSB
+### Config database
 
-To access the [WWW dashboard interface](Web%20Dashboard.md), [internal users](../Stakeholders/Internal%20user.md) (including [moderators](../Stakeholders/Moderator.md)) can use "sign-in with SSB ID".
+The configuration database holds basic administrative data, readable only by [admins](../Stakeholders/Room%20admin.md) and (indirectly via the [dashboard](Web%20Dashboard.md)) by [moderators](../Stakeholders/Moderator.md).
 
 #### Specification
 
-| Client (internal user) | Server (room) |
-|----------------------|---------------|
-| Is connected to the room via secret-handshake and muxrpc | Recognizes the client as an [internal user](../Stakeholders/Internal%20user.md) |
-| Presses a button in the SSB app "Open web dashboard" | |
-| Generates a challenge code `cc` | |
-| SSB app redirects to login endpoint at the room and passes the challenge as a a request param, `/login?feedid=${sbot.id}&challenge=${cc}` | |
-| | Receives challenge `cc`, solves it as `sr`. Generates a challenge `sc` and sends `sr+sc` to the client `feedid` via muxrpc |
-| Receives solution `sr`, if it's incorrect, don't do anything (and let the login HTTP request fail with a timeout). Else, solve `sc` as `cr`, and send it to the room via muxrpc. | |
-| | Receives solution `cr`, if it's incorrect, respond the login HTTP request with a failure. Else, redirect to the logged-in view of the dashboard `/manage` |
+The database should contain these data points:
 
-*   HTTPS please #TODO
-*   How is the challenge exactly generated? #TODO
-*   Shouldn't the `/login` endpoint always be a POST method? #TODO
-*   Something about tokens and cookies to keep the client signed in #TODO
+*   Which [privacy mode](../Setup/Privacy%20modes.md) is selected
+*   List of SSB IDs of [moderators](../Stakeholders/Moderator.md)
+*   List of blocked SSB IDs
+*   Name of the room (a short string)
+*   Description for the room (not too long string)
 
 
 ### Web Dashboard
@@ -150,40 +159,26 @@ Moderators obviously hold some power, and this power may be abused through unfai
 A moderator has the right to nominate other internal users to become moderators, and this could lead to a proliferation of moderators, which increases the possibility that one of these moderators abuses their powers. On the other hand, there has been many maintainers and npm owners in the [SSBC](https://github.com/ssbc/) (e.g. 32 GitHub org members and 17 npm owners for the cornerstone [`ssb-db`](https://www.npmjs.com/package/ssb-db) package), we also know that the presence of many moderators may also help to *decrease* the possibility of abuse, because asymmetry of privilege is reduced.
 
 
-### Config database
+### Sign-in with SSB
 
-The configuration database holds basic administrative data, readable only by [admins](../Stakeholders/Room%20admin.md) and (indirectly via the [dashboard](Web%20Dashboard.md)) by [moderators](../Stakeholders/Moderator.md).
+To access the [WWW dashboard interface](Web%20Dashboard.md), [internal users](../Stakeholders/Internal%20user.md) (including [moderators](../Stakeholders/Moderator.md)) can use "sign-in with SSB ID".
 
 #### Specification
 
-The database should contain these data points:
+| Client (internal user) | Server (room) |
+|----------------------|---------------|
+| Is connected to the room via secret-handshake and muxrpc | Recognizes the client as an [internal user](../Stakeholders/Internal%20user.md) |
+| Presses a button in the SSB app "Open web dashboard" | |
+| Generates a challenge code `cc` | |
+| SSB app redirects to login endpoint at the room and passes the challenge as a a request param, `/login?feedid=${sbot.id}&challenge=${cc}` | |
+| | Receives challenge `cc`, solves it as `sr`. Generates a challenge `sc` and sends `sr+sc` to the client `feedid` via muxrpc |
+| Receives solution `sr`, if it's incorrect, don't do anything (and let the login HTTP request fail with a timeout). Else, solve `sc` as `cr`, and send it to the room via muxrpc. | |
+| | Receives solution `cr`, if it's incorrect, respond the login HTTP request with a failure. Else, redirect to the logged-in view of the dashboard `/manage` |
 
-*   Which [privacy mode](../Setup/Privacy%20modes.md) is selected
-*   List of SSB IDs of [moderators](../Stakeholders/Moderator.md)
-*   List of blocked SSB IDs
-*   Name of the room (a short string)
-*   Description for the room (not too long string)
-
-
-### Components
-
-A room server is defined by several components, which are systems that enable features, some of these are optional and some are required.
-
-#### Required
-
-*   [Tunneled connection](../Participation/Tunneled%20connection.md)
-*   [Tunnel addresses](../Participation/Tunnel%20addresses.md)
-*   [Privacy modes](../Setup/Privacy%20modes.md) (at least the *Open* mode)
-*   [Joining](../Participation/Joining.md) (for at least the *Open* mode)
-
-#### Optional
-
-*   Other [Privacy modes](../Setup/Privacy%20modes.md) and respective ways of [joining](../Participation/Joining.md)
-*   [Internal user authentication](../Participation/Internal%20user%20authentication.md)
-*   [Tunneled authentication](../Participation/Tunneled%20authentication.md)
-*   [Invite endpoint](../Participation/Invite%20endpoint.md)
-*   [Web Dashboard](Web%20Dashboard.md) and [Sign-in with SSB](Sign-in%20with%20SSB.md)
-*   [Aliases](../Alias/Readme.md) (requires "Web Dashboard" and "Sign-in with SSB")
+*   HTTPS please #TODO
+*   How is the challenge exactly generated? #TODO
+*   Shouldn't the `/login` endpoint always be a POST method? #TODO
+*   Something about tokens and cookies to keep the client signed in #TODO
 
 
 ## Participation
@@ -224,6 +219,32 @@ The joining process is different for each [Privacy mode](../Setup/Privacy%20mode
     5.  The room accepts the connection from Alice and immediately grants her a [tunnel address](Tunnel%20addresses.md)
     6.  Alice has become an [internal user](../Stakeholders/Internal%20user.md)
     7.  The room stores Alice's SSB ID in the [Internal user registry](Internal%20user%20registry.md)
+
+
+### Internal user registry
+
+The *internal user registry* is a database the room manages, keeping records of which SSB users are [internal users](../Stakeholders/Internal%20user.md). It is a simple list or table, where each entry refers to an internal user, and must contain at least the SSB ID for that user.
+
+
+### Internal user authentication
+
+In rooms where the [privacy mode](../Setup/Privacy%20modes.md) is not *open*, not all SSB users who connect to the room are [internal users](../Stakeholders/Internal%20user.md). The room thus needs a way to authenticate the user before granting them a [tunnel address](Tunnel%20addresses.md).
+
+#### Specification
+
+When the room receives a secret-handshake incoming connection from Alice, it checks the [internal user registry](Internal%20user%20registry.md), looking for entry in the registry corresponding to Alice's ID. If there is an entry, the room allows the incoming connection to stay alive, and grants Alice a [tunnel address](Tunnel%20addresses.md). Otherwise, the room allows the connection but does not grant Alice a tunnel address.
+
+We need the connection to remain up even in the event of internal user authentication failing, because there are other muxrpc APIs that the room should allow external users to call, such as when consuming an invite (to become an internal user) or to perform [alias resolution](../Alias/Alias%20resolution.md).
+
+#### Security considerations
+
+##### Malicious [external user](../Stakeholders/External%20user.md)
+
+In the case of a room configured with [privacy modes](../Setup/Privacy%20modes.md) *Restricted*, the internal users of this room may want to be shielded from any external user gathering data about them, such as resolving aliases. The room needs to allow the external user to call muxrpc APIs, because the external user may be trying to [join](Joining.md) by consuming an invite. But in the case of a malicious external user, they may try to call other muxrpc APIs and so far this spec does not address how to protect against this possibility.
+
+##### Malicious [room admin](../Stakeholders/Room%20admin.md)
+
+The room software could be modified by the room admin to not authenticate some users as internal users.
 
 
 ### Invite endpoint
@@ -283,50 +304,6 @@ The tunnel address, being a multiserver address, can also contain a *transform* 
     z8SsxlIgansud4LKM57IHIw2Okw/hvOdeJWw=
 
 
-### Internal user authentication
-
-In rooms where the [privacy mode](../Setup/Privacy%20modes.md) is not *open*, not all SSB users who connect to the room are [internal users](../Stakeholders/Internal%20user.md). The room thus needs a way to authenticate the user before granting them a [tunnel address](Tunnel%20addresses.md).
-
-#### Specification
-
-When the room receives a secret-handshake incoming connection from Alice, it checks the [internal user registry](Internal%20user%20registry.md), looking for entry in the registry corresponding to Alice's ID. If there is an entry, the room allows the incoming connection to stay alive, and grants Alice a [tunnel address](Tunnel%20addresses.md). Otherwise, the room allows the connection but does not grant Alice a tunnel address.
-
-We need the connection to remain up even in the event of internal user authentication failing, because there are other muxrpc APIs that the room should allow external users to call, such as when consuming an invite (to become an internal user) or to perform [alias resolution](../Alias/Alias%20resolution.md).
-
-#### Security considerations
-
-##### Malicious [external user](../Stakeholders/External%20user.md)
-
-In the case of a room configured with [privacy modes](../Setup/Privacy%20modes.md) *Restricted*, the internal users of this room may want to be shielded from any external user gathering data about them, such as resolving aliases. The room needs to allow the external user to call muxrpc APIs, because the external user may be trying to [join](Joining.md) by consuming an invite. But in the case of a malicious external user, they may try to call other muxrpc APIs and so far this spec does not address how to protect against this possibility.
-
-##### Malicious [room admin](../Stakeholders/Room%20admin.md)
-
-The room software could be modified by the room admin to not authenticate some users as internal users.
-
-
-### Tunneled authentication
-
-Tunneled authentication is about making sure that SSB peers on the opposite end of a [tunneled connection](Tunneled%20connection.md) only allow the connection to occur if they follow the peer on the other side. Thus we need a way for peers to know who wants to open a tunneled connection and we should facilitate mutual follows to occur so that peers only create tunneled connections imbued with mutual interest.
-
-#### Specification
-
-Tunneled friend authentication is an algorithm or protocol that applies automatically without any user input from either end of the secret-handshake channel. This protocol should not apply for the intermediary peer, that is, the room server.
-
-When Alice receives a tunneled secret-handshake incoming connection from Bob, she automatically allows it if Alice checks that she follows Bob, or automatically cancels the connection if Alice checks that she does not follow Bob (or blocks Bob). Same is true reciprocically: Bob applies this rule for incoming connections from Alice.
-
-Thus tunneled authentication **requires mutual follows** ("friendship") before establishing a functioning [tunneled connection](Tunneled%20connection.md).
-
-When a denial of connection occurs, the peer that received the connection should be able to see (and thus locally log): (1) SSB ID of the intermediary peer (room) used, (2) SSB ID of the origin peer behind the intermediary, (3) (MAYBE) the address ([tunnel address](Tunnel%20addresses.md) or [full alias string](../Alias/Full%20alias%20string.md)) of the origin peer.
-
-The user that received the denied connection can then see this fact in their SSB app, and then they can make a conscious choice to either (1) follow the origin peer, or (2) connect to the origin peer (if (3) from the previous paragraph existed), or both.
-
-#### Implementation notes
-
-Note that in current room server implementation in JavaScript, [`opts.origin`](https://github.com/staltz/ssb-room/blob/e78d54887682664def36d48ca9e648fc609478e9/tunnel/server.js#L100) in the room is calculated from secret-handshake, so it can be trusted to be authentic.
-
-For the next version of rooms, if we want `opts.origin` to also contain the origin peer's address (ssb-tunnel address or full alias string), then we need other means of verifying that the origin address is authentic. E.g. if it's a full alias string, maybe the receiving peer performs [host resolution](../Alias/Host%20resolution.md) and [alias resolution](../Alias/Alias%20resolution.md), or maybe the receiving peer takes the ssb-tunnel address and verifies that the ID matches with the secret-handshake-given ID.
-
-
 ### Tunneled connection
 
 A tunneled connection is an indirect connection between two peers assisted by an intermediary peer. Ideally, two peers could always connect with each other directly, but they often have unstable IP addresses behind NATs and firewalls, making it difficult to consistently and reliably establish connections. The purpose of the intermediary peer is to improve connection reliability, because these intermediary peers can be privileged nodes with public IP addresses, such as from hosting services.
@@ -354,9 +331,27 @@ The arrows represent the direction of the connection – from the client, pointi
 The room admin could log and track all connection sessions for every tunneled connection, thus tracking the **IP addresses**, **timestamps**, **durations**, and **bandwidth** of interactions between [internal users](../Stakeholders/Internal%20user.md). That said, because of encrypted tunneled secret-handshake channels, the room admin could not know the contents of data transmitted between the internal users.
 
 
-### Internal user registry
+### Tunneled authentication
 
-The *internal user registry* is a database the room manages, keeping records of which SSB users are [internal users](../Stakeholders/Internal%20user.md). It is a simple list or table, where each entry refers to an internal user, and must contain at least the SSB ID for that user.
+Tunneled authentication is about making sure that SSB peers on the opposite end of a [tunneled connection](Tunneled%20connection.md) only allow the connection to occur if they follow the peer on the other side. Thus we need a way for peers to know who wants to open a tunneled connection and we should facilitate mutual follows to occur so that peers only create tunneled connections imbued with mutual interest.
+
+#### Specification
+
+Tunneled friend authentication is an algorithm or protocol that applies automatically without any user input from either end of the secret-handshake channel. This protocol should not apply for the intermediary peer, that is, the room server.
+
+When Alice receives a tunneled secret-handshake incoming connection from Bob, she automatically allows it if Alice checks that she follows Bob, or automatically cancels the connection if Alice checks that she does not follow Bob (or blocks Bob). Same is true reciprocically: Bob applies this rule for incoming connections from Alice.
+
+Thus tunneled authentication **requires mutual follows** ("friendship") before establishing a functioning [tunneled connection](Tunneled%20connection.md).
+
+When a denial of connection occurs, the peer that received the connection should be able to see (and thus locally log): (1) SSB ID of the intermediary peer (room) used, (2) SSB ID of the origin peer behind the intermediary, (3) (MAYBE) the address ([tunnel address](Tunnel%20addresses.md) or [full alias string](../Alias/Full%20alias%20string.md)) of the origin peer.
+
+The user that received the denied connection can then see this fact in their SSB app, and then they can make a conscious choice to either (1) follow the origin peer, or (2) connect to the origin peer (if (3) from the previous paragraph existed), or both.
+
+#### Implementation notes
+
+Note that in current room server implementation in JavaScript, [`opts.origin`](https://github.com/staltz/ssb-room/blob/e78d54887682664def36d48ca9e648fc609478e9/tunnel/server.js#L100) in the room is calculated from secret-handshake, so it can be trusted to be authentic.
+
+For the next version of rooms, if we want `opts.origin` to also contain the origin peer's address (ssb-tunnel address or full alias string), then we need other means of verifying that the origin address is authentic. E.g. if it's a full alias string, maybe the receiving peer performs [host resolution](../Alias/Host%20resolution.md) and [alias resolution](../Alias/Alias%20resolution.md), or maybe the receiving peer takes the ssb-tunnel address and verifies that the ID matches with the secret-handshake-given ID.
 
 
 ## Alias
