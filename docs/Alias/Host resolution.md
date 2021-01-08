@@ -23,19 +23,19 @@ The room should be serving **HTTPS** connections, and one of its HTTPS resources
 
 ```json
 {
-	"$schema": "http://json-schema.org/draft-07/schema#",
-	"$id": "https://github.com/ssb-ngi-pointer/rooms2",
-	"type": "object",
-	"properties": {
-		"multiserverAddress": {
-			"title": "Multiserver Address",
-			"description": "Should conform to https://github.com/ssbc/multiserver-address"
-			"type": "string"
-		}
-	},
-	"required": [
-		"multiserverAddress"
-	]
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ssb-ngi-pointer/rooms2",
+  "type": "object",
+  "properties": {
+    "multiserverAddress": {
+      "title": "Multiserver Address",
+      "description": "Should conform to https://github.com/ssbc/multiserver-address"
+      "type": "string"
+    }
+  },
+  "required": [
+    "multiserverAddress"
+  ]
 }
 ```
 
