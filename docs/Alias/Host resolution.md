@@ -39,7 +39,7 @@ The room should be serving **HTTPS** connections, and one of its HTTPS resources
 }
 ```
 
-The client (external user) picks the `multiserverAddress` property of the responded JSON and uses that as the address to create a muxrpc connection with the room.
+The client (external user) picks the `multiserverAddress` property of the responded JSON and uses that as the address to establish a secret-handshake connection with the room.
 
 ### Security considerations
 
