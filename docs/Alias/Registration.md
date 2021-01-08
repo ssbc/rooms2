@@ -16,18 +16,17 @@ An [internal user](../Stakeholders/Internal%20user.md) who does not have an alia
 1. The room checks whether there already exists an entry in the [Alias database](Alias%20database.md) with the *key* `alias`
     1. If there is, respond with an error on the web dashboard
     1. Else, proceed (below)
-1. The room receives the internal user's `alias` via HTTPS, and calls a specific [muxrpc](https://github.com/ssb-js/muxrpc/) API `confirmAlias(alias)` at the internal user
+1. The room receives the internal user's `alias` via HTTPS, and calls a specific [muxrpc](https://github.com/ssb-js/muxrpc/) `async` API `confirmAlias(alias, callback)` at the internal user
 1. The internal user receives the muxrpc message, and prompts the user interface to confirm this choice
     1. If it is denied, reply to the room with an error
         1. The room then responds with an error on the web dashboard
     1. Else, proceed (below)
-1. The internal user replies to the room's muxrpc call with two strings:
+1. The internal user responds to the room's muxrpc call with two strings:
     - `=alias-registration:${roomId}:${feedId}:${alias}`, read more about it in the [alias database](Alias%20database.md) spec
     - A cryptographic signature of the string above using `feedId`'s cryptographic keypair, referred to as `sig`, read more about it in the [alias database](Alias%20database.md) spec
-1. The room adds an entry to its [Alias database](Alias%20database.md) for `key=alias` & `value=feedId+sig`
-1. The room replies back to the client on the web dashboard with "success"
-1. (Optional) The room replies back to the internal user via muxrpc to inform successful alias registration (more details #TODO)
-1. (Optional) The internal user publishes an SSB msg of type `about` with a field listing all its aliases for various rooms, where this specific `alias` is included (more details #TODO)
+1. The internal user (who optimistically assumes the room will correctly receive the muxrpc response and correctly save it in its database) publishes an SSB msg of type `about` with a field listing all its aliases for various rooms, where this specific `alias` is included. The specific schema of the message type is an application-level concern
+1. The room, upon receiving the muxrpc response, adds an entry to its [Alias database](Alias%20database.md) for `key=alias` & `value=feedId+sig`
+1. The room responds back to the web dashboard client with "success"
 
 ### Security considerations
 
