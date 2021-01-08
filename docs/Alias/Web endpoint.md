@@ -14,8 +14,8 @@ If the alias `alice` is registered at the room `scuttlebutt.eu` for a certain `f
 - Displays the [resolved](Alias%20resolution.md) SSB ID `feedId` and signature `sig`
 - Informs users how to install an SSB app that can correctly consume room aliases
 - Renders a "Connect with me" button
-  - The button links to `ssb://roomalias/scuttlebutt.eu/alice` (debatable format! #TODO)
-- The page automatically redirects to `ssb://roomalias/scuttlebutt.eu/alice`
+  - The button links to `ssb:roomalias/scuttlebutt.eu/alice`
+- The page automatically redirects to `ssb:roomalias/scuttlebutt.eu/alice`
 
 ### Open questions
 
