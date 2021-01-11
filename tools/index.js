@@ -61,7 +61,9 @@ async function main() {
     .use(toc, {heading: 'Table of contents', maxDepth: 3, tight: true})
     .process(fullContents);
 
-  const stringOutput = String(output).replace(/\#TODO/g, '')
+  const stringOutput = String(output)
+    .replace(/\#TODO/g, '')
+    .replace('`$REVISION`', new Date().toISOString().slice(0, 10));
 
   fs.writeFileSync(OUTPUT_PATH, stringOutput);
 }
