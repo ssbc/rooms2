@@ -1,5 +1,5 @@
 
-- [Intro](header.md)
+- [Intro](Intro.md)
 - [Stakeholders](docs/Stakeholders/Readme.md)
   - [Administrator](docs/Stakeholders/Room%20admin.md)
   - [Internal user](docs/Stakeholders/Internal%20user.md)
@@ -11,7 +11,6 @@
   - [Config database](docs/Setup/Config%20database.md)
   - [Web Dashboard](docs/Setup/Web%20Dashboard.md)
   - [Sign-in with SSB](docs/Setup/Sign-in%20with%20SSB.md)
-  - Audit feed? #TODO
 - [Participation](docs/Participation/Readme.md)
   - [Joining](docs/Participation/Joining.md)
   - [Internal user registry](docs/Participation/Internal%20user%20registry.md)
