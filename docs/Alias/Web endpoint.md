@@ -8,6 +8,8 @@ The goal of this page is primarily to improve SSB onboarding when the visitor be
 
 ### Specification
 
+This specification does not apply if the [privacy mode](../Setup/Privacy%20modes.md) is *Restricted*.
+
 If the alias `alice` is registered at the room `scuttlebutt.eu` for a certain `feedId`, then the room's HTTP endpoint `https://scuttlebutt.eu/alice` will respond with a web site which:
 
 - Displays the alias `alice`
@@ -16,10 +18,6 @@ If the alias `alice` is registered at the room `scuttlebutt.eu` for a certain `f
 - Renders a "Connect with me" button
   - The button links to `ssb:roomalias/scuttlebutt.eu/alice`
 - The page automatically redirects to `ssb:roomalias/scuttlebutt.eu/alice`
-
-### Open questions
-
-- Is this endpoint disabled when the room's [privacy mode](../Setup/Privacy%20modes.md) is *Community* or *Restricted*? #TODO
 
 ### Security considerations
 
