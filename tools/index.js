@@ -61,7 +61,9 @@ async function main() {
     .use(toc, {heading: 'Table of contents', maxDepth: 3, tight: true})
     .process(fullContents);
 
-  fs.writeFileSync(OUTPUT_PATH, String(output));
+  const stringOutput = String(output).replace(/\#TODO/g, '')
+
+  fs.writeFileSync(OUTPUT_PATH, stringOutput);
 }
 
 main();
