@@ -21,13 +21,13 @@ sequenceDiagram
   alt SSB peer is disconnected from the room
         R-->>Uweb: HTTP 403
   else SSB peer is connected to the room
-        R-->>Umux: `sr+sc`
+        R->>Umux: (muxrpc async) `signIn(cc, sr, sc)`
       alt `sr` is incorrect
-        Umux->>R: `sr` is incorrect
+        Umux-->>R: respond signIn with error "`sr` is incorrect"
         R-->>Uweb: HTTP 403
       else `sr` is correct
         Umux->>Umux: Solve `sc` as `cr`
-      Umux->>R: `cr`
+      Umux-->>R: respond signIn with `cr`
       alt `cr` is incorrect
         R-->>Uweb: HTTP 403
       else `cr` is correct
@@ -36,5 +36,4 @@ sequenceDiagram
       end
        end
   end
-
 ```
