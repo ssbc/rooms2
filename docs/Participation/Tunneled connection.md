@@ -24,5 +24,7 @@ The arrows represent the direction of the connection – from the client, pointi
 
 #### Malicious [room admin](../Stakeholders/Room%20admin.md)
 
-The room admin could log and track all connection sessions for every tunneled connection, thus tracking the **IP addresses**, **timestamps**, **durations**, and **bandwidth** of interactions between [internal users](../Stakeholders/Internal%20user.md). That said, because of encrypted tunneled secret-handshake channels, the room admin could not know the contents of data transmitted between the internal users.
+The room admin could log and track all connection sessions for every tunneled connection, thus tracking the **IP addresses**, **timestamps**, **durations**, and **bandwidth** of interactions between [internal users](../Stakeholders/Internal%20user.md). The room admin could track which SSB users are interested in connecting with internal users, i.e. they can gather **social interest metadata**, which could be used to create a draft of a portion of the social graph.
+
+That said, because of encrypted tunneled secret-handshake channels, the room admin could not know the contents of data transmitted between the internal users.
 
