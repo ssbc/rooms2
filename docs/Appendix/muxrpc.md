@@ -1,6 +1,5 @@
 ## List of new muxrpc APIs
 
 - async
-  - `confirmAlias(alias, callback)`
-  - `aliasRegistered(alias, answer, callback)`
+  - `registerAlias(alias, feedId, signature, callback)`
   - `signIn(cc, sr, sc, callback)`
