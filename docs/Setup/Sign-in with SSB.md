@@ -12,11 +12,11 @@ sequenceDiagram
   participant Uweb as Browser client
   participant R as Room server
 
-  Umux->>Umux: Generates a challenge code `cc`
+  Umux->>Umux: Generates<br/>challenge `cc`
   Umux->>Uweb: `https://${roomHost}/login<br/>?userId=${userId}&challenge=${cc}`
   Uweb->>R: `https://${roomHost}/login<br/>?userId=${userId}&challenge=${cc}`
   R->>R: Solves `cc` as `sr`
-  R->>R: Generates challenge `sc`
+  R->>R: Generates<br/>challenge `sc`
   alt SSB peer is disconnected from the room
     R-->>Uweb: HTTP 403
   else SSB peer is connected to the room
