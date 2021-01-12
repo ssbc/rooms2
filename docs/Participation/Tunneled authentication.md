@@ -10,7 +10,7 @@ When Alice receives a tunneled secret-handshake incoming connection from Bob, sh
 
 Thus tunneled authentication **requires mutual follows** ("friendship") before establishing a functioning [tunneled connection](Tunneled%20connection.md).
 
-When a denial of connection occurs, the peer that received the connection should be able to see (and thus locally log): (1) SSB ID of the intermediary peer (room) used, (2) SSB ID of the origin peer behind the intermediary, (3) (MAYBE) the address ([tunnel address](Tunnel%20addresses.md) or [full alias string](../Alias/Full%20alias%20string.md)) of the origin peer.
+When a denial of connection occurs, the peer that received the connection should be able to see (and thus locally log): (1) SSB ID of the intermediary peer (room) used, (2) SSB ID of the origin peer behind the intermediary, (3) (optionally) the address ([tunnel address](Tunnel%20addresses.md) or [alias endpoint URL](Web%20endpoint.md)) of the origin peer.
 
 The user that received the denied connection can then see this fact in their SSB app, and then they can make a conscious choice to either (1) follow the origin peer, or (2) connect to the origin peer (if (3) from the previous paragraph existed), or both.
 
@@ -18,4 +18,4 @@ The user that received the denied connection can then see this fact in their SSB
 
 Note that in current room server implementation in JavaScript, [`opts.origin`](https://github.com/staltz/ssb-room/blob/e78d54887682664def36d48ca9e648fc609478e9/tunnel/server.js#L100) in the room is calculated from secret-handshake, so it can be trusted to be authentic.
 
-For the next version of rooms, if we want `opts.origin` to also contain the origin peer's address (ssb-tunnel address or full alias string), then we need other means of verifying that the origin address is authentic. E.g. if it's a full alias string, maybe the receiving peer performs [host resolution](../Alias/Host%20resolution.md) and [alias resolution](../Alias/Alias%20resolution.md), or maybe the receiving peer takes the ssb-tunnel address and verifies that the ID matches with the secret-handshake-given ID.
+For the next version of rooms, if we want `opts.origin` to also contain the origin peer's address (ssb-tunnel address or alias endpoint), then we need other means of verifying that the origin address is authentic. E.g. if it's an [alias endpoint URL](../Alias/Web%20endpoint.md), maybe the receiving peer visits the alias JSON endpoint then [consumes the alias](../Alias/Alias%20consumption.md), or maybe the receiving peer takes the ssb-tunnel address and verifies that the ID matches with the secret-handshake-given ID.
