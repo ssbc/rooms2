@@ -16,9 +16,51 @@ When an [internal user](../Stakeholders/Internal%20user.md) who has [registered]
         1. The room then responds with an error on the web dashboard
     1. Else, proceed (below)
 1. The internal user responds to the room's muxrpc call with a `true` boolean
-1. The internal user (who optimistically assumes the room will correctly receive the muxrpc response and correctly remove it from its database) publishes an SSB msg of type `about` with a field listing all its aliases for various rooms, where this specific `alias` is no longer listed. The specific schema of the message type is an application-level concern
-1. The room, upon receiving the muxrpc response, removes the entry in the [Alias database](Alias%20database.md) associated with `feedId`
-1. The room replies back to the web dashboard client with "success"
+1. The room receives the `confirmAlias` response, and attempts to remove the entry in the [Alias database](Alias%20database.md) associated with `feedId`
+    1. If the database entry removal failed for any reason
+        1. Call a muxrpc `async` API `aliasRegistered(null, error, callback)` at the internal user
+        1. Respond with an error on the web dashboard
+    1. Else, proceed (below)
+1. The room calls a muxrpc `async` API `aliasRegistered(null, true, callback)` at the internal user
+1. The room responds back to the web dashboard client with "success"
+1. The internal user receives the `aliasRegistered` muxrpc call from the room and checks the second argument:
+    1. If it is an error, then (optionally) display a user interface failure to revoke the alias
+    1. If it is `true`, then publish an SSB msg of type `about` with a field listing all its aliases for various rooms, where this specific `alias` is no longer listed. The specific schema of the message type is an application-level concern
+
+The above algorithm is also provided below as a UML sequence diagram:
+
+```mermaid
+sequenceDiagram
+  participant Umux as SSB peer
+  participant Uweb as Browser client
+  participant R as Room server
+
+  Note over Umux,R: Sign-in with SSB
+
+  Uweb->>R: "Revoke alias" feature in the dashboard<br/>
+  alt no alias exists in the alias database for `feedId`
+    R-->>Uweb: error
+  else else
+    R->>Umux: (muxrpc async) `confirmAlias(null)`
+    Umux->>Umux: Prompts the user<br/>interface to<br/>confirm the choice
+    alt user denies it
+        Umux-->>R: respond confirmAlias with an error
+        R-->>Uweb: error
+    else user accepts it
+        Umux-->>R: respond confirmAlias with `true`
+        R->>R: Attempts to remove<br/>the entry in the<br/>alias database
+        alt removal failed
+            R->>Umux: (muxrpc async) `aliasRegistered(null, error)`
+            R-->>Uweb: error
+        else removal succeeded
+            R->>Umux: (muxrpc async) `aliasRegistered(null, true)`
+            R-->>Uweb: HTTP 200
+            Umux->>Umux: Publishes an SSB<br/>msg of type<br/>`about`
+        end
+    end
+  end
+```
+
 
 ### Security considerations
 
