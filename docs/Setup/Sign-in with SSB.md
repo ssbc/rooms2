@@ -8,8 +8,8 @@ An [internal user](../Stakeholders/Internal%20user.md) known by its SSB ID `user
 
 ```mermaid
 sequenceDiagram
-    participant Umux as SSB peer
-    participant Uweb as Browser client
+  participant Umux as SSB peer
+  participant Uweb as Browser client
   participant R as Room server
 
   Umux->>Umux: Generates a challenge code `cc`
@@ -17,16 +17,15 @@ sequenceDiagram
   Uweb->>R: `https://${roomHost}/login<br/>?userId=${userId}&challenge=${cc}`
   R->>R: Solves `cc` as `sr`
   R->>R: Generates challenge `sc`
-
   alt SSB peer is disconnected from the room
-        R-->>Uweb: HTTP 403
+    R-->>Uweb: HTTP 403
   else SSB peer is connected to the room
-        R->>Umux: (muxrpc async) `signIn(cc, sr, sc)`
-      alt `sr` is incorrect
-        Umux-->>R: respond signIn with error "`sr` is incorrect"
-        R-->>Uweb: HTTP 403
-      else `sr` is correct
-        Umux->>Umux: Solve `sc` as `cr`
+    R->>Umux: (muxrpc async) `signIn(cc, sr, sc)`
+    alt `sr` is incorrect
+      Umux-->>R: respond signIn with error "`sr` is incorrect"
+      R-->>Uweb: HTTP 403
+    else `sr` is correct
+      Umux->>Umux: Solve `sc` as `cr`
       Umux-->>R: respond signIn with `cr`
       alt `cr` is incorrect
         R-->>Uweb: HTTP 403
@@ -34,6 +33,6 @@ sequenceDiagram
         R-->>Uweb: HTTP 200, auth token
         Uweb->>Uweb: Stores auth token as a cookie
       end
-       end
+    end
   end
 ```
