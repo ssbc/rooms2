@@ -28,4 +28,5 @@
   - [Alias resolution](docs/Alias/Alias%20resolution.md)
   - [Alias web endpoint](docs/Alias/Web%20endpoint.md)
   - [Alias database](docs/Alias/Alias%20database.md)
-
+- [Appendix](docs/Appendix/Readme.md)
+  - [List of new muxrpc APIs](docs/Appendix/muxrpc.md)
