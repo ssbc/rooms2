@@ -2,3 +2,4 @@
 node_modules
 pnpm-lock.yaml
 tools/compiled.md
+tools/*.md

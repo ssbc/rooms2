@@ -37,7 +37,7 @@ async function toString(asyncIter) {
 }
 
 const INPUT_PATH = '../Readme.md'
-const OUTPUT_PATH = './compiled.md'
+const OUTPUT_PATH = './'
 
 async function main() {
   const listFiles = [];
@@ -61,11 +61,13 @@ async function main() {
     .use(toc, {heading: 'Table of contents', maxDepth: 3, tight: true})
     .process(fullContents);
 
+  const revision = new Date().toISOString().slice(0,10)
+
   const stringOutput = String(output)
     .replace(/\#TODO/g, '')
-    .replace('`$REVISION`', new Date().toISOString().slice(0, 10));
+    .replace('`$REVISION`', revision);
 
-  fs.writeFileSync(OUTPUT_PATH, stringOutput);
+  fs.writeFileSync(path.join(OUTPUT_PATH, `rev${revision}.md`), stringOutput);
 }
 
 main();
