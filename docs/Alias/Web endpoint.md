@@ -8,7 +8,7 @@ The goal of this endpoint is to help any SSB user *locate and identify* the alia
 
 ### Specification
 
-Thi specification does not apply if the [privacy mode](../Setup/Privacy%20modes.md) is *Restricted*. This web endpoint is available only if the privacy mode is *Open* or *Community*.
+This specification does not apply if the [privacy mode](../Setup/Privacy%20modes.md) is *Restricted*. This web endpoint is available only if the privacy mode is *Open* or *Community*.
 
 If the alias `${alias}` is registered at the room `${roomHost}` for a certain `${userId}`, then the room's HTTP endpoint `https://${alias}.${roomHost}` SHOULD respond with HTML which:
 
