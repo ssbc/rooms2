@@ -27,6 +27,6 @@ The tunnel address, being a multiserver address, can also contain a *transform* 
 ```
 tunnel:@7MG1hyfz8SsxlIgansud4LKM57IHIw2Okw
 /hvOdeJWw=.ed25519:@1b9KP8znF7A4i8wnSevBSK
-2ZabI/Re4bYF/Vh3hXasQ=.ed25519~shs:7MG1hyf
-z8SsxlIgansud4LKM57IHIw2Okw/hvOdeJWw=
+2ZabI/Re4bYF/Vh3hXasQ=.ed25519~shs:1b9KP8z
+nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 ```
