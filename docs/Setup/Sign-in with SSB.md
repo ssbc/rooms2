@@ -13,12 +13,14 @@ The three sides (browser client, SSB peer, and room server) perform the followin
 - `sc`: "server's challenge"
 - `cr`: "client's response"
 
-The challenges, `cc` and `sc`, are [cryptographic nonces](https://en.wikipedia.org/wiki/Cryptographic_nonce) in hexadecimals. The responses, `sr` and `cr`, are the cryptographic signatures for the strings `=challenge:${cc}` and `=challenge:${sc}`, respectively, using the cryptographic keypairs that identify the server and the client, respectively.
+The challenges, `cc` and `sc`, are 256-bit [cryptographic nonces](https://en.wikipedia.org/wiki/Cryptographic_nonce) encoded in base64. The responses, `sr` and `cr`, are cryptographic signatures using the cryptographic keypairs that identify the server and the client, respectively, described below:
 
-To summarize:
-
-- `cc` is a hexadecimal nonce string created by the client, `cr` is the cryptographic signature of the string `=challenge:${sc}` using the client's cryptographic keypair, where `${sc}` is replaced by the contents of `sc` in hexadecimal.
-- `sc` is a hexadecimal nonce string created by the server, `sr` is the cryptographic signature of the string `=challenge:${cc}` using the servers's cryptographic keypair, where `${cc}` is replaced by the contents of `cc` in hexadecimal.
+- `cid` is the client's identity from their cryptographic keypair
+- `sid` is the servers's identity from their cryptographic keypair
+- `cc` is a 256-bit nonce created by the client, encoded in base64
+- `sc` is a 256-bit nonce created by the client, encoded in base64
+- `sr` is the server's cryptographic signature of the string `=http-auth-sign-in:${cid}:${sid}:${cc}:${sc}` where `${x}` means string interpolation of the value `x`
+- `cr` is the client's cryptographic signature of the string `=http-auth-sign-in:${cid}:${sid}:${cc}:${sc}` where `${x}` means string interpolation of the value `x`
 
 The UML sequence diagram for the whole protocol is shown below:
 
@@ -31,18 +33,18 @@ sequenceDiagram
   Umux->>Umux: Generates<br/>challenge `cc`
   Umux->>Uweb: `https://${roomHost}/login<br/>?userId=${userId}&challenge=${cc}`
   Uweb->>R: `https://${roomHost}/login<br/>?userId=${userId}&challenge=${cc}`
-  R->>R: Solves `cc` as `sr`
   R->>R: Generates<br/>challenge `sc`
+  R->>R: Generates<br/>signature `sr`
   alt SSB peer is disconnected from the room
     R-->>Uweb: HTTP 403
   else SSB peer is connected to the room
-    R->>Umux: (muxrpc async) `signIn(cc, sr, sc)`
+    R->>Umux: (muxrpc async) `httpAuth.signIn(cc, sc, sr)`
     alt `sr` is incorrect
-      Umux-->>R: respond signIn with error "`sr` is incorrect"
+      Umux-->>R: respond httpAuth.signIn with error "`sr` is incorrect"
       R-->>Uweb: HTTP 403
     else `sr` is correct
-      Umux->>Umux: Solve `sc` as `cr`
-      Umux-->>R: respond signIn with `cr`
+      Umux->>Umux: Generates<br/>signature `cr`
+      Umux-->>R: respond httpAuth.signIn with `cr`
       alt `cr` is incorrect
         R-->>Uweb: HTTP 403
       else `cr` is correct
