@@ -1,5 +1,5 @@
 ## List of new muxrpc APIs
 
 - async
-  - `registerAlias(alias, feedId, signature, callback)`
-  - `signIn(cc, sr, sc, callback)`
+  - `room.registerAlias(alias, feedId, signature, callback)`
+  - `httpAuth.signIn(cc, sc, sr, callback)`

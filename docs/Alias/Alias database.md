@@ -25,10 +25,10 @@ This can be a simple persistent key-value store, such as Leveldb.
     - the SSB ID, i.e. `userId`
     - alias string, i.e. `alias`
 
-The signature is applied on the following string: `=alias-registration:${roomId}:${userId}:${alias}`, known as the *Alias confirmation*, see example (without spaces nor newlines):
+The signature is applied on the following string: `=room-alias-registration:${roomId}:${userId}:${alias}`, known as the *Alias confirmation*, see example (without spaces nor newlines):
 
 ```
-=alias-registration:@51w4nYL0k7mRzDGw20KQqCjt35
+=room-alias-registration:@51w4nYL0k7mRzDGw20KQqCjt35
 y8qLiBNtWk3MX7ppo=.ed25519:@FlieaFef19uJ6jhHwv2
 CSkFrDLYKJd/SuIS71A5Y2as=.ed25519:alice
 ```
