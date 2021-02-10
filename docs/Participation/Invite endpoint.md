@@ -5,7 +5,7 @@ When [joining](Joining.md) a *Community* room or *Restricted* room, [internal us
 ### Example
 
 1. Invite link is `https://scuttlebutt.eu/join?invite=39c0ac1850ec9af14f1bb73`
-1. User opens that link in a browser, which redirects to `ssb:address/net_shs/scuttlebutt.eu/8008/51w4nYL0k7mRzDG
+1. User opens that link in a browser, which redirects to `ssb:address/netshs/scuttlebutt.eu/8008/51w4nYL0k7mRzDG
 w20KQqCjt35y8qLiBNtWk3MX7ppo%3D?inviteType=room&inviteCode=39c0ac1850ec9af14f1bb73`
 1. User's operating system opens that SSB URI in an SSB app, which then communicates with the room server via muxrpc, read more in [Joining](Joining.md)
 

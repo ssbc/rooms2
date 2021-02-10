@@ -28,3 +28,4 @@
   - [Alias database](docs/Alias/Alias%20database.md)
 - [Appendix](docs/Appendix/Readme.md)
   - [List of new muxrpc APIs](docs/Appendix/muxrpc.md)
+  - [List of new SSB URIs](docs/Appendix/ssb-uris.md)
