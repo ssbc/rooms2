@@ -2,5 +2,5 @@
 
 - async
   - `room.registerAlias(alias, feedId, signature, callback)`
-  - `httpAuth.signIn(cc, sc, sr, callback)`
-  - `httpAuth.signOut(authToken, callback)`
+  - `httpAuth.signIn(sc, cc, cr, callback)`
+  - `httpAuth.signOut(sc, callback)`

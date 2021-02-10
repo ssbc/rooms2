@@ -72,7 +72,7 @@ As an additional endpoint for programmatic purposes, the HTTP endpoint `https://
 Suppose the alias is `alice`, registered for the user ID `@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519` at the room with host name `scuttlebutt.eu`. Then the alias endpoint `https://alice.scuttlebutt.eu` responds with the following SSB URI (without spaces nor newlines):
 
 ```
-ssb:address/net_shs/scuttlebutt.eu/8008/51w4nYL0k7mRzDG
+ssb:address/netshs/scuttlebutt.eu/8008/51w4nYL0k7mRzDG
 w20KQqCjt35y8qLiBNtWk3MX7ppo%3D?roomId=ed25519%2F51w4nY
 L0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D&userId=ed25519
 %2FFlieaFef19uJ6jhHwv2CSkFrDLYKJd_SuIS71A5Y2as%3D&alias
@@ -81,7 +81,7 @@ lrzvmxTNt3d0MNTf%2BSLMIxgxf00S5fKAlG2%2FC5NTE0Zq1Mmg%3D
 %3D
 ```
 
-Note the multiserver address for the room is written in an SSB URI friendly format, `ssb:address/net_shs/${host}/${port}/${pubkey}`, that can be converted to canonical multiserver format `net:${host}:${port}~shs:${pubkey}`.
+Note the multiserver address for the room is written in an SSB URI friendly format, `ssb:address/netshs/${host}/${port}/${pubkey}`, that can be converted to canonical multiserver format `net:${host}:${port}~shs:${pubkey}`.
 
 The JSON endpoint `https://alice.scuttlebutt.eu/json` would respond with the following JSON:
 
