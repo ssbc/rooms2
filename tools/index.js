@@ -3,10 +3,13 @@ const path = require('path');
 const remark = require('remark');
 const behead = require('remark-behead');
 const gap = require('remark-heading-gap');
+const html = require('remark-html')
+const mermaid = require('remark-mermaid')
 const toc = require('remark-toc');
 const slug = require('remark-slug');
 const vfile = require('to-vfile');
 const selectAll = require('unist-util-select').selectAll;
+const wrap = require('./wrap')
 
 function collectFiles(list) {
   return () => (tree) => {
@@ -58,16 +61,22 @@ async function main() {
     .use(behead, {after: 'Table of contents', depth: 1})
     .use(gap, {1: headerSpacing, 2: headerSpacing, 3: headerSpacing})
     .use(slug)
+    .use(mermaid, {simple: true })
     .use(toc, {heading: 'Table of contents', maxDepth: 3, tight: true})
+    .use(html)
     .process(fullContents);
 
   const revision = new Date().toISOString().slice(0,10)
+  const fixRelativeLinks = (match, _, slugMatch) => {
+    return `href="#${slugMatch.replace(/%20/g, '-').toLowerCase()}"`
+  }
 
   const stringOutput = String(output)
     .replace(/\#TODO/g, '')
-    .replace('`$REVISION`', revision);
+    .replace(/href="([.]{2}[/].*?[/])?(.*?)\.md"/g, fixRelativeLinks)
+    .replace('$REVISION', revision);
 
-  fs.writeFileSync(path.join(OUTPUT_PATH, `rev${revision}.md`), stringOutput);
+  fs.writeFileSync(path.join(OUTPUT_PATH, `rev${revision}.html`), wrap(stringOutput));
 }
 
 main();
