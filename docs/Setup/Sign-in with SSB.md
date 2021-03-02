@@ -40,43 +40,18 @@ sequenceDiagram
   Umux->>Uweb: `https://${roomHost}/login<br/>?userId=${cid}&challenge=${cc}`
   Uweb->>+R: `https://${roomHost}/login<br/>?userId=${cid}&challenge=${cc}`
   Note over R: Generates<br/>challenge `sc`
-  Note over R: Generates<br/>signature `sr`
   alt SSB peer is disconnected from the room
     R-->>Uweb: HTTP 403
   else SSB peer is connected to the room
-    R->>+Umux: (muxrpc async) `httpAuth.signIn(cc, sc, sr)`
-    alt `sr` is incorrect
-      Umux-->>R: respond httpAuth.signIn with error "`sr` is incorrect"
-      R-->>Uweb: HTTP 403
-    else `sr` is correct
-      Note over Umux: Generates<br/>signature `cr`
-      Umux-->>-R: respond httpAuth.signIn with `cr`
-      alt `cr` is incorrect
-        R-->>Uweb: HTTP 403
-      else `cr` is correct
-        R-->>-Uweb: HTTP 200, auth token
-        Note over Uweb: Stores auth token as a cookie
-      end
-    end
-  end
-```
-
-```mermaid
-sequenceDiagram
-  participant Umux as SSB peer
-  participant Uweb as Browser client
-  participant R as Room server
-
-  rect rgb(230, 255, 230)
-    note over Umux: Generates<br/>challenge `cc`
-    Umux->>Uweb: `https://${roomHost}/login<br/>?userId=${cid}&challenge=${cc}`
-    Uweb->>+R: `https://${roomHost}/login<br/>?userId=${cid}&challenge=${cc}`
-    Note over R: Generates<br/>challenge `sc`
     R->>+Umux: (muxrpc async) `httpAuth.signIn(sc, cc, null)`
     Note over Umux: Generates<br/>signature `cr`
     Umux-->>-R: respond httpAuth.signIn with `cr`
-    R-->>-Uweb: HTTP 200, auth token
-    Note over Uweb: Stores auth token as a cookie
+    alt `cr` is incorrect
+      R-->>Uweb: HTTP 403
+    else `cr` is correct
+      R-->>-Uweb: HTTP 200, auth token
+      Note over Uweb: Stores auth token as a cookie
+    end
   end
 ```
 
@@ -94,31 +69,6 @@ sequenceDiagram
   participant Uweb as Browser client
   participant R as Room server
 
-  rect rgb(230, 255, 230)
-    Uweb->>R: `https://${roomHost}/login?userId=${cid}` or<br/>`https://${roomHost}/login?alias=${alias}`
-    activate R
-    Note over R: Generates<br/>challenge `sc`
-    R-->>Uweb: Displays `ssb:httpauth/start/${sid}/${sc}`
-    Uweb->>R: Subscribe to `/sse/login/${sc}`
-    Uweb->>Umux: Consumes SSB URI
-    Note over Umux: Generates<br/>challenge `cc`
-    Note over Umux: Generates<br/>signature `cr`
-    Umux->>+R: (muxrpc async) `httpAuth.signIn(sc, cc, cr)`
-    R-->>-Umux: `true`
-    R-->>Uweb: (SSE) "redirect to ${url}"
-    Uweb->>+R: GET `${url}`
-    R-->>-Uweb: HTTP 200, auth token
-    deactivate R
-    Note over Uweb: Stores auth token as a cookie
-  end
-```
-
-```mermaid
-sequenceDiagram
-  participant Umux as SSB peer
-  participant Uweb as Browser client
-  participant R as Room server
-
   Uweb->>R: `https://${roomHost}/login?userId=${cid}` or<br/>`https://${roomHost}/login?alias=${alias}`
   activate R
   Note over R: Generates<br/>challenge `sc`
@@ -126,35 +76,20 @@ sequenceDiagram
   Uweb->>R: Subscribe to `/sse/login/${sc}`
   Uweb->>Umux: Consumes SSB URI
   Note over Umux: Generates<br/>challenge `cc`
-  Umux->>+R: (muxrpc async) `httpAuth.startSignIn(cc, sc)`
-  Note over R: Generates<br/>signature `sr`
-  R-->>-Umux: `true`
-  alt Timeout, or SSB peer is disconnected from the room, or other errors
+  Note over Umux: Generates<br/>signature `cr`
+  Umux->>+R: (muxrpc async) `httpAuth.sign(sc, cc, cr)`
+  alt `cr` is incorrect, or other errors
+    R-->>Umux: `false`
     R-->>Uweb: (SSE) "redirect to ${url}"
     Uweb->>+R: GET `${url}`
     R-->>-Uweb: HTTP 403
-  else SSB peer is connected to the room
-    R->>Umux: (muxrpc async) `httpAuth.signIn(cc, sc, sr)`
-    alt `sr` is incorrect
-      Umux-->>R: respond httpAuth.signIn with error "`sr` is incorrect"
-      R-->>Uweb: (SSE) "redirect to ${url}"
-      Uweb->>+R: GET `${url}`
-      R-->>-Uweb: HTTP 403
-    else `sr` is correct
-      Note over Umux: Generates<br/>signature `cr`
-      Umux-->>R: respond httpAuth.signIn with `cr`
-      alt `cr` is incorrect
-        R-->>Uweb: (SSE) "redirect to ${url}"
-        Uweb->>+R: GET `${url}`
-        R-->>-Uweb: HTTP 403
-      else `cr` is correct
-        R-->>Uweb: (SSE) "redirect to ${url}"
-        Uweb->>+R: GET `${url}`
-        R-->>-Uweb: HTTP 200, auth token
-        deactivate R
-        Note over Uweb: Stores auth token as a cookie
-      end
-    end
+  else `cr` is correct
+    R-->>-Umux: `true`
+    R-->>Uweb: (SSE) "redirect to ${url}"
+    Uweb->>+R: GET `${url}`
+    R-->>-Uweb: HTTP 200, auth token
+    deactivate R
+    Note over Uweb: Stores auth token as a cookie
   end
 ```
 
