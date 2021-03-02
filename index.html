@@ -1,0 +1,732 @@
+<html>
+<head>
+<style>
+html {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+table {
+  border-collapse: collapse;
+}
+td, th {
+  padding: 0.5rem;
+  border: 1px #aaa solid;
+}
+</style>
+</head>
+<script crossorigin src="https://unpkg.com/mermaid@8.9.1/dist/mermaid.min.js"></script>
+<body>
+
+<h1 id="ssb-rooms-20">SSB Rooms 2.0</h1>
+<h5 id="revision-revision">Revision: <code>2021-03-02</code></h5>
+<h5 id="author-andre-medeiros-contactstaltzcom">Author: Andre Medeiros <a href="mailto:contact@staltz.com">contact@staltz.com</a></h5>
+<h5 id="this-work-is-licensed-under-a-creative-commons-attribution-40-international-license">This work is licensed under a <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</h5>
+<h2 id="abstract">Abstract</h2>
+<p>A room server is an SSB peer with privileged internet presence (for instance, not behind a NAT layer) which allows its clients to perform tunneled connections wich each other. For practical purposes, room clients seem to be connected to each other directly, but the room is an intermediary. Connections between server and client are end-to-end encrypted via secret-handshake, as well as in tunneled connections between room clients, so that the room server cannot eavesdrop on the payloads in the tunneled connections. This document describes new capabilities for rooms, such as user aliases, privacy modes, and tunneled authentication.</p>
+<h2 id="table-of-contents">Table of contents</h2>
+<ul>
+<li><a href="#stakeholders">Stakeholders</a>
+<ul>
+<li><a href="#room-admin">Room admin</a></li>
+<li><a href="#internal-user">Internal user</a></li>
+<li><a href="#external-user">External user</a></li>
+<li><a href="#moderator">Moderator</a></li>
+</ul>
+</li>
+<li><a href="#setup">Setup</a>
+<ul>
+<li><a href="#components">Components</a></li>
+<li><a href="#privacy-modes">Privacy modes</a></li>
+<li><a href="#config-database">Config database</a></li>
+<li><a href="#web-dashboard">Web Dashboard</a></li>
+<li><a href="#sign-in-with-ssb">Sign-in with SSB</a></li>
+</ul>
+</li>
+<li><a href="#participation">Participation</a>
+<ul>
+<li><a href="#joining">Joining</a></li>
+<li><a href="#internal-user-registry">Internal user registry</a></li>
+<li><a href="#internal-user-authentication">Internal user authentication</a></li>
+<li><a href="#invite-endpoint">Invite endpoint</a></li>
+<li><a href="#tunnel-addresses">Tunnel addresses</a></li>
+<li><a href="#tunneled-connection">Tunneled connection</a></li>
+<li><a href="#tunneled-authentication">Tunneled authentication</a></li>
+</ul>
+</li>
+<li><a href="#alias">Alias</a>
+<ul>
+<li><a href="#alias-string">Alias string</a></li>
+<li><a href="#alias-registration">Alias registration</a></li>
+<li><a href="#alias-revocation">Alias revocation</a></li>
+<li><a href="#alias-consumption">Alias consumption</a></li>
+<li><a href="#web-endpoint">Web endpoint</a></li>
+<li><a href="#alias-database">Alias database</a></li>
+</ul>
+</li>
+<li><a href="#appendix">Appendix</a>
+<ul>
+<li><a href="#list-of-new-muxrpc-apis">List of new muxrpc APIs</a></li>
+<li><a href="#list-of-new-ssb-uris">List of new SSB URIs</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="stakeholders">Stakeholders</h2>
+<p>Persons or organizations that are involved or engaged in or around room servers. They may hold responsibilities or powers, and may cause harm to other stakeholders when their responsibilities or powers are abused. They hold interest in engaging with other stakeholders while managing the risk for harm associated with engagement. Harm mitigation such as <a href="#privacy-modes">Privacy modes</a> is important when discussing stakeholders.</p>
+<h3 id="room-admin">Room admin</h3>
+<p>Person or organization responsible for operating the room server, and has full access rights over the server's resources such as logs, disk, memory, etc. In other words, this person or organization physically owns the room server or has SSH access to the remote server hosted in some PaaS cloud provider.</p>
+<p>Typically, the admin possesses an SSB ID (it's very common, but not necessarily always the case), and is also a <a href="#moderator">moderator</a> in the room.</p>
+<h3 id="internal-user">Internal user</h3>
+<p>SSB user who accesses the room server and is considered <em>internal</em> because they have already <a href="#joining">joined</a> the room and may even have registered an <a href="#readme">alias</a> in the room.</p>
+<h4 id="specification">Specification</h4>
+<p><strong>Definition:</strong> an <em>internal user</em> of a room is any SSB ID for which the room grants a <a href="#tunnel-addresses">tunnel address</a>. In other words, if an SSB ID is <em>reachable</em> via a <a href="#tunneled-connection">tunneled connection</a> through a room server, then they are considered an internal user of that room.</p>
+<p><strong>Becoming an internal user:</strong> read more about that in <a href="#joining">Joining a room</a>.</p>
+<h3 id="external-user">External user</h3>
+<p>Any SSB user who is not an <a href="#internal-user">internal user</a> of the room (i.e. do not have a usable <a href="#tunnel-addresses">tunnel address</a> referencing the room), but may still interact with the room server in meaningful ways, for instance with <a href="#tunneled-connection">tunneled connections</a>, <a href="#web-endpoint">alias endpoints</a> or <a href="#alias-consumption">alias consumption</a>.</p>
+<h3 id="moderator">Moderator</h3>
+<p>A moderator is an <a href="#internal-user">internal user</a> that has acquired special privileges in the <a href="#web-dashboard">web dashboard</a> and actions allowed by the dashboard.</p>
+<p>Moderators can use <a href="#sign-in-with-ssb">Moderator sign-in</a> to access the <a href="#web-dashboard">dashboard</a>.</p>
+<h2 id="setup">Setup</h2>
+<p>There are different ways a room server can be configured.</p>
+<h3 id="components">Components</h3>
+<p>A room server is defined by several components, which are systems that enable features, some of these are optional and some are required.</p>
+<h4 id="required">Required</h4>
+<ul>
+<li><a href="#tunneled-connection">Tunneled connection</a></li>
+<li><a href="#tunnel-addresses">Tunnel addresses</a></li>
+<li><a href="#privacy-modes">Privacy modes</a> (at least the <em>Open</em> mode)</li>
+<li><a href="#joining">Joining</a> (for at least the <em>Open</em> mode)</li>
+</ul>
+<h4 id="optional">Optional</h4>
+<ul>
+<li>Other <a href="#privacy-modes">Privacy modes</a> and respective ways of <a href="#joining">joining</a></li>
+<li><a href="#internal-user-authentication">Internal user authentication</a></li>
+<li><a href="#tunneled-authentication">Tunneled authentication</a></li>
+<li><a href="#invite-endpoint">Invite endpoint</a></li>
+<li><a href="#web-dashboard">Web Dashboard</a> and <a href="#sign-in-with-ssb">Sign-in with SSB</a></li>
+<li><a href="#readme">Aliases</a> (requires "Web Dashboard" and "Sign-in with SSB")</li>
+</ul>
+<h3 id="privacy-modes">Privacy modes</h3>
+<p>A room server should allow the <a href="#room-admin">room admin</a> or a <a href="#moderator">moderator</a> to configure which users can become <a href="#internal-user">internal user</a>.</p>
+<h4 id="specification-1">Specification</h4>
+<p>There are three strategies recommended as policies to <a href="#joining">join</a> the room, known as privacy modes:</p>
+<ul>
+<li><strong>Open</strong>: invite codes are openly known, similar to <a href="https://github.com/staltz/ssb-room">ssb-room v1</a></li>
+<li><strong>Community</strong>: only <a href="#internal-user">internal users</a> can invite <a href="#external-user">external users</a> to become an internal users</li>
+<li><strong>Restricted</strong>: only <a href="#moderator">moderators</a> can invite <a href="#external-user">external users</a> to become an internal users, and <a href="#readme">aliases</a> are not supported</li>
+</ul>
+<p><strong>Joining:</strong> To become a member of the room, peers need to <a href="#joining">join the room</a>.</p>
+<h3 id="config-database">Config database</h3>
+<p>The configuration database holds basic administrative data, readable only by <a href="#room-admin">admins</a> and (indirectly via the <a href="#web-dashboard">dashboard</a>) by <a href="#moderator">moderators</a>.</p>
+<h4 id="specification-2">Specification</h4>
+<p>The database should contain these data points:</p>
+<ul>
+<li>Which <a href="#privacy-modes">privacy mode</a> is selected</li>
+<li>List of SSB IDs of <a href="#moderator">moderators</a></li>
+<li>List of blocked SSB IDs</li>
+<li>Name of the room (a short string)</li>
+<li>Description for the room (not too long string)</li>
+</ul>
+<h3 id="web-dashboard">Web Dashboard</h3>
+<p>This is a WWW interface that allows <a href="#moderator">moderators</a> to <a href="#sign-in-with-ssb">sign-in</a> and perform some privileged actions. <a href="#internal-user">Internal users</a> can also sign-in and perform basic actions such as <a href="#joining">create invites for other users to join</a>.</p>
+<h4 id="specification-3">Specification</h4>
+<p>The dashboard grants <a href="#moderator">moderators</a> with features and powers such as:</p>
+<ul>
+<li>Block SSB IDs from connecting with this room, meaning two things:
+<ul>
+<li>If they were an <a href="#internal-user">internal user</a>, they get demoted to <a href="#external-user">external user</a></li>
+<li>Even if they were an <a href="#external-user">external user</a>, the room server will reject new attempts of secret-handshake connections</li>
+</ul>
+</li>
+<li>Unblock SSB IDs that are blocked</li>
+<li>Nominate other internal users to become moderators too</li>
+<li>View the list of aliases according to the <a href="#alias-database">Alias database</a></li>
+<li>Revoke aliases by removing an entry from the <a href="#alias-database">Alias database</a></li>
+<li>Change the <a href="#privacy-modes">privacy mode</a> of the room</li>
+<li>View other technical measurements such as bandwidth used, storage used by the databases, etc</li>
+</ul>
+<p>The dashboard grants <a href="#internal-user">internal users</a> basic features such as:</p>
+<ul>
+<li>Register an alias for themselves</li>
+<li>Revoke an alias for themselves</li>
+<li>Create an invite for <a href="#external-user">external users</a> to <a href="#joining">join the room</a> if the room is running in <a href="#privacy-modes">Community mode</a></li>
+</ul>
+<h4 id="security-considerations">Security considerations</h4>
+<h5 id="malicious-moderator">Malicious <a href="#moderator">moderator</a></h5>
+<p>Moderators obviously hold some power, and this power may be abused through unfair blocks, unfair revoking of aliases. In many cases, fairness is subjective, and is understood to be an essential compromise of having moderation to begin with. So in this section we will focus our attention on unusual security issues with moderation.</p>
+<p>A moderator has the right to nominate other internal users to become moderators, and this could lead to a proliferation of moderators, which increases the possibility that one of these moderators abuses their powers. On the other hand, there has been many maintainers and npm owners in the <a href="https://github.com/ssbc/">SSBC</a> (e.g. 32 GitHub org members and 17 npm owners for the cornerstone <a href="https://www.npmjs.com/package/ssb-db"><code>ssb-db</code></a> package), we also know that the presence of many moderators may also help to <em>decrease</em> the possibility of abuse, because asymmetry of privilege is reduced.</p>
+<h3 id="sign-in-with-ssb">Sign-in with SSB</h3>
+<p>To access the <a href="#web-dashboard">WWW dashboard interface</a>, <a href="#internal-user">internal users</a> (including <a href="#moderator">moderators</a>) can use "sign-in with SSB ID".</p>
+<h4 id="specification-4">Specification</h4>
+<p>An <a href="#internal-user">internal user</a> known by its SSB ID <code>cid</code> is connected to the room via secret-handshake and muxrpc. A browser client is supposedly the same person or agent as the internal user and wishes to gain access to the web dashboard. All HTTP requests SHOULD be done with HTTPS.</p>
+<p>The three sides (browser client, SSB peer, and room server) perform the following <a href="https://en.wikipedia.org/wiki/Challenge%E2%80%93response_authentication">challenge-response authentication</a> protocol, specified as a UML sequence diagram. We use the shorthands <code>cc</code>, <code>sr</code>, <code>sc</code>, and <code>cr</code> to mean:</p>
+<ul>
+<li><code>cc</code>: "client's challenge"</li>
+<li><code>sr</code>: "server's response"</li>
+<li><code>sc</code>: "server's challenge"</li>
+<li><code>cr</code>: "client's response"</li>
+</ul>
+<p>The challenges, <code>cc</code> and <code>sc</code>, are 256-bit <a href="https://en.wikipedia.org/wiki/Cryptographic_nonce">cryptographic nonces</a> encoded in base64. The responses, <code>sr</code> and <code>cr</code>, are cryptographic signatures using the cryptographic keypairs that identify the server and the client, respectively, described below:</p>
+<ul>
+<li><code>cid</code> is the client's identity from their cryptographic keypair</li>
+<li><code>sid</code> is the servers's identity from their cryptographic keypair</li>
+<li><code>cc</code> is a 256-bit nonce created by the client, encoded in base64</li>
+<li><code>sc</code> is a 256-bit nonce created by the client, encoded in base64</li>
+<li><code>sr</code> is the server's cryptographic signature of the string <code>=http-auth-sign-in:${cid}:${sid}:${cc}:${sc}</code> where <code>${x}</code> means string interpolation of the value <code>x</code></li>
+<li><code>cr</code> is the client's cryptographic signature of the string <code>=http-auth-sign-in:${cid}:${sid}:${cc}:${sc}</code> where <code>${x}</code> means string interpolation of the value <code>x</code></li>
+</ul>
+<p>Both sides generate the nonces, but there are use cases where one side should start first. In other words, the challenge-response protocol described here can be either <strong>client-initiated</strong> or <strong>server-initiated</strong>.</p>
+<h5 id="client-initiated-protocol">Client-initiated protocol</h5>
+<p>In the client-initiated variant of the challenge-response protocol, the first step is the client creating <code>cc</code> and opening a web page in the browser. Then, the server attending to that HTTP request will call <code>httpAuth.signIn(cc, sc, sr)</code> on the client SSB peer.</p>
+<p>The UML sequence diagram for the whole client-initial protocol is shown below:</p>
+<div class="mermaid">
+  sequenceDiagram
+  participant Umux as SSB peer
+  participant Uweb as Browser client
+  participant R as Room server
+
+  note over Umux: Generates<br/>challenge `cc`
+  Umux->>Uweb: `https://${roomHost}/login<br/>?userId=${cid}&challenge=${cc}`
+  Uweb->>+R: `https://${roomHost}/login<br/>?userId=${cid}&challenge=${cc}`
+  Note over R: Generates<br/>challenge `sc`
+  alt SSB peer is disconnected from the room
+    R-->>Uweb: HTTP 403
+  else SSB peer is connected to the room
+    R->>+Umux: (muxrpc async) `httpAuth.signIn(sc, cc, null)`
+    Note over Umux: Generates<br/>signature `cr`
+    Umux-->>-R: respond httpAuth.signIn with `cr`
+    alt `cr` is incorrect
+      R-->>Uweb: HTTP 403
+    else `cr` is correct
+      R-->>-Uweb: HTTP 200, auth token
+      Note over Uweb: Stores auth token as a cookie
+    end
+  end
+</div>
+<h5 id="server-initiated-protocol">Server-initiated protocol</h5>
+<p>In the server-initiated variant of the challenge-response protocol, the first step is the browser requesting the server to login with a certain <code>cid</code> (or <code>alias</code>, which the server knows how to map to a <code>cid</code>). The server answers the browser, which in turn displays an SSB URI which the SSB peer knows how to open.</p>
+<p>The primary difference between this variant and the previous one is the muxrpc async RPC <code>httpAuth.requestSignIn</code> which is used for the SSB peer to inform the room peer about the <code>cc</code>. Afterwards, the protocol is similar to the server-initiated one, with the minor addition of Server-Sent Events between the browser and the room.</p>
+<p>The UML sequence diagram for the whole server-initial protocol is shown below:</p>
+<div class="mermaid">
+  sequenceDiagram
+  participant Umux as SSB peer
+  participant Uweb as Browser client
+  participant R as Room server
+
+  Uweb->>R: `https://${roomHost}/login?userId=${cid}` or<br/>`https://${roomHost}/login?alias=${alias}`
+  activate R
+  Note over R: Generates<br/>challenge `sc`
+  R-->>Uweb: Displays `ssb:httpauth/start/${sid}/${sc}`
+  Uweb->>R: Subscribe to `/sse/login/${sc}`
+  Uweb->>Umux: Consumes SSB URI
+  Note over Umux: Generates<br/>challenge `cc`
+  Note over Umux: Generates<br/>signature `cr`
+  Umux->>+R: (muxrpc async) `httpAuth.sign(sc, cc, cr)`
+  alt `cr` is incorrect, or other errors
+    R-->>Umux: `false`
+    R-->>Uweb: (SSE) "redirect to ${url}"
+    Uweb->>+R: GET `${url}`
+    R-->>-Uweb: HTTP 403
+  else `cr` is correct
+    R-->>-Umux: `true`
+    R-->>Uweb: (SSE) "redirect to ${url}"
+    Uweb->>+R: GET `${url}`
+    R-->>-Uweb: HTTP 200, auth token
+    deactivate R
+    Note over Uweb: Stores auth token as a cookie
+  end
+</div>
+<h5 id="sign-out">Sign-out</h5>
+<p>An optional (but recommended) muxrpc API <code>httpAuth.signOut</code> on the Room server to allow the SSB peer to invalidate the auth token. See UML sequence diagram:</p>
+<div class="mermaid">
+  sequenceDiagram
+  participant Umux as SSB peer
+  participant Uweb as Browser client
+  participant R as Room server
+
+  Umux->>+R: (muxrpc async) `httpAuth.signOut(sc)`
+  Note over R: Invalidates `authtoken`<br/>associated with `sc`
+  R-->>-Umux: respond httpAuth.signOut with `true`
+  Note over Uweb,R: Potentially thereafter...
+  Uweb->>+R: Authenticate using `authtoken`
+  R-->>-Uweb: HTTP 401
+</div>
+<p>The browser client also has the option of signing out with HTTP endpoints. This does not require a muxrpc call with the SSB peer. See UML sequence diagram:</p>
+<div class="mermaid">
+  sequenceDiagram
+  participant Uweb as Browser client
+  participant R as Room server
+
+  Uweb->>+R: `/logout`
+  Note over R: Invalidates `authtoken`
+  R-->>-Uweb: HTTP 200
+  Note over Uweb,R: Potentially thereafter...
+  Uweb->>+R: Authenticate using `authtoken`
+  R-->>-Uweb: HTTP 401
+</div>
+<h2 id="participation">Participation</h2>
+<p>Before peers can connect to each other via a room server, they first need to become members, i.e. <a href="#internal-user">internal users</a>. This section describes the different protocols used for establishing internal user participation.</p>
+<h3 id="joining">Joining</h3>
+<p>"Joining a room" means the process where an <a href="#external-user">external user</a> becomes an <a href="#internal-user">internal user</a>.</p>
+<h4 id="specification-5">Specification</h4>
+<p>The joining process is different for each <a href="#privacy-modes">Privacy mode</a>:</p>
+<ul>
+<li><strong>Open:</strong>
+<ol>
+<li>An <a href="#external-user">external user</a>, Alice, acquires the open <em>invite code</em> either through the room's public website or via other means</li>
+<li>Alice consumes the invite code in her SSB app that supports being a room client</li>
+<li>The room accepts the connection from Alice and immediately grants her a <a href="#tunnel-addresses">tunnel address</a></li>
+<li>Alice has become an <a href="#internal-user">internal user</a></li>
+</ol>
+</li>
+<li><strong>Community:</strong>
+<ol>
+<li>An <a href="#internal-user">internal user</a>, Bob, <a href="#sign-in-with-ssb">signs into</a> the room's <a href="#web-dashboard">web dashboard</a> where he creates a one-time invite code in the form of an <a href="#invite-endpoint">invite endpoint</a>, provided by the dashboard.</li>
+<li>Bob informs an <a href="#external-user">external user</a>, Alice, of the invite code</li>
+<li>Alice consumes the invite code in their SSB app that supports being a room client</li>
+<li>The room checks whether the invite code is valid and has not yet been consumed
+<ol>
+<li>If it is invalid or has been consumed, reply to Alice with an error</li>
+<li>Else, proceed (below)</li>
+</ol>
+</li>
+<li>The room accepts the connection from Alice and immediately grants her a <a href="#tunnel-addresses">tunnel address</a></li>
+<li>Alice has become an <a href="#internal-user">internal user</a></li>
+<li>The room stores Alice's SSB ID in the <a href="#internal-user-registry">Internal user registry</a></li>
+</ol>
+</li>
+<li><strong>Restricted:</strong>
+<ol>
+<li>A <a href="#moderator">moderator</a>, Carla, <a href="#sign-in-with-ssb">signs into</a> the room's <a href="#web-dashboard">web dashboard</a> where she creates a one-time invite code in the form of an <a href="#invite-endpoint">invite endpoint</a>, provided by the dashboard.</li>
+<li>Bob informs an <a href="#external-user">external user</a>, Alice, of the invite code</li>
+<li>Alice consumes the invite code in their SSB app that supports being a room client</li>
+<li>The room checks whether the invite code is valid and has not yet been consumed
+<ol>
+<li>If it is invalid or has been consumed, reply to Alice with an error</li>
+<li>Else, proceed (below)</li>
+</ol>
+</li>
+<li>The room accepts the connection from Alice and immediately grants her a <a href="#tunnel-addresses">tunnel address</a></li>
+<li>Alice has become an <a href="#internal-user">internal user</a></li>
+<li>The room stores Alice's SSB ID in the <a href="#internal-user-registry">Internal user registry</a></li>
+</ol>
+</li>
+</ul>
+<p>To summarize, in <strong>Community</strong> mode, all internal users can create invites while in <strong>Restricted</strong> mode only moderators can. <strong>Open</strong> mode means there always is an invite for all the users in the room.</p>
+<h3 id="internal-user-registry">Internal user registry</h3>
+<p>The <em>internal user registry</em> is a database the room manages, keeping records of which SSB users are <a href="#internal-user">internal users</a>. It is a simple list or table, where each entry refers to an internal user, and must contain at least the SSB ID for that user.</p>
+<h3 id="internal-user-authentication">Internal user authentication</h3>
+<p>In rooms where the <a href="#privacy-modes">privacy mode</a> is not <em>open</em>, not all SSB users who connect to the room are <a href="#internal-user">internal users</a>. The room thus needs a way to authenticate the user before granting them a <a href="#tunnel-addresses">tunnel address</a>.</p>
+<h4 id="specification-6">Specification</h4>
+<p>When the room receives a secret-handshake incoming connection from Alice, it checks the <a href="#internal-user-registry">internal user registry</a>, looking for entry in the registry corresponding to Alice's ID. If there is an entry, the room allows the incoming connection to stay alive, and grants Alice a <a href="#tunnel-addresses">tunnel address</a>. Otherwise, the room allows the connection but does not grant Alice a tunnel address.</p>
+<p>We need the connection to remain up even in the event of internal user authentication failing, because there are other muxrpc APIs that the room should allow external users to call, such as when consuming an invite (to become an internal user) or to perform <a href="#alias-consumption">alias consumption</a>.</p>
+<h4 id="security-considerations-1">Security considerations</h4>
+<h5 id="malicious-external-user">Malicious <a href="#external-user">external user</a></h5>
+<p>In the case of a room configured with <a href="#privacy-modes">privacy modes</a> <em>Restricted</em>, the internal users of this room may want to be shielded from any external user gathering data about them, such as resolving aliases via web endpoints. The room needs to allow the external user to call muxrpc APIs, because the external user may be trying to <a href="#joining">join</a> by consuming an invite. But in the case of a malicious external user, they may try to call other muxrpc APIs and so far this spec does not address how to protect against this possibility.</p>
+<h5 id="malicious-room-admin">Malicious <a href="#room-admin">room admin</a></h5>
+<p>The room software could be modified by the room admin to not authenticate some users as internal users.</p>
+<h3 id="invite-endpoint">Invite endpoint</h3>
+<p>When <a href="#joining">joining</a> a <em>Community</em> room or <em>Restricted</em> room, <a href="#internal-user">internal users</a> create invites. The invite code is originally just random bytes encoded as hex, but can be transformed into an <em>invite link</em>, i.e. an HTTPS endpoint URL on the room server.</p>
+<h4 id="example">Example</h4>
+<ol>
+<li>Invite link is <code>https://scuttlebutt.eu/join?invite=39c0ac1850ec9af14f1bb73</code></li>
+<li>User opens that link in a browser, which redirects to <code>ssb:address/netshs/scuttlebutt.eu/8008/51w4nYL0k7mRzDG w20KQqCjt35y8qLiBNtWk3MX7ppo%3D?inviteType=room&#x26;inviteCode=39c0ac1850ec9af14f1bb73</code></li>
+<li>User's operating system opens that SSB URI in an SSB app, which then communicates with the room server via muxrpc, read more in <a href="#joining">Joining</a></li>
+</ol>
+<h4 id="specification-7">Specification</h4>
+<ol>
+<li>Suppose the room is hosted at domain <code>roomHost</code> and it has generated an invite <code>inviteCode</code></li>
+<li>The invite link is <code>https://${roomHost}/join?invite=${inviteCode}</code></li>
+<li>Once a web visitor opens that link, then they are presented with the SSB URI <code>ssb:address/${roomMsAddr}?inviteType=room&#x26;inviteCode=${inviteCode}</code> where <code>${roomMsAddr}</code> consititutes the room's multiserver address in an SSB URI friendly format
+<ol>
+<li>If the operating system detects an installed SSB app that recognizes the <code>ssb</code> scheme, the SSB app handles this URI</li>
+<li>Else, the website at displays instructions how to install an SSB app
+<ul>
+<li>For instance, there could be an app store URL (see <a href="https://stackoverflow.com/questions/28744167/android-deep-linking-use-the-same-link-for-the-app-and-the-play-store">this technical possibility</a>) to install Manyverse which further redirects to this SSB URI, maybe may have to rely on a fixed URL (for Manyverse to register in its manifest) such as <code>join.manyver.se</code>. Same idea for other mobile apps, say "Imaginary App" using the fixed URL "join.imaginary.app". Desktop apps are different as they can be installed without an app store.</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>The SSB app knows how to parse the SSB URI into inputs necessary for <a href="#joining">joining the room</a></li>
+</ol>
+<h4 id="security-considerations-2">Security considerations</h4>
+<h5 id="malicious-web-visitor">Malicious web visitor</h5>
+<p>A web visitor, either human or bot, could attempt brute force visiting all possible invite endpoints, in order to force themselves to become an <a href="#internal-user">internal user</a>. However, this could easily be mitigated by rate limiting requests by the same IP address.</p>
+<h3 id="tunnel-addresses">Tunnel addresses</h3>
+<p>To establish a <a href="#tunneled-connection">tunneled connection</a>, the peer initiating it must know the <em>tunnel address</em> of the peer at the other side of the tunnel.</p>
+<h4 id="specification-8">Specification</h4>
+<p>A tunnel address is a string conforming to the <a href="https://github.com/ssbc/multiserver-address">multiserver-address</a> grammar. We say that "room M <em>grants</em> peer A a tunnel address" when room M allows other peers to request and establish <a href="#tunneled-connection">tunneled connections</a> with peer A, using the tunnel address to identify peer A.</p>
+<p>It consists of three parts and <code>:</code> as separators in between:</p>
+<ul>
+<li><code>tunnel</code> as a constant tag</li>
+<li>SSB ID of the intermediary peer</li>
+<li>SSB ID of the target peer</li>
+</ul>
+<h4 id="example-1">Example</h4>
+<p>Without spaces nor newlines:</p>
+<pre><code>tunnel:@7MG1hyfz8SsxlIgansud4LKM57IHIw2Okw
+/hvOdeJWw=.ed25519:@1b9KP8znF7A4i8wnSevBSK
+2ZabI/Re4bYF/Vh3hXasQ=.ed25519
+</code></pre>
+<p>The tunnel address, being a multiserver address, can also contain a <em>transform</em> section, such as the common <code>shs</code> transform (without spaces nor newlines):</p>
+<pre><code>tunnel:@7MG1hyfz8SsxlIgansud4LKM57IHIw2Okw
+/hvOdeJWw=.ed25519:@1b9KP8znF7A4i8wnSevBSK
+2ZabI/Re4bYF/Vh3hXasQ=.ed25519~shs:1b9KP8z
+nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
+</code></pre>
+<h3 id="tunneled-connection">Tunneled connection</h3>
+<p>A tunneled connection is an indirect connection between two peers assisted by an intermediary peer. Ideally, two peers could always connect with each other directly, but they often have unstable IP addresses behind NATs and firewalls, making it difficult to consistently and reliably establish connections. The purpose of the intermediary peer is to improve connection reliability, because these intermediary peers can be privileged nodes with public IP addresses, such as from hosting services.</p>
+<h4 id="specification-9">Specification</h4>
+<p>Tunneled connections in SSB originated from the proof-of-concept <a href="https://github.com/ssbc/ssb-tunnel">ssb-tunnel</a> module. Suppose A and B are clients of a intermediary server M. Peer A creates a conventional <a href="https://ssbc.github.io/scuttlebutt-protocol-guide/#handshake">handshake</a> connection to M, and waits to receive tunnel connections. Peer B creates a conventional secret handshake connection to M, and then requests a tunneled connection to A through that conventional connection (B-M). Then, M calls A, creating a tunneled connection where one end is attached to A and the other end is attached to B's request. Finally, B uses the secret handshake to authenticate A.</p>
+<p>Notice that for the intermediary M, peer A is the server and B is the client (client calls, server answers) but M is just the portal. The tunneled connection is inside the outer (conventional) connections, which means it is encrypted twice with <a href="https://ssbc.github.io/scuttlebutt-protocol-guide/#box-stream">box stream</a>. This means A and B can mutually authenticate each other, and M cannot see the content of their connection.</p>
+<p>Diagram:</p>
+<pre><code>,---,      ,---,     ,---,
+|   |----->|   |&#x3C;----|   |
+| A |&#x3C;=====| M |&#x3C;====| B |
+|   |----->|   |&#x3C;----|   |
+`---`      `---`     `---`
+</code></pre>
+<p>The arrows represent the direction of the connection – from the client, pointing to the server. Notice the M&#x3C;=B connection is the same direction as the M&#x3C;-B outer connection, but the A&#x3C;=M connection is the opposite direction as the A->M outer connection.</p>
+<h4 id="security-considerations-3">Security considerations</h4>
+<h5 id="malicious-room-admin-1">Malicious <a href="#room-admin">room admin</a></h5>
+<p>The room admin could log and track all connection sessions for every tunneled connection, thus tracking the <strong>IP addresses</strong>, <strong>timestamps</strong>, <strong>durations</strong>, and <strong>bandwidth</strong> of interactions between <a href="#internal-user">internal users</a>. The room admin could track which SSB users are interested in connecting with internal users, i.e. they can gather <strong>social interest metadata</strong>, which could be used to create a draft of a portion of the social graph.</p>
+<p>That said, because of encrypted tunneled secret-handshake channels, the room admin could not know the contents of data transmitted between the internal users.</p>
+<h3 id="tunneled-authentication">Tunneled authentication</h3>
+<p>Tunneled authentication is about making sure that SSB peers on the opposite end of a <a href="#tunneled-connection">tunneled connection</a> only allow the connection to occur if they follow the peer on the other side. Thus we need a way for peers to know who wants to open a tunneled connection and we should facilitate mutual follows to occur so that peers only create tunneled connections imbued with mutual interest.</p>
+<h4 id="specification-10">Specification</h4>
+<p>Tunneled friend authentication is an algorithm or protocol that applies automatically without any user input from either end of the secret-handshake channel. This protocol should not apply for the intermediary peer, that is, the room server.</p>
+<p>When Alice receives a tunneled secret-handshake incoming connection from Bob, she automatically allows it if Alice checks that she follows Bob, or automatically cancels the connection if Alice checks that she does not follow Bob (or blocks Bob). Same is true reciprocically: Bob applies this rule for incoming connections from Alice.</p>
+<p>Thus tunneled authentication <strong>requires mutual follows</strong> ("friendship") before establishing a functioning <a href="#tunneled-connection">tunneled connection</a>.</p>
+<p>When a denial of connection occurs, the peer that received the connection should be able to see (and thus locally log): (1) SSB ID of the intermediary peer (room) used, (2) SSB ID of the origin peer behind the intermediary, (3) (optionally) the address (<a href="#tunnel-addresses">tunnel address</a> or <a href="#web-endpoint">alias endpoint URL</a>) of the origin peer.</p>
+<p>The user that received the denied connection can then see this fact in their SSB app, and then they can make a conscious choice to either (1) follow the origin peer, or (2) connect to the origin peer (if (3) from the previous paragraph existed), or both.</p>
+<h4 id="implementation-notes">Implementation notes</h4>
+<p>Note that in current room server implementation in JavaScript, <a href="https://github.com/staltz/ssb-room/blob/e78d54887682664def36d48ca9e648fc609478e9/tunnel/server.js#L100"><code>opts.origin</code></a> in the room is calculated from secret-handshake, so it can be trusted to be authentic.</p>
+<p>For the next version of rooms, if we want <code>opts.origin</code> to also contain the origin peer's address (ssb-tunnel address or alias endpoint), then we need other means of verifying that the origin address is authentic. E.g. if it's an <a href="#web-endpoint">alias endpoint URL</a>, maybe the receiving peer visits the alias JSON endpoint then <a href="#alias-consumption">consumes the alias</a>, or maybe the receiving peer takes the ssb-tunnel address and verifies that the ID matches with the secret-handshake-given ID.</p>
+<h2 id="alias">Alias</h2>
+<p>An alias (also known as "room alias") is a string that identifies an <a href="#internal-user">internal user</a>, designed to be short and human-friendly, similar to <a href="https://en.wikipedia.org/wiki/Email_address">email addresses</a> and <a href="https://docs.joinmastodon.org/spec/webfinger/">Mastodon WebFinger addresses</a>. The purpose of aliases is give improve the user experience of accurately (1) <strong>identifying</strong> the internal user, (2) <strong>locating</strong> the internal user at a room server for the purpose of establishing a connection with them.</p>
+<p>As an example, suppose Alice is an internal user of the room "Scuttlebutt EU". The room's domain is <code>scuttlebutt.eu</code> and Alice's <a href="#alias-string">alias</a> is <code>alice</code>. Alice's <a href="#web-endpoint">alias endpoint</a> is thus <code>alice.scuttlebutt.eu</code>.</p>
+<p>In short,</p>
+<ul>
+<li>Anyone can access an alias <a href="#web-endpoint">web endpoint</a></li>
+<li><a href="#internal-user">Internal users</a> can <a href="#registration">register</a> and <a href="#revocation">revoke</a> aliases</li>
+<li><a href="#internal-user">Internal users</a> and <a href="#external-user">external users</a> who visit a target user's <a href="#web-endpoint">alias endpoint</a> can <a href="#alias-consumption">consume it</a> in order to <a href="#tunneled-connection">connect</a> with the target internal user</li>
+<li>The <a href="#room-admin">room admin</a> has read/write access to the <a href="#alias-database">alias database</a></li>
+<li><a href="#moderator">Moderators</a> can remove alias entries from the <a href="#alias-database">alias database</a></li>
+</ul>
+<h3 id="alias-string">Alias string</h3>
+<p>An <a href="#internal-user">internal user</a>'s alias, also known as "alias string", is used to uniquely (unique within the room server only) identify that internal user. This string is useful only within the context of the room, i.e. not globally identifiable.</p>
+<h4 id="example-2">Example</h4>
+<p>Suppose Alice is an internal user of the room "Scuttlebutt EU". Alice's alias could be one of these strings (non-exhaustive list):</p>
+<ul>
+<li><code>alice</code></li>
+<li><code>alice1994</code></li>
+<li><code>alice_94</code></li>
+</ul>
+<h4 id="specification-11">Specification</h4>
+<p>The string should satisfy the same rules as domain "labels" as defined in <a href="https://tools.ietf.org/html/rfc1035">RFC 1035</a>.</p>
+<h3 id="alias-registration">Alias registration</h3>
+<p>An <a href="#internal-user">internal user</a> who does not have an alias in the current room server can choose to register an alias. Not all internal users need to have aliases, so the process described here is optional.</p>
+<h4 id="specification-12">Specification</h4>
+<ol>
+<li>An internal user with SSB ID <code>feedId</code> and a room server with SSB ID <code>roomId</code> are connected to each other via secret-handshake</li>
+<li>The internal user chooses a <code>alias</code> as a candidate <a href="#alias-string">alias string</a></li>
+<li>The internal user calls a specific <a href="https://github.com/ssb-js/muxrpc/">muxrpc</a> <code>async</code> API <code>room.registerAlias(alias, feedId, signature, callback)</code> where <code>signature</code> is a cryptographic signature of the string <code>=room-alias-registration:${roomId}:${feedId}:${alias}</code> using <code>feedId</code>'s cryptographic keypair, read more about it in the <a href="#alias-database">alias database</a> spec</li>
+<li>The room, upon receiving the <code>room.registerAlias</code> muxrpc call, checks whether that <code>alias</code> is valid (see spec in <a href="#alias-string">Alias string</a>)
+<ol>
+<li>If it is invalid, respond <code>room.registerAlias</code> with an error</li>
+<li>Else, proceed (below)</li>
+</ol>
+</li>
+<li>The room checks whether there already exists an entry in the <a href="#alias-database">Alias database</a> associated with this <code>feedId</code>
+<ol>
+<li>If there is, respond <code>room.registerAlias</code> with an error</li>
+<li>Else, proceed (below)</li>
+</ol>
+</li>
+<li>The room checks whether there already exists an entry in the <a href="#alias-database">Alias database</a> with the <em>key</em> <code>alias</code>
+<ol>
+<li>If there is, respond <code>room.registerAlias</code> with an error</li>
+<li>Else, proceed (below)</li>
+</ol>
+</li>
+<li>The room adds an entry to its <a href="#alias-database">Alias database</a> for <code>key=alias</code> &#x26; <code>value=feedId+sig</code></li>
+<li>The room responds <code>room.registerAlias</code> with <code>true</code>, indicating success</li>
+<li>The internal user receives the room's response to <code>room.registerAlias</code>
+<ol>
+<li>If it is an error, then (optionally) display a user interface failure to register the alias</li>
+<li>If it is <code>true</code>, then publish an SSB msg of type <code>about</code> with a field listing all its aliases for various rooms, where this specific <code>alias</code> is included. The specific schema of the message type is an application-level concern</li>
+</ol>
+</li>
+</ol>
+<p>The above algorithm is also provided below as a UML sequence diagram:</p>
+<div class="mermaid">
+  sequenceDiagram
+  participant U as SSB peer
+  participant R as Room server
+
+  U->>R: (muxrpc async) `room.registerAlias(alias, feedId, signature)`
+  alt `alias` is an invalid alias string<br/>or already taken in the alias database<br/>or `feedId` already has an alias
+    R-->>U: Respond room.registerAlias with an error
+    opt
+        U->>U: Display user interface error
+    end
+  else else
+    R->>R: Adds an entry to<br/>its alias database
+    R-->>U: Respond room.registerAlias with `true`
+    U->>U: Publishes an SSB<br/>msg of type<br/>`about`
+  end
+</div>
+<h4 id="security-considerations-4">Security considerations</h4>
+<h5 id="malicious-internal-user">Malicious <a href="#internal-user">internal user</a></h5>
+<p>The reason why there can be only one alias for SSB ID is to prevent a malicious internal user from exhausting many or all possible aliases in case the room accidentally allows such malicious user to become an internal user. Arguably, some room implementations could choose to relax this choice, perhaps to allow different aliases for an internal user, that covers typographic mistakes such as <code>aliec</code>, <code>alicce</code>. For the time being, it seems sensible that each internal user can receive only one alias.</p>
+<h4 id="malicious-room-admin-2">Malicious <a href="#room-admin">room admin</a></h4>
+<p>The room admin could reply with errors when technically the muxrpc should have succeeded, e.g. pretending that the <code>alias</code> candidate is invalid or pretending that it's already registered.</p>
+<h3 id="alias-revocation">Alias revocation</h3>
+<p>When an <a href="#internal-user">internal user</a> who has <a href="#registration">registered</a> no longer wishes to have that alias associated with them anymore, they can perform <em>alias revocation</em> to remove that alias from the <a href="#alias-database">alias database</a>.</p>
+<h4 id="specification-13">Specification</h4>
+<ol>
+<li>An internal user with SSB ID <code>feedId</code> and a room server with SSB ID <code>roomId</code> are connected to each other via secret-handshake</li>
+<li>The internal user calls a specific <a href="https://github.com/ssb-js/muxrpc/">muxrpc</a> <code>async</code> API <code>room.registerAlias(null, feedId, null, callback)</code></li>
+<li>The room, upon receiving the <code>room.registerAlias</code> muxrpc call, checks whether there exists an entry in the <a href="#alias-database">Alias database</a> associated with <code>feedId</code>
+<ol>
+<li>If there is no entry, respond <code>room.registerAlias</code> with an error</li>
+<li>Else, proceed (below)</li>
+</ol>
+</li>
+<li>The room adds an entry to its <a href="#alias-database">Alias database</a> for <code>key=alias</code> &#x26; <code>value=feedId+sig</code></li>
+<li>The room removes the entry from the <a href="#alias-database">Alias database</a> associated with <code>feedId</code></li>
+<li>The room responds <code>room.registerAlias</code> with <code>true</code>, indicating success</li>
+<li>The internal user receives the room's response to <code>room.registerAlias</code>
+<ol>
+<li>If it is an error, then (optionally) display a user interface failure to revoke the alias</li>
+<li>If it is <code>true</code>, then publish an SSB msg of type <code>about</code> with a field listing all its aliases for various rooms, where this specific <code>alias</code> is no longer listed. The specific schema of the message type is an application-level concern</li>
+</ol>
+</li>
+</ol>
+<p>The above algorithm is also provided below as a UML sequence diagram:</p>
+<div class="mermaid">
+  sequenceDiagram
+  participant U as SSB peer
+  participant R as Room server
+
+  U->>R: (muxrpc async) `room.registerAlias(null, feedId, null)`
+  alt no alias exists in the alias database for `feedId`
+    R-->>U: Respond room.registerAlias with an error
+    opt
+        U->>U: Display user interface error
+    end
+  else else
+    R->>R: Remove the entry in<br/>the alias database
+    R-->>U: Respond room.registerAlias with `true`
+    U->>U: Publishes an SSB<br/>msg of type<br/>`about`
+  end
+</div>
+<h4 id="security-considerations-5">Security considerations</h4>
+<h5 id="malicious-room-admin-3">Malicious <a href="#room-admin">room admin</a></h5>
+<p>The room admin could refuse to remove the database entry, or could delete the database entry at will (before the internal user performs revocation). In other words, the internal user does not ultimately have power over the deletion of the alias entry from the alias database, it must trust the room admin regarding deletion.</p>
+<h3 id="alias-consumption">Alias consumption</h3>
+<p>When an SSB user (<a href="#external-user">external</a> or <a href="#internal-user">internal</a>) is connected to the room, and knows of another <a href="#internal-user">internal user's</a> <a href="#alias-string">alias</a>, they can perform <em>alias consumption</em>. After consumption is completed successfully, they authentically obtain the target user's SSB ID and can use it to start a <a href="#tunneled-connection">tunneled connection</a>.</p>
+<h4 id="specification-14">Specification</h4>
+<p>The input for the consumption algorithm is the response from the <a href="#web-endpoint">web endpoint</a>, which is (either through JSON or SSB URI): the room's multiserver <code>address</code>, <code>roomId</code>, <code>userId</code>, <code>alias</code>, and <code>signature</code>.</p>
+<ol>
+<li>The SSB user verifies that the <code>signature</code> authentically matches <code>roomId</code>, <code>userId</code> and <code>alias</code>
+<ol>
+<li>If it is an invalid signature, interrupt alias consumption with a failure indicating that the alias association to the internal user <code>userId</code> was probably forged</li>
+<li>Else, proceed (below)</li>
+</ol>
+</li>
+<li>The SSB user acting as a client connects to the room's <code>address</code> and establishes a <a href="https://github.com/ssb-js/muxrpc/">muxrpc</a> connection</li>
+<li>The client can now use <code>userId</code> to initiate a <a href="#tunneled-connection">tunneled connection</a> with them</li>
+<li>(Optional and recommended) The client <em>follows</em> the <code>userId</code>, see <a href="#tunneled-authentication">tunneled authentication</a></li>
+</ol>
+<h3 id="web-endpoint">Web endpoint</h3>
+<p>Once an alias is <a href="#registration">registered</a>, it enables any web user to visit a web endpoint on the room server dedicated to that alias, for the purpose of telling the visitor what SSB ID does the alias resolve to, and with instructions on how to install an SSB app if the visitor doesn't have it yet.</p>
+<p>The goal of this endpoint is to help any SSB user <em>locate and identify</em> the alias' owner by resolving the alias to: (1) the room's <a href="https://github.com/ssb-js/multiserver">multiserver address</a>, (2) the owner's SSB ID, and (3) a cryptographic signature that proves the owner associated themselves with that alias. This web endpoint is very valuable to onboard new SSB users being invited by an <a href="#internal-user">internal user</a>.</p>
+<p><strong>Prior art:</strong> This endpoint should be in many ways similar to the <a href="https://telegram.org/">Telegram</a> <code>https://t.me/example</code> service for the username <code>@example</code>, also capable of redirecting the web visitor to a scheme <code>tg</code> URI <code>tg://resolve?domain=example</code>, which Telegram apps know how to parse and open the target user's profile screen.</p>
+<h4 id="specification-15">Specification</h4>
+<p>This specification does not apply if the <a href="#privacy-modes">privacy mode</a> is <em>Restricted</em>. This web endpoint is available only if the privacy mode is <em>Open</em> or <em>Community</em>.</p>
+<p>If the alias <code>${alias}</code> is registered at the room <code>${roomHost}</code> for a certain <code>${userId}</code>, then the room's HTTP endpoint <code>https://${alias}.${roomHost}</code> SHOULD respond with HTML which:</p>
+<ul>
+<li>Informs users how to install an SSB app that can correctly consume room aliases</li>
+<li>Renders a "Connect with me" button linking to an SSB URI (see below)</li>
+<li>The page automatically redirects (when the browser supports it) to an SSB URI (see below)</li>
+<li>The alias SSB URI is <code>ssb:address/${roomMsAddr}?roomId=${roomId}&#x26;userId=${userId}&#x26;alias=${alias}&#x26;signature=${signature}</code>, in other words there are 2 components:
+<ul>
+<li><code>ssb:address/${roomMsAddr}</code>, comprising the <strong>path component</strong> of the URI, is the room's <a href="https://github.com/ssb-js/multiserver">multiserver address</a></li>
+<li>The <strong>query component</strong> of the URI with the following 4 parts:
+<ul>
+<li><code>roomId=${roomId}</code>, the room's SSB ID</li>
+<li><code>userId=${userId}</code>, the SSB ID of the alias's owner</li>
+<li><code>alias=${alias}</code>, the <a href="#alias-string">alias string</a></li>
+<li><code>signature=${signature}</code>, the alias's owner signature as described in the <a href="#alias-database">alias database</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>As an additional endpoint for programmatic purposes, the HTTP endpoint <code>https://${alias}.${roomHost}/json</code> MUST respond with a JSON body with the following schema:</p>
+<pre><code class="language-json">{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ssb-ngi-pointer/rooms2",
+  "type": "object",
+  "properties": {
+    "address": {
+      "title": "Multiserver address",
+      "description": "Should conform to https://github.com/ssbc/multiserver-address",
+      "type": "string"
+    },
+    "roomId": {
+      "title": "Room ID",
+      "description": "SSB ID for the room server",
+      "type": "string"
+    },
+    "userId": {
+      "title": "User ID",
+      "description": "SSB ID for the user owning the alias",
+      "type": "string"
+    },
+    "alias": {
+      "title": "Alias",
+      "description": "A domain 'label' as defined in RFC 1035",
+      "type": "string"
+    },
+    "signature": {
+      "title": "Signature",
+      "description": "Cryptographic signature covering the roomId, the userId, and the alias",
+      "type": "string"
+    }
+  },
+  "required": [
+    "address",
+    "roomId",
+    "userId",
+    "alias",
+    "signature"
+  ]
+}
+</code></pre>
+<h4 id="example-3">Example</h4>
+<p>Suppose the alias is <code>alice</code>, registered for the user ID <code>@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519</code> at the room with host name <code>scuttlebutt.eu</code>. Then the alias endpoint <code>https://alice.scuttlebutt.eu</code> responds with the following SSB URI (without spaces nor newlines):</p>
+<pre><code>ssb:address/netshs/scuttlebutt.eu/8008/51w4nYL0k7mRzDG
+w20KQqCjt35y8qLiBNtWk3MX7ppo%3D?roomId=ed25519%2F51w4nY
+L0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D&#x26;userId=ed25519
+%2FFlieaFef19uJ6jhHwv2CSkFrDLYKJd_SuIS71A5Y2as%3D&#x26;alias
+=alice&#x26;signature=yNDgrVOLm6sMUHdvnbFUQYgLkCGiOKrpP9KiBv
+lrzvmxTNt3d0MNTf%2BSLMIxgxf00S5fKAlG2%2FC5NTE0Zq1Mmg%3D
+%3D
+</code></pre>
+<p>Note the multiserver address for the room is written in an SSB URI friendly format, <code>ssb:address/netshs/${host}/${port}/${pubkey}</code>, that can be converted to canonical multiserver format <code>net:${host}:${port}~shs:${pubkey}</code>.</p>
+<p>The JSON endpoint <code>https://alice.scuttlebutt.eu/json</code> would respond with the following JSON:</p>
+<pre><code class="language-json">{
+  "address": "net:scuttlebutt.eu:8008~shs:51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo=",
+  "roomId": "@51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo=.ed25519",
+  "userId": "@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519",
+  "alias": "alice",
+  "signature": "yNDgrVOLm6sMUHdvnbFUQYgLkCGiOKrpP9KiBvlrzvmxTNt3d0MNTf+SLMIxgxf00S5fKAlG2/C5NTE0Zq1Mmg=="
+}
+</code></pre>
+<h4 id="security-considerations-6">Security considerations</h4>
+<h5 id="malicious-web-visitor-1">Malicious web visitor</h5>
+<p>A web visitor, either human or bot, could attempt brute force visiting all possible alias endpoints, in order to build a dataset of all SSB IDs and claimed aliases gathered at this room, potentially tracking profiles of these SSB IDs. Malicious web visitors can also attempt to connect with these target IDs as victims, and may use social engineering or impersonation tactics during <a href="#tunneled-authentication">tunneled authentication</a>.</p>
+<h5 id="malicious-room-admin-4">Malicious <a href="#room-admin">room admin</a></h5>
+<p>The room admin could tamper with the <a href="#alias-database">alias database</a> and provide fake information on this web endpoint, e.g. that a certain alias was claimed by a certain users. Although the <a href="#alias-database">database signature</a> exists to prevent this type of tampering, it is only verified when performing <a href="#alias-consumption">alias consumption</a>. For web visitors who only want to know which SSB ID corresponds to an alias, and only that, these visitors must trust the room administrator, who could provide inauthentic information.</p>
+<h3 id="alias-database">Alias database</h3>
+<p>This is a database that stores all aliases that were <a href="#registration">registered</a> by internal users.</p>
+<h4 id="example-4">Example</h4>
+<p>The following is a mock up of a key-value store:</p>
+<table>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+<tbody>
+<tr>
+<td><code>alice</code></td>
+<td><code>@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519</code> plus signature</td>
+</tr>
+<tr>
+<td><code>bob</code></td>
+<td><code>@25WfId3Vx/gyMAZqCyZzhtW4iPtUVXB/aOMYbq44P4c=.ed25519</code> plus signature</td>
+</tr>
+<tr>
+<td><code>carla</code></td>
+<td><code>@dRE+jzKo0VWX6JbcSVATyOvFlbjCNwPWNzQLkTGenac=.ed25519</code> plus signature</td>
+</tr>
+<tr>
+<td><code>daniel</code></td>
+<td><code>@SMMgb4bZAgRgtAPdMw4loQeZL9lQgsRDi+xin0ZDzAg=.ed25519</code> plus signature</td>
+</tr>
+</tbody>
+</table>
+<h4 id="specification-16">Specification</h4>
+<p>This can be a simple persistent key-value store, such as Leveldb.</p>
+<ul>
+<li>Each <strong>Key</strong> is an <a href="#alias-string">alias string</a></li>
+<li>Each <strong>Value</strong> is a string that encodes two things:
+<ul>
+<li><a href="https://ssbc.github.io/scuttlebutt-protocol-guide/#keys-and-identities">SSB identity</a> of the <a href="#internal-user">internal user</a></li>
+<li>A cryptographic signature that covers <strong>all these</strong>
+<ul>
+<li>the room server's ID, i.e. <code>roomId</code></li>
+<li>the SSB ID, i.e. <code>userId</code></li>
+<li>alias string, i.e. <code>alias</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>The signature is applied on the following string: <code>=room-alias-registration:${roomId}:${userId}:${alias}</code>, known as the <em>Alias confirmation</em>, see example (without spaces nor newlines):</p>
+<pre><code>=room-alias-registration:@51w4nYL0k7mRzDGw20KQqCjt35
+y8qLiBNtWk3MX7ppo=.ed25519:@FlieaFef19uJ6jhHwv2
+CSkFrDLYKJd/SuIS71A5Y2as=.ed25519:alice
+</code></pre>
+<p>where</p>
+<ul>
+<li><code>roomId</code> is <code>@51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo=.ed25519</code></li>
+<li><code>userId</code> is <code>@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519</code></li>
+<li><code>alias</code> is <code>alice</code></li>
+</ul>
+<p>The purpose of a cryptographic signature on the combined <code>roomId</code> &#x26; <code>userId</code> &#x26; <code>alias</code> is to make sure that the <a href="#room-admin">Room admin</a> cannot tamper with the database to delegitimize its contents. This means that each key-value pair is certainly authored by the declared SSB ID, that is, neither the key (the alias) nor the value (the SSB ID) was modified by the Room admin.</p>
+<h4 id="security-considerations-7">Security considerations</h4>
+<h5 id="malicious-room-admin-5">Malicious <a href="#room-admin">room admin</a></h5>
+<p>The room admin can freely read or write to this database, they can create new entries, and so forth. If they modify an entry and thus break the validation of the signatures, other SSB users can detect this when verifying the signatures.</p>
+<p>Thus the admin <strong>cannot</strong> effectively:</p>
+<ul>
+<li>Register a signed alias on behalf of an <a href="#internal-user">internal user</a></li>
+<li>Modify a registered alias made by <a href="#internal-user">internal users</a></li>
+</ul>
+<p>But the admin <strong>can</strong>:</p>
+<ul>
+<li>Remove any registered key-value pairs from the database, essentially removing an alias</li>
+<li>Register signed aliases for fake users it has created itself</li>
+</ul>
+<h5 id="malicious-moderator-1">Malicious <a href="#moderator">moderator</a></h5>
+<p>Similar considerations as with the room admin, but less powers. The malicious moderator <em>cannot</em> do the actions that the room admin cannot do (otherwise moderators would have more power than admins), but the one thing moderators can do is:</p>
+<ul>
+<li>Remove any registered key-value pairs from the database, essentially removing an alias</li>
+</ul>
+<h2 id="appendix">Appendix</h2>
+<h3 id="list-of-new-muxrpc-apis">List of new muxrpc APIs</h3>
+<ul>
+<li>async
+<ul>
+<li><code>room.registerAlias(alias, feedId, signature, callback)</code></li>
+<li><code>httpAuth.signIn(sc, cc, cr, callback)</code></li>
+<li><code>httpAuth.signOut(sc, callback)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="list-of-new-ssb-uris">List of new SSB URIs</h3>
+<ul>
+<li><code>ssb:address/${multiserverAddress}</code>
+<ul>
+<li>Special case: <code>ssb:address/${roomMsAddr}?inviteType=room&#x26;inviteCode=${inviteCode}</code></li>
+<li>Special case: <code>ssb:address/${roomMsAddr}?roomId=${roomId}&#x26;userId=${userId}&#x26;alias=${alias}&#x26;signature=${signature}</code></li>
+</ul>
+</li>
+<li><code>ssb:httpauth/start/${sid}/${sc}</code></li>
+</ul>
+
+
+</body>
+</html>
