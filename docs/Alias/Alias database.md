@@ -6,12 +6,30 @@ This is a database that stores all aliases that were [registered](Registration.m
 
 The following is a mock up of a key-value store:
 
-| Key | Value |
-|----|-----|
-| `alice` | `@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519` plus signature |
-| `bob` | `@25WfId3Vx/gyMAZqCyZzhtW4iPtUVXB/aOMYbq44P4c=.ed25519` plus signature |
-| `carla` | `@dRE+jzKo0VWX6JbcSVATyOvFlbjCNwPWNzQLkTGenac=.ed25519` plus signature |
-| `daniel` | `@SMMgb4bZAgRgtAPdMw4loQeZL9lQgsRDi+xin0ZDzAg=.ed25519` plus signature |
+<table>
+<tr>
+<th>Key</th>
+<th>Value</th>
+</tr>
+<tbody>
+<tr>
+<td><code>alice</code></td>
+<td><code>@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519</code> plus signature</td>
+</tr>
+<tr>
+<td><code>bob</code></td>
+<td><code>@25WfId3Vx/gyMAZqCyZzhtW4iPtUVXB/aOMYbq44P4c=.ed25519</code> plus signature</td>
+</tr>
+<tr>
+<td><code>carla</code></td>
+<td><code>@dRE+jzKo0VWX6JbcSVATyOvFlbjCNwPWNzQLkTGenac=.ed25519</code> plus signature</td>
+</tr>
+<tr>
+<td><code>daniel</code></td>
+<td><code>@SMMgb4bZAgRgtAPdMw4loQeZL9lQgsRDi+xin0ZDzAg=.ed25519</code> plus signature</td>
+</tr>
+</tbody>
+</table>
 
 ### Specification
 
