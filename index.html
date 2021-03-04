@@ -13,13 +13,20 @@ td, th {
   padding: 0.5rem;
   border: 1px #aaa solid;
 }
+a[href^="http"]::after {
+  content: "⧉";
+}
+a[href^="#"] {
+  text-decoration: none;
+  border-bottom: 1px blue dotted;
+}
 </style>
 </head>
 <script crossorigin src="https://unpkg.com/mermaid@8.9.1/dist/mermaid.min.js"></script>
 <body>
 
 <h1 id="ssb-rooms-20">SSB Rooms 2.0</h1>
-<h5 id="revision-revision">Revision: <code>2021-03-02</code></h5>
+<h5 id="revision-revision">Revision: <code>2021-03-04</code></h5>
 <h5 id="author-andre-medeiros-contactstaltzcom">Author: Andre Medeiros <a href="mailto:contact@staltz.com">contact@staltz.com</a></h5>
 <h5 id="this-work-is-licensed-under-a-creative-commons-attribution-40-international-license">This work is licensed under a <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</h5>
 <h2 id="abstract">Abstract</h2>
