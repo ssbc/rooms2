@@ -6,12 +6,9 @@ An [internal user](../Stakeholders/Internal%20user.md) who does not have an alia
 
 1. An internal user with SSB ID `feedId` and a room server with SSB ID `roomId` are connected to each other via secret-handshake
 1. The internal user chooses a `alias` as a candidate [alias string](Alias%20string.md)
-1. The internal user calls a specific [muxrpc](https://github.com/ssb-js/muxrpc/) `async` API `room.registerAlias(alias, feedId, signature, callback)` where `signature` is a cryptographic signature of the string `=room-alias-registration:${roomId}:${feedId}:${alias}` using `feedId`'s cryptographic keypair, read more about it in the [alias database](Alias%20database.md) spec
+1. The internal user calls a specific [muxrpc](https://github.com/ssb-js/muxrpc/) `async` API `room.registerAlias(alias, signature, callback)` where `signature` is a cryptographic signature of the string `=room-alias-registration:${roomId}:${feedId}:${alias}` using `feedId`'s cryptographic keypair, read more about it in the [alias database](Alias%20database.md) spec
 1. The room, upon receiving the `room.registerAlias` muxrpc call, checks whether that `alias` is valid (see spec in [Alias string](Alias%20string.md))
     1. If it is invalid, respond `room.registerAlias` with an error
-    1. Else, proceed (below)
-1. The room checks whether there already exists an entry in the [Alias database](Alias%20database.md) associated with this `feedId`
-    1. If there is, respond `room.registerAlias` with an error
     1. Else, proceed (below)
 1. The room checks whether there already exists an entry in the [Alias database](Alias%20database.md) with the *key* `alias`
     1. If there is, respond `room.registerAlias` with an error
@@ -29,7 +26,7 @@ sequenceDiagram
   participant U as SSB peer
   participant R as Room server
 
-  U->>R: (muxrpc async) `room.registerAlias(alias, feedId, signature)`
+  U->>R: (muxrpc async) `room.registerAlias(alias, signature)`
   alt `alias` is an invalid alias string<br/>or already taken in the alias database<br/>or `feedId` already has an alias
     R-->>U: Respond room.registerAlias with an error
     opt
@@ -46,7 +43,7 @@ sequenceDiagram
 
 #### Malicious [internal user](../Stakeholders/Internal%20user.md)
 
-The reason why there can be only one alias for SSB ID is to prevent a malicious internal user from exhausting many or all possible aliases in case the room accidentally allows such malicious user to become an internal user. Arguably, some room implementations could choose to relax this choice, perhaps to allow different aliases for an internal user, that covers typographic mistakes such as `aliec`, `alicce`. For the time being, it seems sensible that each internal user can receive only one alias.
+A malicious internal user could take many or all possible aliases in case the room accidentally allows such malicious user to become an internal user. Arguably, some room implementations could choose to allow only one alias per internal user, and that would still be compliant with this spec.
 
 ### Malicious [room admin](../Stakeholders/Room%20admin.md)
 
