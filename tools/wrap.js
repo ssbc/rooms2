@@ -5,6 +5,14 @@ html {
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+  padding: 80px 0;
+  line-height: 1.5em;
+}
+h2 {
+  margin-top: 70px;
+}
+h3 {
+  margin-top: 50px;
 }
 table {
   border-collapse: collapse;

@@ -1,10 +1,10 @@
 # SSB Rooms 2.0
 
-##### Revision: `$REVISION`
+**Revision:** `$REVISION`
 
-##### Author: Andre Medeiros <contact@staltz.com>
+**Author:** Andre Medeiros <contact@staltz.com>
 
-##### This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
+**License:** This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
 
 ## Abstract
 
