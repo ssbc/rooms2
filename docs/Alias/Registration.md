@@ -27,7 +27,7 @@ sequenceDiagram
   participant R as Room server
 
   U->>R: (muxrpc async) `room.registerAlias(alias, signature)`
-  alt `alias` is an invalid alias string<br/>or already taken in the alias database<br/>or `feedId` already has an alias
+  alt `alias` is an invalid alias string<br/>or already taken in the alias database<br/>or other errors
     R-->>U: Respond room.registerAlias with an error
     opt
         U->>U: Display user interface error
