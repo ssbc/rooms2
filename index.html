@@ -34,7 +34,7 @@ a[href^="#"] {
 <body>
 
 <h1 id="ssb-rooms-20">SSB Rooms 2.0</h1>
-<p><strong>Revision:</strong> <code>2021-03-09</code></p>
+<p><strong>Revision:</strong> <code>2021-03-10</code></p>
 <p><strong>Author:</strong> Andre Medeiros <a href="mailto:contact@staltz.com">contact@staltz.com</a></p>
 <p><strong>License:</strong> This work is licensed under a <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
 <h2 id="abstract">Abstract</h2>
@@ -445,16 +445,10 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <ol>
 <li>An internal user with SSB ID <code>feedId</code> and a room server with SSB ID <code>roomId</code> are connected to each other via secret-handshake</li>
 <li>The internal user chooses a <code>alias</code> as a candidate <a href="#alias-string">alias string</a></li>
-<li>The internal user calls a specific <a href="https://github.com/ssb-js/muxrpc/">muxrpc</a> <code>async</code> API <code>room.registerAlias(alias, feedId, signature, callback)</code> where <code>signature</code> is a cryptographic signature of the string <code>=room-alias-registration:${roomId}:${feedId}:${alias}</code> using <code>feedId</code>'s cryptographic keypair, read more about it in the <a href="#alias-database">alias database</a> spec</li>
+<li>The internal user calls a specific <a href="https://github.com/ssb-js/muxrpc/">muxrpc</a> <code>async</code> API <code>room.registerAlias(alias, signature, callback)</code> where <code>signature</code> is a cryptographic signature of the string <code>=room-alias-registration:${roomId}:${feedId}:${alias}</code> using <code>feedId</code>'s cryptographic keypair, read more about it in the <a href="#alias-database">alias database</a> spec</li>
 <li>The room, upon receiving the <code>room.registerAlias</code> muxrpc call, checks whether that <code>alias</code> is valid (see spec in <a href="#alias-string">Alias string</a>)
 <ol>
 <li>If it is invalid, respond <code>room.registerAlias</code> with an error</li>
-<li>Else, proceed (below)</li>
-</ol>
-</li>
-<li>The room checks whether there already exists an entry in the <a href="#alias-database">Alias database</a> associated with this <code>feedId</code>
-<ol>
-<li>If there is, respond <code>room.registerAlias</code> with an error</li>
 <li>Else, proceed (below)</li>
 </ol>
 </li>
@@ -479,8 +473,8 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
   participant U as SSB peer
   participant R as Room server
 
-  U->>R: (muxrpc async) `room.registerAlias(alias, feedId, signature)`
-  alt `alias` is an invalid alias string<br/>or already taken in the alias database<br/>or `feedId` already has an alias
+  U->>R: (muxrpc async) `room.registerAlias(alias, signature)`
+  alt `alias` is an invalid alias string<br/>or already taken in the alias database<br/>or other errors
     R-->>U: Respond room.registerAlias with an error
     opt
         U->>U: Display user interface error
@@ -493,7 +487,7 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 </div>
 <h4 id="security-considerations-4">Security considerations</h4>
 <h5 id="malicious-internal-user">Malicious <a href="#internal-user">internal user</a></h5>
-<p>The reason why there can be only one alias for SSB ID is to prevent a malicious internal user from exhausting many or all possible aliases in case the room accidentally allows such malicious user to become an internal user. Arguably, some room implementations could choose to relax this choice, perhaps to allow different aliases for an internal user, that covers typographic mistakes such as <code>aliec</code>, <code>alicce</code>. For the time being, it seems sensible that each internal user can receive only one alias.</p>
+<p>A malicious internal user could take many or all possible aliases in case the room accidentally allows such malicious user to become an internal user. Arguably, some room implementations could choose to allow only one alias per internal user, and that would still be compliant with this spec.</p>
 <h4 id="malicious-room-admin-2">Malicious <a href="#room-admin">room admin</a></h4>
 <p>The room admin could reply with errors when technically the muxrpc should have succeeded, e.g. pretending that the <code>alias</code> candidate is invalid or pretending that it's already registered.</p>
 <h3 id="alias-revocation">Alias revocation</h3>
@@ -501,17 +495,17 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <h4 id="specification-13">Specification</h4>
 <ol>
 <li>An internal user with SSB ID <code>feedId</code> and a room server with SSB ID <code>roomId</code> are connected to each other via secret-handshake</li>
-<li>The internal user calls a specific <a href="https://github.com/ssb-js/muxrpc/">muxrpc</a> <code>async</code> API <code>room.registerAlias(null, feedId, null, callback)</code></li>
-<li>The room, upon receiving the <code>room.registerAlias</code> muxrpc call, checks whether there exists an entry in the <a href="#alias-database">Alias database</a> associated with <code>feedId</code>
+<li>The internal user calls a specific <a href="https://github.com/ssb-js/muxrpc/">muxrpc</a> <code>async</code> API <code>room.revokeAlias(alias, callback)</code></li>
+<li>The room, upon receiving the <code>room.revokeAlias</code> muxrpc call, checks whether there exists an entry in the <a href="#alias-database">Alias database</a> for <code>alias</code>
 <ol>
-<li>If there is no entry, respond <code>room.registerAlias</code> with an error</li>
+<li>If there is no entry, respond <code>room.revokeAlias</code> with an error</li>
+<li>Else, if there exists an entry for <code>alias</code> but it is not owned by <code>feedId</code>, respond <code>room.revokeAlias</code> with an error</li>
 <li>Else, proceed (below)</li>
 </ol>
 </li>
-<li>The room adds an entry to its <a href="#alias-database">Alias database</a> for <code>key=alias</code> &#x26; <code>value=feedId+sig</code></li>
 <li>The room removes the entry from the <a href="#alias-database">Alias database</a> associated with <code>feedId</code></li>
-<li>The room responds <code>room.registerAlias</code> with <code>true</code>, indicating success</li>
-<li>The internal user receives the room's response to <code>room.registerAlias</code>
+<li>The room responds <code>room.revokeAlias</code> with <code>true</code>, indicating success</li>
+<li>The internal user receives the room's response to <code>room.revokeAlias</code>
 <ol>
 <li>If it is an error, then (optionally) display a user interface failure to revoke the alias</li>
 <li>If it is <code>true</code>, then publish an SSB msg of type <code>about</code> with a field listing all its aliases for various rooms, where this specific <code>alias</code> is no longer listed. The specific schema of the message type is an application-level concern</li>
@@ -524,15 +518,15 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
   participant U as SSB peer
   participant R as Room server
 
-  U->>R: (muxrpc async) `room.registerAlias(null, feedId, null)`
-  alt no alias exists in the alias database for `feedId`
-    R-->>U: Respond room.registerAlias with an error
+  U->>R: (muxrpc async) `room.revokeAlias(alias)`
+  alt `alias` does not exist, or other errors
+    R-->>U: Respond room.revokeAlias with an error
     opt
         U->>U: Display user interface error
     end
   else else
     R->>R: Remove the entry in<br/>the alias database
-    R-->>U: Respond room.registerAlias with `true`
+    R-->>U: Respond room.revokeAlias with `true`
     U->>U: Publishes an SSB<br/>msg of type<br/>`about`
   end
 </div>
@@ -725,9 +719,10 @@ CSkFrDLYKJd/SuIS71A5Y2as=.ed25519:alice
 <ul>
 <li>async
 <ul>
-<li><code>room.registerAlias(alias, feedId, signature, callback)</code></li>
-<li><code>httpAuth.signIn(sc, cc, cr, callback)</code></li>
-<li><code>httpAuth.signOut(sc, callback)</code></li>
+<li><code>room.registerAlias(alias, signature)</code></li>
+<li><code>room.revokeAlias(alias)</code></li>
+<li><code>httpAuth.signIn(sc, cc, cr)</code></li>
+<li><code>httpAuth.signOut(sc)</code></li>
 </ul>
 </li>
 </ul>
