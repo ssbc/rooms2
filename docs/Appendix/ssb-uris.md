@@ -1,6 +1,5 @@
 ## List of new SSB URIs
 
-- `ssb:address/${multiserverAddress}`
-  - Special case: `ssb:address/${roomMsAddr}?inviteType=room&inviteCode=${inviteCode}`
-  - Special case: `ssb:address/${roomMsAddr}?roomId=${roomId}&userId=${userId}&alias=${alias}&signature=${signature}`
-- `ssb:httpauth/start/${sid}/${sc}`
+- `ssb:?action=consume-alias&alias=${alias}&userId=${userId}&signature=${signature}&roomId=${roomId}&multiserverAddress=${roomMsAddr}`
+- `ssb:?action=join-room&invite=${inviteCode}&multiserverAddress=${roomMsAddr}`
+- `ssb:?action=start-http-auth&sid=${sid}&sc=${sc}`
