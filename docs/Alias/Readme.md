@@ -9,5 +9,5 @@ In short,
 - Anyone can access an alias [web endpoint](Web%20endpoint.md)
 - [Internal users](../Stakeholders/Internal%20user.md) can [register](Registration.md) and [revoke](Revocation.md) their aliases
 - [Internal users](../Stakeholders/Internal%20user.md) and [external users](../Stakeholders/External%20user.md) who visit a target user's [alias endpoint](Web%20endpoint.md) can [consume it](Alias%20consumption.md) in order to [connect](../Participation/Tunneled%20connection.md) with the target internal user
-- [Room admins](../Stakeholders/Room%20admin.md) have read access to the [alias database](Alias%20database.md) but can't change the entries since they are signed by the owner.
+- [Room admins](../Stakeholders/Room%20admin.md) have read/write access to the [alias database](Alias%20database.md) but can't add cryptographically valid entries since they are signed by the owner
 - [Moderators](../Stakeholders/Moderator.md) can remove alias entries from the [alias database](Alias%20database.md)
