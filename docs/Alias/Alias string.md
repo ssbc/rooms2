@@ -8,7 +8,7 @@ Suppose Alice is an internal user of the room "Scuttlebutt EU". Alice's alias co
 
 - `alice`
 - `alice1994`
-- `alice_94`
+- `alice94`
 
 ### Specification
 
