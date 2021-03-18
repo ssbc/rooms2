@@ -130,7 +130,7 @@ a[href^="#"] {
 <ul>
 <li><strong>Open</strong>: invite codes are openly known, similar to <a href="https://github.com/staltz/ssb-room">ssb-room v1</a></li>
 <li><strong>Community</strong>: only <a href="#internal-user">internal users</a> can invite <a href="#external-user">external users</a> to become an internal users</li>
-<li><strong>Restricted</strong>: only <a href="#moderator">moderators</a> can invite <a href="#external-user">external users</a> to become an internal users, and <a href="#readme">aliases</a> are not supported</li>
+<li><strong>Restricted</strong>: only <a href="#room-admin">admins</a> and <a href="#moderator">moderators</a> can invite <a href="#external-user">external users</a> to become an internal users, and <a href="#readme">aliases</a> are not supported</li>
 </ul>
 <p><strong>Joining:</strong> To become a member of the room, peers need to <a href="#joining">join the room</a>.</p>
 <h3 id="config-database">Config database</h3>
@@ -175,26 +175,24 @@ a[href^="#"] {
 <h3 id="sign-in-with-ssb">Sign-in with SSB</h3>
 <p>To access the <a href="#web-dashboard">WWW dashboard interface</a>, <a href="#internal-user">internal users</a> (including <a href="#moderator">moderators</a>) can use "sign-in with SSB ID".</p>
 <h4 id="specification-4">Specification</h4>
-<p>An <a href="#internal-user">internal user</a> known by its SSB ID <code>cid</code> is connected to the room via secret-handshake and muxrpc. A browser client is supposedly the same person or agent as the internal user and wishes to gain access to the web dashboard. All HTTP requests SHOULD be done with HTTPS.</p>
-<p>The three sides (browser client, SSB peer, and room server) perform the following <a href="https://en.wikipedia.org/wiki/Challenge%E2%80%93response_authentication">challenge-response authentication</a> protocol, specified as a UML sequence diagram. We use the shorthands <code>cc</code>, <code>sr</code>, <code>sc</code>, and <code>cr</code> to mean:</p>
+<p>An <a href="#internal-user">internal user</a> known by its SSB ID <code>cid</code> is connected to the room via secret-handshake and muxrpc. A browser client is supposedly the same person or agent as the internal user and wishes to gain access to the web dashboard. All HTTP requests MUST be done with HTTPS.</p>
+<p>The three sides (browser client, SSB peer, and room server) perform the following <a href="https://en.wikipedia.org/wiki/Challenge%E2%80%93response_authentication">challenge-response authentication</a> protocol, specified as a UML sequence diagram. We use the shorthands <code>cc</code>, <code>sc</code>, and <code>cr</code> to mean:</p>
 <ul>
 <li><code>cc</code>: "client's challenge"</li>
-<li><code>sr</code>: "server's response"</li>
 <li><code>sc</code>: "server's challenge"</li>
 <li><code>cr</code>: "client's response"</li>
 </ul>
-<p>The challenges, <code>cc</code> and <code>sc</code>, are 256-bit <a href="https://en.wikipedia.org/wiki/Cryptographic_nonce">cryptographic nonces</a> encoded in base64. The responses, <code>sr</code> and <code>cr</code>, are cryptographic signatures using the cryptographic keypairs that identify the server and the client, respectively, described below:</p>
+<p>The challenges, <code>cc</code> and <code>sc</code>, are 256-bit <a href="https://en.wikipedia.org/wiki/Cryptographic_nonce">cryptographic nonces</a> encoded in base64. The response <code>cr</code> is a cryptographic signature using the cryptographic keypair <code>cid</code> that identifies the client, described below:</p>
 <ul>
 <li><code>cid</code> is the client's identity from their cryptographic keypair</li>
 <li><code>sid</code> is the servers's identity from their cryptographic keypair</li>
 <li><code>cc</code> is a 256-bit nonce created by the client, encoded in base64</li>
-<li><code>sc</code> is a 256-bit nonce created by the client, encoded in base64</li>
-<li><code>sr</code> is the server's cryptographic signature of the string <code>=http-auth-sign-in:${cid}:${sid}:${cc}:${sc}</code> where <code>${x}</code> means string interpolation of the value <code>x</code></li>
+<li><code>sc</code> is a 256-bit nonce created by the server, encoded in base64</li>
 <li><code>cr</code> is the client's cryptographic signature of the string <code>=http-auth-sign-in:${cid}:${sid}:${cc}:${sc}</code> where <code>${x}</code> means string interpolation of the value <code>x</code></li>
 </ul>
 <p>Both sides generate the nonces, but there are use cases where one side should start first. In other words, the challenge-response protocol described here can be either <strong>client-initiated</strong> or <strong>server-initiated</strong>.</p>
 <h5 id="client-initiated-protocol">Client-initiated protocol</h5>
-<p>In the client-initiated variant of the challenge-response protocol, the first step is the client creating <code>cc</code> and opening a web page in the browser. Then, the server attending to that HTTP request will call <code>httpAuth.signIn(cc, sc, sr)</code> on the client SSB peer.</p>
+<p>In the client-initiated variant of the challenge-response protocol, the first step is the client creating <code>cc</code> and opening a web page in the browser. Then, the server attending to that HTTP request will call <code>httpAuth.signIn(sc, cc, null)</code> on the client SSB peer.</p>
 <p>The UML sequence diagram for the whole client-initial protocol is shown below:</p>
 <div class="mermaid">
   sequenceDiagram
@@ -221,8 +219,9 @@ a[href^="#"] {
   end
 </div>
 <h5 id="server-initiated-protocol">Server-initiated protocol</h5>
-<p>In the server-initiated variant of the challenge-response protocol, the first step is the browser requesting the server to login with a certain <code>cid</code> (or <code>alias</code>, which the server knows how to map to a <code>cid</code>). The server answers the browser, which in turn displays an SSB URI which the SSB peer knows how to open.</p>
-<p>The primary difference between this variant and the previous one is the muxrpc async RPC <code>httpAuth.requestSignIn</code> which is used for the SSB peer to inform the room peer about the <code>cc</code>. Afterwards, the protocol is similar to the server-initiated one, with the minor addition of Server-Sent Events between the browser and the room.</p>
+<p>In the server-initiated variant of the challenge-response protocol, the first step is the browser requesting a login from the server using a certain <code>cid</code> (or <code>alias</code>, which the server knows how to map to a <code>cid</code>). The server answers the browser, which in turn displays an SSB URI which the SSB peer knows how to open.</p>
+<p>The primary difference between this variant and the previous one is that the muxrpc async RPC <code>httpAuth.signIn</code> is reversed. Previously, the server called <code>httpAuth.signIn</code> <strong>on the client</strong>. In this variant, client calls <code>httpAuth.signIn</code> <strong>on the server</strong>. The response is also different. In the previous case, the <code>cr</code> argument is left in blank (null) and the client's response is expected to be the <code>cr</code>. In this variant, the <code>cr</code> argument is provided by the client and the server's response is expected to be <code>true</code>.</p>
+<p>The secondary difference with this variant is the addition of <a href="https://html.spec.whatwg.org/multipage/server-sent-events.html">Server-Sent Events</a> between the browser and the room, to update the browser when the muxrpc protocol succeeds.</p>
 <p>The UML sequence diagram for the whole server-initial protocol is shown below:</p>
 <div class="mermaid">
   sequenceDiagram
@@ -254,15 +253,15 @@ a[href^="#"] {
   end
 </div>
 <h5 id="sign-out">Sign-out</h5>
-<p>An optional (but recommended) muxrpc API <code>httpAuth.signOut</code> on the Room server to allow the SSB peer to invalidate the auth token. See UML sequence diagram:</p>
+<p>An optional (but recommended) muxrpc API <code>httpAuth.signOut</code> on the Room server to allow the SSB peer to invalidate the auth token associated with the <code>cid</code>. See UML sequence diagram:</p>
 <div class="mermaid">
   sequenceDiagram
   participant Umux as SSB peer
   participant Uweb as Browser client
   participant R as Room server
 
-  Umux->>+R: (muxrpc async) `httpAuth.signOut(sc)`
-  Note over R: Invalidates `authtoken`<br/>associated with `sc`
+  Umux->>+R: (muxrpc async) `httpAuth.signOut()`
+  Note over R: Invalidates `sc` and `authtoken`<br/>associated with `cid`
   R-->>-Umux: respond httpAuth.signOut with `true`
   Note over Uweb,R: Potentially thereafter...
   Uweb->>+R: Authenticate using `authtoken`
@@ -744,7 +743,7 @@ CSkFrDLYKJd/SuIS71A5Y2as=.ed25519:alice
 <li><code>room.registerAlias(alias, signature)</code></li>
 <li><code>room.revokeAlias(alias)</code></li>
 <li><code>httpAuth.signIn(sc, cc, cr)</code></li>
-<li><code>httpAuth.signOut(sc)</code></li>
+<li><code>httpAuth.signOut()</code></li>
 </ul>
 </li>
 </ul>
