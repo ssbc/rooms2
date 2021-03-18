@@ -8,6 +8,6 @@ There are three strategies recommended as policies to [join](../Participation/Jo
 
 - **Open**: invite codes are openly known, similar to [ssb-room v1](https://github.com/staltz/ssb-room)
 - **Community**: only [internal users](../Stakeholders/Internal%20user.md) can invite [external users](../Stakeholders/External%20user.md) to become an internal users
-- **Restricted**: only [moderators](../Stakeholders/Moderator.md) can invite [external users](../Stakeholders/External%20user.md) to become an internal users, and [aliases](../Alias/Readme.md) are not supported
+- **Restricted**: only [admins](../Stakeholders/Room%20admin.md) and [moderators](../Stakeholders/Moderator.md) can invite [external users](../Stakeholders/External%20user.md) to become an internal users, and [aliases](../Alias/Readme.md) are not supported
 
 **Joining:** To become a member of the room, peers need to [join the room](../Participation/Joining.md).
