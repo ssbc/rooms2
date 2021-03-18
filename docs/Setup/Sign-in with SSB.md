@@ -93,7 +93,7 @@ sequenceDiagram
 
 #### Sign-out
 
-An optional (but recommended) muxrpc API `httpAuth.signOut` on the Room server to allow the SSB peer to invalidate the auth token. See UML sequence diagram:
+An optional (but recommended) muxrpc API `httpAuth.signOut` on the Room server to allow the SSB peer to invalidate the auth token associated with the `cid`. See UML sequence diagram:
 
 ```mermaid
 sequenceDiagram
@@ -101,8 +101,8 @@ sequenceDiagram
   participant Uweb as Browser client
   participant R as Room server
 
-  Umux->>+R: (muxrpc async) `httpAuth.signOut(sc)`
-  Note over R: Invalidates `authtoken`<br/>associated with `sc`
+  Umux->>+R: (muxrpc async) `httpAuth.signOut()`
+  Note over R: Invalidates `sc` and `authtoken`<br/>associated with `cid`
   R-->>-Umux: respond httpAuth.signOut with `true`
   Note over Uweb,R: Potentially thereafter...
   Uweb->>+R: Authenticate using `authtoken`
