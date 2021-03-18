@@ -72,7 +72,7 @@ sequenceDiagram
   Uweb->>R: `https://${roomHost}/login?userId=${cid}` or<br/>`https://${roomHost}/login?alias=${alias}`
   activate R
   Note over R: Generates<br/>challenge `sc`
-  R-->>Uweb: Displays `ssb:?action=start-http-auth&sid=${sid}&sc=${sc}`
+  R-->>Uweb: Displays `ssb:experimental?action=start-http-auth&sid=${sid}&sc=${sc}`
   Uweb->>R: Subscribe to `/sse/login/${sc}`
   Uweb->>Umux: Consumes SSB URI
   Note over Umux: Generates<br/>challenge `cc`
