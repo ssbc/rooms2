@@ -41,7 +41,7 @@ sequenceDiagram
   alt SSB peer is disconnected from the room
     R-->>Uweb: HTTP 403
   else SSB peer is connected to the room
-    R->>+Umux: (muxrpc async) `httpAuth.signIn(sc, cc)`
+     R->>+Umux: (muxrpc async) `httpAuth.signIn(sc, cc, null)`
     Note over Umux: Generates<br/>signature `cr`
     Umux-->>-R: respond httpAuth.signIn with `cr`
     alt `cr` is incorrect
