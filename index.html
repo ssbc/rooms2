@@ -233,12 +233,12 @@ a[href^="#"] {
   Uweb->>R: `https://${roomHost}/login?userId=${cid}` or<br/>`https://${roomHost}/login?alias=${alias}`
   activate R
   Note over R: Generates<br/>challenge `sc`
-  R-->>Uweb: Displays `ssb:experimental?action=start-http-auth&sid=${sid}&sc=${sc}`
+  R-->>Uweb: Displays `ssb:experimental?<br/>action=start-http-auth&sid=${sid}&sc=${sc}`
   Uweb->>R: Subscribe to `/sse/login/${sc}`
   Uweb->>Umux: Consumes SSB URI
   Note over Umux: Generates<br/>challenge `cc`
   Note over Umux: Generates<br/>signature `cr`
-  Umux->>+R: (muxrpc async) `httpAuth.sign(sc, cc, cr)`
+  Umux->>+R: (muxrpc async) `httpAuth.signIn(sc, cc, cr)`
   alt `cr` is incorrect, or other errors
     R-->>Umux: `false`
     R-->>Uweb: (SSE) "redirect to ${url}"
