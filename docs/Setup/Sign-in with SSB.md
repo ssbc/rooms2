@@ -6,13 +6,13 @@ To access the [WWW dashboard interface](Web%20Dashboard.md), [internal users](..
 
 An [internal user](../Stakeholders/Internal%20user.md) known by its SSB ID `cid` is connected to the room via secret-handshake and muxrpc. A browser client is supposedly the same person or agent as the internal user and wishes to gain access to the web dashboard. All HTTP requests MUST be done with HTTPS.
 
-The three sides (browser client, SSB peer, and room server) perform the following [challenge-response authentication](https://en.wikipedia.org/wiki/Challenge%E2%80%93response_authentication) protocol, specified as a UML sequence diagram. We use the shorthands `cc`, `sr`, `sc`, and `cr` to mean:
+The three sides (browser client, SSB peer, and room server) perform the following [challenge-response authentication](https://en.wikipedia.org/wiki/Challenge%E2%80%93response_authentication) protocol, specified as a UML sequence diagram. We use the shorthands `cc`, `sc`, and `cr` to mean:
 
 - `cc`: "client's challenge"
 - `sc`: "server's challenge"
 - `cr`: "client's response"
 
-The challenges, `cc` and `sc`, are 256-bit [cryptographic nonces](https://en.wikipedia.org/wiki/Cryptographic_nonce) encoded in base64. The response `cr` is a cryptographic signature using the cryptographic keypair that identifies the client, described below:
+The challenges, `cc` and `sc`, are 256-bit [cryptographic nonces](https://en.wikipedia.org/wiki/Cryptographic_nonce) encoded in base64. The response `cr` is a cryptographic signature using the cryptographic keypair `cid` that identifies the client, described below:
 
 - `cid` is the client's identity from their cryptographic keypair
 - `sid` is the servers's identity from their cryptographic keypair
@@ -24,7 +24,7 @@ Both sides generate the nonces, but there are use cases where one side should st
 
 #### Client-initiated protocol
 
-In the client-initiated variant of the challenge-response protocol, the first step is the client creating `cc` and opening a web page in the browser. Then, the server attending to that HTTP request will call `httpAuth.signIn(cc, sc)` on the client SSB peer.
+In the client-initiated variant of the challenge-response protocol, the first step is the client creating `cc` and opening a web page in the browser. Then, the server attending to that HTTP request will call `httpAuth.signIn(sc, cc, null)` on the client SSB peer.
 
 The UML sequence diagram for the whole client-initial protocol is shown below:
 
@@ -41,7 +41,7 @@ sequenceDiagram
   alt SSB peer is disconnected from the room
     R-->>Uweb: HTTP 403
   else SSB peer is connected to the room
-     R->>+Umux: (muxrpc async) `httpAuth.signIn(sc, cc, null)`
+    R->>+Umux: (muxrpc async) `httpAuth.signIn(sc, cc, null)`
     Note over Umux: Generates<br/>signature `cr`
     Umux-->>-R: respond httpAuth.signIn with `cr`
     alt `cr` is incorrect
@@ -57,7 +57,9 @@ sequenceDiagram
 
 In the server-initiated variant of the challenge-response protocol, the first step is the browser requesting a login from the server using a certain `cid` (or `alias`, which the server knows how to map to a `cid`). The server answers the browser, which in turn displays an SSB URI which the SSB peer knows how to open.
 
-The primary difference between this variant and the previous one is the muxrpc async RPC `httpAuth.signIn` which is used for the SSB peer to inform the room peer about the `cc`. Afterwards, the protocol is similar to the server-initiated one, with the minor addition of Server-Sent Events between the browser and the room.
+The primary difference between this variant and the previous one is that the muxrpc async RPC `httpAuth.signIn` is reversed. Previously, the server called `httpAuth.signIn` **on the client**. In this variant, client calls `httpAuth.signIn` **on the server**. The response is also different. In the previous case, the `cr` argument is left in blank (null) and the client's response is expected to be the `cr`. In this variant, the `cr` argument is provided by the client and the server's response is expected to be `true`.
+
+The secondary difference with this variant is the addition of [Server-Sent Events](https://html.spec.whatwg.org/multipage/server-sent-events.html) between the browser and the room, to update the browser when the muxrpc protocol succeeds.
 
 The UML sequence diagram for the whole server-initial protocol is shown below:
 
@@ -93,7 +95,7 @@ sequenceDiagram
 
 #### Sign-out
 
-An optional (but recommended) muxrpc API `httpAuth.signOut` on the Room server to allow the SSB peer to invalidate the auth token. See UML sequence diagram:
+An optional (but recommended) muxrpc API `httpAuth.signOut` on the Room server to allow the SSB peer to invalidate the auth token associated with the `cid`. See UML sequence diagram:
 
 ```mermaid
 sequenceDiagram
@@ -101,8 +103,8 @@ sequenceDiagram
   participant Uweb as Browser client
   participant R as Room server
 
-  Umux->>+R: (muxrpc async) `httpAuth.signOut(sc)`
-  Note over R: Invalidates `authtoken`<br/>associated with `sc`
+  Umux->>+R: (muxrpc async) `httpAuth.signOut()`
+  Note over R: Invalidates `sc` and `authtoken`<br/>associated with `cid`
   R-->>-Umux: respond httpAuth.signOut with `true`
   Note over Uweb,R: Potentially thereafter...
   Uweb->>+R: Authenticate using `authtoken`

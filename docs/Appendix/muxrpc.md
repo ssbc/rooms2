@@ -4,4 +4,4 @@
   - `room.registerAlias(alias, signature)`
   - `room.revokeAlias(alias)`
   - `httpAuth.signIn(sc, cc, cr)`
-  - `httpAuth.signOut(sc)`
+  - `httpAuth.signOut()`
