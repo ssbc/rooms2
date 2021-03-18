@@ -34,7 +34,7 @@ a[href^="#"] {
 <body>
 
 <h1 id="ssb-rooms-20">SSB Rooms 2.0</h1>
-<p><strong>Revision:</strong> <code>2021-03-16</code></p>
+<p><strong>Revision:</strong> <code>2021-03-18</code></p>
 <p><strong>Author:</strong> Andre Medeiros <a href="mailto:contact@staltz.com">contact@staltz.com</a></p>
 <p><strong>License:</strong> This work is licensed under a <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
 <h2 id="abstract">Abstract</h2>
@@ -233,7 +233,7 @@ a[href^="#"] {
   Uweb->>R: `https://${roomHost}/login?userId=${cid}` or<br/>`https://${roomHost}/login?alias=${alias}`
   activate R
   Note over R: Generates<br/>challenge `sc`
-  R-->>Uweb: Displays `ssb:?action=start-http-auth&sid=${sid}&sc=${sc}`
+  R-->>Uweb: Displays `ssb:experimental?action=start-http-auth&sid=${sid}&sc=${sc}`
   Uweb->>R: Subscribe to `/sse/login/${sc}`
   Uweb->>Umux: Consumes SSB URI
   Note over Umux: Generates<br/>challenge `cc`
@@ -348,7 +348,7 @@ a[href^="#"] {
 <ol>
 <li>Suppose the room is hosted at domain <code>roomHost</code> and it has generated an invite <code>inviteCode</code></li>
 <li>The invite URL <strong>SHOULD</strong> be <code>https://${roomHost}/join?invite=${inviteCode}</code></li>
-<li>Once a web visitor opens that link, then they <strong>MUST</strong> be presented with the SSB URI <code>ssb:?action=join-room&#x26;invite=${inviteCode}&#x26;multiserverAddress=${roomMsAddr}</code> where <code>${roomMsAddr}</code> consititutes the room's multiserver address in an SSB URI friendly format
+<li>Once a web visitor opens that link, then they <strong>MUST</strong> be presented with the SSB URI <code>ssb:experimental?action=join-room&#x26;invite=${inviteCode}&#x26;multiserverAddress=${roomMsAddr}</code> where <code>${roomMsAddr}</code> consititutes the room's multiserver address in an SSB URI friendly format
 <ol>
 <li>If the operating system detects an installed SSB app that recognizes the <code>ssb</code> scheme, the SSB app handles this URI</li>
 <li>Else, the website at displays instructions how to install an SSB app</li>
@@ -362,7 +362,7 @@ a[href^="#"] {
 <h4 id="example">Example</h4>
 <ol>
 <li>Invite link is <code>https://scuttlebutt.eu/join?invite=39c0ac1850ec9af14f1bb73</code></li>
-<li>User opens that link in a browser, which redirects to the SSB URI <a href="ssb:?action=join-room&#x26;invite=39c0ac1850ec9af14f1bb73&#x26;multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3A51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D">ssb:?action=join-room&#x26;invite=39c0ac1850ec9af14f1bb73&#x26;multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3A51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D</a></li>
+<li>User opens that link in a browser, which redirects to the SSB URI <a href="ssb:experimental?action=join-room&#x26;invite=39c0ac1850ec9af14f1bb73&#x26;multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3A51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D">ssb:experimental?action=join-room&#x26;invite=39c0ac1850ec9af14f1bb73&#x26;multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3A51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D</a></li>
 <li>User's operating system opens that SSB URI in an SSB app, which then communicates with the room server via muxrpc (read more in <a href="#joining">Joining</a>)</li>
 </ol>
 <h4 id="security-considerations-2">Security considerations</h4>
@@ -561,7 +561,7 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <li><strong>MAY</strong> inform users how to install an SSB app that can correctly consume room aliases</li>
 <li><strong>SHOULD</strong> render a "Connect with me" button linking to an SSB URI (see below)</li>
 <li>The page <strong>MAY</strong> automatically redirect (when the browser supports it) to an SSB URI (see below)</li>
-<li>The alias SSB URI <strong>MUST</strong> be <code>ssb:?action=consume-alias&#x26;alias=${alias}&#x26;userId=${userId}&#x26;signature=${signature}&#x26;roomId=${roomId}&#x26;multiserverAddress=${roomMsAddr}</code>, in other words there are 6 query components:
+<li>The alias SSB URI <strong>MUST</strong> be <code>ssb:experimental?action=consume-alias&#x26;alias=${alias}&#x26;userId=${userId}&#x26;signature=${signature}&#x26;roomId=${roomId}&#x26;multiserverAddress=${roomMsAddr}</code>, in other words there are 6 query components:
 <ul>
 <li><code>action=consume-alias</code>, a constant string to identify the purpose of this URI</li>
 <li><code>alias=${alias}</code>, the <a href="#alias-string">alias string</a></li>
@@ -645,7 +645,7 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 </code></pre>
 <h4 id="example-3">Example</h4>
 <p>Suppose the alias is <code>alice</code>, registered for the user ID <code>@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519</code> at the room with host name <code>scuttlebutt.eu</code>. Then the alias endpoint <code>https://alice.scuttlebutt.eu</code> responds with HTML containing the following SSB URI:</p>
-<p><a href="ssb:?action=consume-alias&#x26;alias=alice&#x26;userId=%40FlieaFef19uJ6jhHwv2CSkFrDLYKJd%2FSuIS71A5Y2as%3D.ed25519&#x26;roomId=%4051w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D.ed25519&#x26;signature=yNDgrVOLm6sMUHdvnbFUQYgLkCGiOKrpP9KiBvlrzvmxTNt3d0MNTf%2BSLMIxgxf00S5fKAlG2%2FC5NTE0Zq1Mmg%3D%3D&#x26;multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3A51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D">ssb:?action=consume-alias&#x26;alias=alice&#x26;userId=%40FlieaFef19uJ6jhHwv2CSkFrDLYKJd%2FSuIS71A5Y2as%3D.ed25519&#x26;roomId=%4051w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D.ed25519&#x26;signature=yNDgrVOLm6sMUHdvnbFUQYgLkCGiOKrpP9KiBvlrzvmxTNt3d0MNTf%2BSLMIxgxf00S5fKAlG2%2FC5NTE0Zq1Mmg%3D%3D&#x26;multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3A51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D</a></p>
+<p><a href="ssb:experimental?action=consume-alias&#x26;alias=alice&#x26;userId=%40FlieaFef19uJ6jhHwv2CSkFrDLYKJd%2FSuIS71A5Y2as%3D.ed25519&#x26;roomId=%4051w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D.ed25519&#x26;signature=yNDgrVOLm6sMUHdvnbFUQYgLkCGiOKrpP9KiBvlrzvmxTNt3d0MNTf%2BSLMIxgxf00S5fKAlG2%2FC5NTE0Zq1Mmg%3D%3D&#x26;multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3A51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D">ssb:experimental?action=consume-alias&#x26;alias=alice&#x26;userId=%40FlieaFef19uJ6jhHwv2CSkFrDLYKJd%2FSuIS71A5Y2as%3D.ed25519&#x26;roomId=%4051w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D.ed25519&#x26;signature=yNDgrVOLm6sMUHdvnbFUQYgLkCGiOKrpP9KiBvlrzvmxTNt3d0MNTf%2BSLMIxgxf00S5fKAlG2%2FC5NTE0Zq1Mmg%3D%3D&#x26;multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3A51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D</a></p>
 <p>The JSON endpoint <code>https://alice.scuttlebutt.eu/json</code> would respond with the following JSON:</p>
 <pre><code class="language-json">{
   "status": "successful",
@@ -750,9 +750,9 @@ CSkFrDLYKJd/SuIS71A5Y2as=.ed25519:alice
 </ul>
 <h3 id="list-of-new-ssb-uris">List of new SSB URIs</h3>
 <ul>
-<li><code>ssb:?action=consume-alias&#x26;alias=${alias}&#x26;userId=${userId}&#x26;signature=${signature}&#x26;roomId=${roomId}&#x26;multiserverAddress=${roomMsAddr}</code></li>
-<li><code>ssb:?action=join-room&#x26;invite=${inviteCode}&#x26;multiserverAddress=${roomMsAddr}</code></li>
-<li><code>ssb:?action=start-http-auth&#x26;sid=${sid}&#x26;sc=${sc}</code></li>
+<li><code>ssb:experimental?action=consume-alias&#x26;alias=${alias}&#x26;userId=${userId}&#x26;signature=${signature}&#x26;roomId=${roomId}&#x26;multiserverAddress=${roomMsAddr}</code></li>
+<li><code>ssb:experimental?action=join-room&#x26;invite=${inviteCode}&#x26;multiserverAddress=${roomMsAddr}</code></li>
+<li><code>ssb:experimental?action=start-http-auth&#x26;sid=${sid}&#x26;sc=${sc}</code></li>
 </ul>
 
 
