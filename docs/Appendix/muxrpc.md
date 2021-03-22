@@ -3,5 +3,6 @@
 - async
   - `room.registerAlias(alias, signature)`
   - `room.revokeAlias(alias)`
-  - `httpAuth.signIn(sc, cc, cr)`
-  - `httpAuth.signOut()`
+  - `httpAuth.requestSolution(sc, cc)`
+  - `httpAuth.sendSolution(sc, cc, cr)`
+  - `httpAuth.invalidateAllSolutions()`
