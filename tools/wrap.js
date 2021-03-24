@@ -28,6 +28,14 @@ a[href^="#"] {
   text-decoration: none;
   border-bottom: 1px blue dotted;
 }
+pre {
+  white-space: break-spaces;
+}
+pre, code {
+  background-color: #e8e8e8;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
 </style>
 </head>
 <script crossorigin src="https://unpkg.com/mermaid@8.9.1/dist/mermaid.min.js"></script>
@@ -41,4 +49,3 @@ const footer = `
 module.exports = function (input) {
     return [header, input, footer].join("\n")
 }
-
