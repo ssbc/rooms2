@@ -30,6 +30,66 @@ The *invite code* (1) is a random sequence of bytes of unspecified length, which
 1. If the room receives a muxrpc connection from the client, it **MUST** authorize it and grant them a [tunnel address](Tunnel%20addresses.md)
 1. The client is now an Internal User
 
+As an additional endpoint for programmatic purposes, if the query parameter `encoding=json` is added to the invite link (for illustration: `https://${roomHost}/join?invite=${inviteCode}&encoding=json`), then, in successful responses, the JSON body **MUST** conform to the following schema:
+
+invite=${inviteCode}&postTo=${submissionUrl}
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ssb-ngi-pointer/rooms2#invite-json-endpoint-success",
+  "type": "object",
+  "properties": {
+    "status": {
+      "title": "Response status tag",
+      "description": "Indicates the completion status of this response",
+      "type": "string",
+      "pattern": "^(successful)$"
+    },
+    "invite": {
+      "title": "Invite code",
+      "description": "Sequence of bytes that acts as a token to accept the invite",
+      "type": "string"
+    },
+    "postTo": {
+      "title": "Submission URL",
+      "description": "URL where clients should submit POST requests with a JSON body",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "invite",
+    "postTo"
+  ]
+}
+```
+
+In failed responses, the JSON body **MUST** conform to the following schema:
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ssb-ngi-pointer/rooms2#invite-json-endpoint-error",
+  "type": "object",
+  "properties": {
+    "status": {
+      "title": "Response status tag",
+      "description": "Indicates the completion status of this response",
+      "type": "string"
+    },
+    "error": {
+      "title": "Response error",
+      "description": "Describes the specific error that occurred",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "error"
+  ]
+}
+```
+
 ### Example
 
 Suppose the client has the SSB ID `@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519` and the room is hosted at `scuttlebutt.eu`. Then the invite user journey is:
@@ -39,6 +99,16 @@ Suppose the client has the SSB ID `@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=
 1. When the client opens that link in a browser, it renders a link to the SSB URI [ssb:experimental?action=join-room&invite=39c0ac1850ec9af14f1bb73&postTo=https%3A%2F%2Fscuttlebutt.eu%2Fclaiminvite](ssb:experimental?action=join-room&invite=39c0ac1850ec9af14f1bb73&postTo=https%3A%2F%2Fscuttlebutt.eu%2Fclaiminvite)
 1. The client's SSB app processes the SSB URI and makes a POST request to `https://scuttlebutt.eu/claiminvite` with body `{"id":"@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519","invite":"39c0ac1850ec9af14f1bb73"}`
 1. The room accepts the POST request, making the client a new internal user
+
+The JSON endpoint `https://scuttlebutt.eu/join?invite=39c0ac1850ec9af14f1bb73&encoding=json` is an alternative to the SSB URI, and would respond with the following JSON:
+
+```json
+{
+  "status": "successful",
+  "invite": "39c0ac1850ec9af14f1bb73",
+  "postTo": "https://scuttlebutt.eu/claiminvite"
+}
+```
 
 ### Implementation notes
 
