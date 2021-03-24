@@ -34,7 +34,7 @@ a[href^="#"] {
 <body>
 
 <h1 id="ssb-rooms-20">SSB Rooms 2.0</h1>
-<p><strong>Revision:</strong> <code>2021-03-22</code></p>
+<p><strong>Revision:</strong> <code>2021-03-24</code></p>
 <p><strong>Author:</strong> Andre Medeiros <a href="mailto:contact@staltz.com">contact@staltz.com</a></p>
 <p><strong>License:</strong> This work is licensed under a <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
 <h2 id="abstract">Abstract</h2>
@@ -584,7 +584,7 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
       "type": "string",
       "pattern": "^(successful)$"
     },
-    "address": {
+    "multiserverAddress": {
       "title": "Multiserver address",
       "description": "Should conform to https://github.com/ssbc/multiserver-address",
       "type": "string"
@@ -612,7 +612,7 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
   },
   "required": [
     "status",
-    "address",
+    "multiserverAddress",
     "roomId",
     "userId",
     "alias",
@@ -644,16 +644,16 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 }
 </code></pre>
 <h4 id="example-3">Example</h4>
-<p>Suppose the alias is <code>alice</code>, registered for the user ID <code>@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519</code> at the room with host name <code>scuttlebutt.eu</code>. Then the alias endpoint <code>https://alice.scuttlebutt.eu</code> responds with HTML containing the following SSB URI:</p>
-<p><a href="ssb:experimental?action=consume-alias&#x26;alias=alice&#x26;userId=%40FlieaFef19uJ6jhHwv2CSkFrDLYKJd%2FSuIS71A5Y2as%3D.ed25519&#x26;roomId=%4051w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D.ed25519&#x26;signature=yNDgrVOLm6sMUHdvnbFUQYgLkCGiOKrpP9KiBvlrzvmxTNt3d0MNTf%2BSLMIxgxf00S5fKAlG2%2FC5NTE0Zq1Mmg%3D%3D&#x26;multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3A51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D">ssb:experimental?action=consume-alias&#x26;alias=alice&#x26;userId=%40FlieaFef19uJ6jhHwv2CSkFrDLYKJd%2FSuIS71A5Y2as%3D.ed25519&#x26;roomId=%4051w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D.ed25519&#x26;signature=yNDgrVOLm6sMUHdvnbFUQYgLkCGiOKrpP9KiBvlrzvmxTNt3d0MNTf%2BSLMIxgxf00S5fKAlG2%2FC5NTE0Zq1Mmg%3D%3D&#x26;multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3A51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D</a></p>
-<p>The JSON endpoint <code>https://alice.scuttlebutt.eu/?encoding=json</code> would respond with the following JSON:</p>
+<p>Suppose the alias is <code>bob</code>, registered for the user ID <code>@yVQxFxzeRQ13DQ813hf8G20U5z5I/nkNDliKeSs/IpU=.ed25519</code> at the room with host name <code>scuttlebutt.eu</code>. Then the alias endpoint <code>https://bob.scuttlebutt.eu</code> responds with HTML containing the following SSB URI:</p>
+<p><a href="ssb:experimental?action=consume-alias&#x26;multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3Azz%2Bn7zuFc4wofIgKeEpXgB%2B%2FXQZB43Xj2rrWyD0QM2M%3D&#x26;alias=bob&#x26;roomId=%40zz%2Bn7zuFc4wofIgKeEpXgB%2B%2FXQZB43Xj2rrWyD0QM2M%3D.ed25519&#x26;userId=%40yVQxFxzeRQ13DQ813hf8G20U5z5I%2FnkNDliKeSs%2FIpU%3D.ed25519&#x26;signature=EiEgn%2Fh2lKoaz28ggKBod6havJNKapRKCmXQ%2Ft%2F4KS1gY4T6zPXWhw6kTaglt8vDJZW%2BjJRJvfB4Rryhl0njCg%3D%3D.sig.ed25519">ssb:experimental?action=consume-alias&#x26;multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3Azz%2Bn7zuFc4wofIgKeEpXgB%2B%2FXQZB43Xj2rrWyD0QM2M%3D&#x26;alias=bob&#x26;roomId=%40zz%2Bn7zuFc4wofIgKeEpXgB%2B%2FXQZB43Xj2rrWyD0QM2M%3D.ed25519&#x26;userId=%40yVQxFxzeRQ13DQ813hf8G20U5z5I%2FnkNDliKeSs%2FIpU%3D.ed25519&#x26;signature=EiEgn%2Fh2lKoaz28ggKBod6havJNKapRKCmXQ%2Ft%2F4KS1gY4T6zPXWhw6kTaglt8vDJZW%2BjJRJvfB4Rryhl0njCg%3D%3D.sig.ed25519</a></p>
+<p>The JSON endpoint <code>https://bob.scuttlebutt.eu/?encoding=json</code> would respond with the following JSON:</p>
 <pre><code class="language-json">{
   "status": "successful",
-  "address": "net:scuttlebutt.eu:8008~shs:51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo=",
-  "roomId": "@51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo=.ed25519",
-  "userId": "@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519",
-  "alias": "alice",
-  "signature": "yNDgrVOLm6sMUHdvnbFUQYgLkCGiOKrpP9KiBvlrzvmxTNt3d0MNTf+SLMIxgxf00S5fKAlG2/C5NTE0Zq1Mmg=="
+  "multiserverAddress": "net:scuttlebutt.eu:8008~shs:zz+n7zuFc4wofIgKeEpXgB+/XQZB43Xj2rrWyD0QM2M=",
+  "roomId": "@zz+n7zuFc4wofIgKeEpXgB+/XQZB43Xj2rrWyD0QM2M=.ed25519",
+  "userId": "@yVQxFxzeRQ13DQ813hf8G20U5z5I/nkNDliKeSs/IpU=.ed25519",
+  "alias": "bob",
+  "signature": "EiEgn/h2lKoaz28ggKBod6havJNKapRKCmXQ/t/4KS1gY4T6zPXWhw6kTaglt8vDJZW+jJRJvfB4Rryhl0njCg==.sig.ed25519"
 }
 </code></pre>
 <h4 id="security-considerations-6">Security considerations</h4>
