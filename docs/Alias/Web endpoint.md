@@ -104,20 +104,20 @@ In failed responses, the JSON body **MUST** conform to the following schema:
 
 ### Example
 
-Suppose the alias is `alice`, registered for the user ID `@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519` at the room with host name `scuttlebutt.eu`. Then the alias endpoint `https://alice.scuttlebutt.eu` responds with HTML containing the following SSB URI:
+Suppose the alias is `bob`, registered for the user ID `@yVQxFxzeRQ13DQ813hf8G20U5z5I/nkNDliKeSs/IpU=.ed25519` at the room with host name `scuttlebutt.eu`. Then the alias endpoint `https://bob.scuttlebutt.eu` responds with HTML containing the following SSB URI:
 
-[ssb:experimental?action=consume-alias&alias=alice&userId=%40FlieaFef19uJ6jhHwv2CSkFrDLYKJd%2FSuIS71A5Y2as%3D.ed25519&roomId=%4051w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D.ed25519&signature=yNDgrVOLm6sMUHdvnbFUQYgLkCGiOKrpP9KiBvlrzvmxTNt3d0MNTf%2BSLMIxgxf00S5fKAlG2%2FC5NTE0Zq1Mmg%3D%3D&multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3A51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D](ssb:experimental?action=consume-alias&alias=alice&userId=%40FlieaFef19uJ6jhHwv2CSkFrDLYKJd%2FSuIS71A5Y2as%3D.ed25519&roomId=%4051w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D.ed25519&signature=yNDgrVOLm6sMUHdvnbFUQYgLkCGiOKrpP9KiBvlrzvmxTNt3d0MNTf%2BSLMIxgxf00S5fKAlG2%2FC5NTE0Zq1Mmg%3D%3D&multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3A51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D)
+[ssb:experimental?action=consume-alias&multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3Azz%2Bn7zuFc4wofIgKeEpXgB%2B%2FXQZB43Xj2rrWyD0QM2M%3D&alias=bob&roomId=%40zz%2Bn7zuFc4wofIgKeEpXgB%2B%2FXQZB43Xj2rrWyD0QM2M%3D.ed25519&userId=%40yVQxFxzeRQ13DQ813hf8G20U5z5I%2FnkNDliKeSs%2FIpU%3D.ed25519&signature=EiEgn%2Fh2lKoaz28ggKBod6havJNKapRKCmXQ%2Ft%2F4KS1gY4T6zPXWhw6kTaglt8vDJZW%2BjJRJvfB4Rryhl0njCg%3D%3D.sig.ed25519](ssb:experimental?action=consume-alias&multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3Azz%2Bn7zuFc4wofIgKeEpXgB%2B%2FXQZB43Xj2rrWyD0QM2M%3D&alias=bob&roomId=%40zz%2Bn7zuFc4wofIgKeEpXgB%2B%2FXQZB43Xj2rrWyD0QM2M%3D.ed25519&userId=%40yVQxFxzeRQ13DQ813hf8G20U5z5I%2FnkNDliKeSs%2FIpU%3D.ed25519&signature=EiEgn%2Fh2lKoaz28ggKBod6havJNKapRKCmXQ%2Ft%2F4KS1gY4T6zPXWhw6kTaglt8vDJZW%2BjJRJvfB4Rryhl0njCg%3D%3D.sig.ed25519)
 
-The JSON endpoint `https://alice.scuttlebutt.eu/?encoding=json` would respond with the following JSON:
+The JSON endpoint `https://bob.scuttlebutt.eu/?encoding=json` would respond with the following JSON:
 
 ```json
 {
   "status": "successful",
-  "multiserverAddress": "net:scuttlebutt.eu:8008~shs:51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo=",
-  "roomId": "@51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo=.ed25519",
-  "userId": "@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519",
-  "alias": "alice",
-  "signature": "yNDgrVOLm6sMUHdvnbFUQYgLkCGiOKrpP9KiBvlrzvmxTNt3d0MNTf+SLMIxgxf00S5fKAlG2/C5NTE0Zq1Mmg=="
+  "multiserverAddress": "net:scuttlebutt.eu:8008~shs:zz+n7zuFc4wofIgKeEpXgB+/XQZB43Xj2rrWyD0QM2M=",
+  "roomId": "@zz+n7zuFc4wofIgKeEpXgB+/XQZB43Xj2rrWyD0QM2M=.ed25519",
+  "userId": "@yVQxFxzeRQ13DQ813hf8G20U5z5I/nkNDliKeSs/IpU=.ed25519",
+  "alias": "bob",
+  "signature": "EiEgn/h2lKoaz28ggKBod6havJNKapRKCmXQ/t/4KS1gY4T6zPXWhw6kTaglt8vDJZW+jJRJvfB4Rryhl0njCg==.sig.ed25519"
 }
 ```
 
