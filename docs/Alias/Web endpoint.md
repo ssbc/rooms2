@@ -39,7 +39,7 @@ As an additional endpoint for programmatic purposes, if the query parameter `enc
       "type": "string",
       "pattern": "^(successful)$"
     },
-    "address": {
+    "multiserverAddress": {
       "title": "Multiserver address",
       "description": "Should conform to https://github.com/ssbc/multiserver-address",
       "type": "string"
@@ -67,7 +67,7 @@ As an additional endpoint for programmatic purposes, if the query parameter `enc
   },
   "required": [
     "status",
-    "address",
+    "multiserverAddress",
     "roomId",
     "userId",
     "alias",
@@ -113,7 +113,7 @@ The JSON endpoint `https://alice.scuttlebutt.eu/?encoding=json` would respond wi
 ```json
 {
   "status": "successful",
-  "address": "net:scuttlebutt.eu:8008~shs:51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo=",
+  "multiserverAddress": "net:scuttlebutt.eu:8008~shs:51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo=",
   "roomId": "@51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo=.ed25519",
   "userId": "@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519",
   "alias": "alice",
