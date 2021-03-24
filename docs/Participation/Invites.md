@@ -1,0 +1,125 @@
+## Invites
+
+When [joining](Joining.md) a *Community* room or *Restricted* room, [internal users](../Stakeholders/Internal%20user.md) create invites. An invite can be sent to anyone who is not yet an internal user, and who can then "claim" the invite in order to become a new internal user of the room.
+
+There are five parts in this system:
+
+1. Invite code
+1. Invite Web URL
+1. Invite façade
+1. Invite SSB URI
+1. ID submission
+
+The *invite code* (1) is a random sequence of bytes of unspecified length, which can be encoded as a parameter in the *invite web URL* (2), a URL on the room server, which responds with the *invite façade* (3) as an HTML page, which in turn contains the *invite SSB URI* (4) as an SSB URI. Finally, to consume the invite URI, the user's SSB ID is (5) *submitted* via a POST request. The user journey to claim an invite flows in the direction described above.
+
+### Specification
+
+1. Suppose an SSB user (known as "the client") has the SSB ID `id` and has an SSB app supporting parsing SSB URIs
+1. Suppose the room is hosted at domain `roomHost` and has generated an invite `inviteCode`
+1. The invite link corresponding to `inviteCode` **SHOULD** be a URL in the format `https://${roomHost}/join?invite=${inviteCode}`
+1. When the client visits that URL in a browser:
+    1. If the `inviteCode` is already claimed or otherwise no longer valid, an error page **SHOULD** be rendered as response, and no further steps in this specification apply
+    1. Otherwise, the `inviteCode` is *unclaimed*, and the following SSB URI **MUST** be rendered on the response page: `ssb:experimental?action=join-room&invite=${inviteCode}&postTo=${submissionUrl}` where `${submissionUrl}` is another URL on the room
+1. The client's SSB app **SHOULD** parse the SSB URI and subsequently **SHOULD** send an HTTPS POST request to the endpoint `submissionUrl` with the header `Content-Type` equal `application/json` and the following body: `{"id":"${id}","invite":"${inviteCode}"}`
+1. The room receives the POST request and:
+    1. If the `inviteCode` is already claimed, the response **SHOULD** be an error, and no further steps in this specification apply
+    1. Otherwise, the `inviteCode` is now considered *claimed* for the client with SSB ID `id`, which means:
+        1. The room **SHOULD** store the client's `id` in the [Internal user registry](Internal%20user%20registry.md), effectively making the client a new internal user
+        1. The room **MUST** respond with header `Content-Type` equal `application/json` and body `{"multiserverAddress":"${roomMsAddr}"}` where `${roomMsAddr}` consititutes the room's multiserver address
+1. The client receives the `submissionUrl` response, parses `${roomMsAddr}` from the response body, and **MAY** use that multiserver address to create a muxrpc connection with the room
+1. If the room receives a muxrpc connection from the client, it **MUST** authorize it and grant them a [tunnel address](Tunnel%20addresses.md)
+1. The client is now an Internal User
+
+As an additional endpoint for programmatic purposes, if the query parameter `encoding=json` is added to the invite link (for illustration: `https://${roomHost}/join?invite=${inviteCode}&encoding=json`), then, in successful responses, the JSON body **MUST** conform to the following schema:
+
+invite=${inviteCode}&postTo=${submissionUrl}
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ssb-ngi-pointer/rooms2#invite-json-endpoint-success",
+  "type": "object",
+  "properties": {
+    "status": {
+      "title": "Response status tag",
+      "description": "Indicates the completion status of this response",
+      "type": "string",
+      "pattern": "^(successful)$"
+    },
+    "invite": {
+      "title": "Invite code",
+      "description": "Sequence of bytes that acts as a token to accept the invite",
+      "type": "string"
+    },
+    "postTo": {
+      "title": "Submission URL",
+      "description": "URL where clients should submit POST requests with a JSON body",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "invite",
+    "postTo"
+  ]
+}
+```
+
+In failed responses, the JSON body **MUST** conform to the following schema:
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ssb-ngi-pointer/rooms2#invite-json-endpoint-error",
+  "type": "object",
+  "properties": {
+    "status": {
+      "title": "Response status tag",
+      "description": "Indicates the completion status of this response",
+      "type": "string"
+    },
+    "error": {
+      "title": "Response error",
+      "description": "Describes the specific error that occurred",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "error"
+  ]
+}
+```
+
+### Example
+
+Suppose the client has the SSB ID `@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519` and the room is hosted at `scuttlebutt.eu`. Then the invite user journey is:
+
+1. Invite code `39c0ac1850ec9af14f1bb73` was generated by any internal user with the rights to generate such
+1. The corresponding invite link is `https://scuttlebutt.eu/join?invite=39c0ac1850ec9af14f1bb73`
+1. When the client opens that link in a browser, it renders a link to the SSB URI [ssb:experimental?action=join-room&invite=39c0ac1850ec9af14f1bb73&postTo=https%3A%2F%2Fscuttlebutt.eu%2Fclaiminvite](ssb:experimental?action=join-room&invite=39c0ac1850ec9af14f1bb73&postTo=https%3A%2F%2Fscuttlebutt.eu%2Fclaiminvite)
+1. The client's SSB app processes the SSB URI and makes a POST request to `https://scuttlebutt.eu/claiminvite` with body `{"id":"@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519","invite":"39c0ac1850ec9af14f1bb73"}`
+1. The room accepts the POST request, making the client a new internal user
+
+The JSON endpoint `https://scuttlebutt.eu/join?invite=39c0ac1850ec9af14f1bb73&encoding=json` is an alternative to the SSB URI, and would respond with the following JSON:
+
+```json
+{
+  "status": "successful",
+  "invite": "39c0ac1850ec9af14f1bb73",
+  "postTo": "https://scuttlebutt.eu/claiminvite"
+}
+```
+
+### Implementation notes
+
+The rendering of the invite façade is unspecified on purpose. Implementors can choose to present the SSB URI either as a link, or as a code to be copied and pasted, or as an automatic redirect.
+
+Furthermore, the invite page is a good place to render instructions on how to install an SSB app, in case the invitee is uninitiated in SSB and this is their entry point.
+
+Specifically, these instructions can also use mobile operating systems deep linking capabilities. For instance, suppose the page recommends installing Manyverse: the page could link to `join.manyver.se` (with additional query parameters to pass on the invite code), which in turn uses Android Deep Linking redirect (see [this technical possibility](https://stackoverflow.com/questions/28744167/android-deep-linking-use-the-same-link-for-the-app-and-the-play-store)) to open Manyverse (if it's installed) or open Google Play Store (to install the app). Same idea should apply for mobile apps, say "Imaginary App" using the fixed URL "join.imaginary.app". Desktop apps are different as they can be installed without an app store. This paragraph was informed by Wouter Moraal's [UX Research for Manyverse](https://www.manyver.se/ux-research/).
+
+### Security considerations
+
+#### Malicious web visitor
+
+A web visitor, either human or bot, could attempt brute force visiting all possible invite URLs, in order to force themselves to become an [internal user](../Stakeholders/Internal%20user.md). However, this could easily be mitigated by rate limiting requests by the same IP address.

@@ -15,7 +15,7 @@
   - [Joining](docs/Participation/Joining.md)
   - [Internal user registry](docs/Participation/Internal%20user%20registry.md)
   - [Internal user authentication](docs/Participation/Internal%20user%20authentication.md)
-  - [Invite web endpoint](docs/Participation/Invite%20endpoint.md)
+  - [Invites](docs/Participation/Invites.md)
   - [Tunnel addresses](docs/Participation/Tunnel%20addresses.md)
   - [Tunneled connection](docs/Participation/Tunneled%20connection.md)
   - [Tunneled authentication](docs/Participation/Tunneled%20authentication.md)
