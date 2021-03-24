@@ -65,7 +65,7 @@ a[href^="#"] {
 <li><a href="#joining">Joining</a></li>
 <li><a href="#internal-user-registry">Internal user registry</a></li>
 <li><a href="#internal-user-authentication">Internal user authentication</a></li>
-<li><a href="#invite-endpoint">Invite endpoint</a></li>
+<li><a href="#invites">Invites</a></li>
 <li><a href="#tunnel-addresses">Tunnel addresses</a></li>
 <li><a href="#tunneled-connection">Tunneled connection</a></li>
 <li><a href="#tunneled-authentication">Tunneled authentication</a></li>
@@ -120,7 +120,7 @@ a[href^="#"] {
 <li>Other <a href="#privacy-modes">Privacy modes</a> and respective ways of <a href="#joining">joining</a></li>
 <li><a href="#internal-user-authentication">Internal user authentication</a></li>
 <li><a href="#tunneled-authentication">Tunneled authentication</a></li>
-<li><a href="#invite-endpoint">Invite endpoint</a></li>
+<li><a href="#invites">Invites</a></li>
 <li><a href="#web-dashboard">Web Dashboard</a> and <a href="#sign-in-with-ssb">Sign-in with SSB</a></li>
 <li><a href="#readme">Aliases</a> (requires "Web Dashboard" and "Sign-in with SSB")</li>
 </ul>
@@ -298,34 +298,19 @@ a[href^="#"] {
 </li>
 <li><strong>Community:</strong>
 <ol>
-<li>An <a href="#internal-user">internal user</a>, Bob, <a href="#sign-in-with-ssb">signs into</a> the room's <a href="#web-dashboard">web dashboard</a> where he creates a one-time invite code in the form of an <a href="#invite-endpoint">invite endpoint</a>, provided by the dashboard.</li>
-<li>Bob informs an <a href="#external-user">external user</a>, Alice, of the invite code</li>
-<li>Alice consumes the invite code in their SSB app that supports being a room client</li>
-<li>The room checks whether the invite code is valid and has not yet been consumed
-<ol>
-<li>If it is invalid or has been consumed, reply to Alice with an error</li>
-<li>Else, proceed (below)</li>
-</ol>
-</li>
-<li>The room accepts the connection from Alice and immediately grants her a <a href="#tunnel-addresses">tunnel address</a></li>
+<li>An <a href="#internal-user">internal user</a>, Bob, <a href="#sign-in-with-ssb">signs into</a> the room's <a href="#web-dashboard">web dashboard</a> where he creates a one-time invite code in the form of an <a href="#invites">invite link</a>, provided by the dashboard.</li>
+<li>Bob informs an <a href="#external-user">external user</a>, Alice, of the invite link</li>
+<li>Alice consumes the invite according to the <a href="#invites">invites specification</a></li>
 <li>Alice has become an <a href="#internal-user">internal user</a></li>
-<li>The room stores Alice's SSB ID in the <a href="#internal-user-registry">Internal user registry</a></li>
 </ol>
 </li>
 <li><strong>Restricted:</strong>
 <ol>
-<li>A <a href="#moderator">moderator</a>, Carla, <a href="#sign-in-with-ssb">signs into</a> the room's <a href="#web-dashboard">web dashboard</a> where she creates a one-time invite code in the form of an <a href="#invite-endpoint">invite endpoint</a>, provided by the dashboard.</li>
-<li>Bob informs an <a href="#external-user">external user</a>, Alice, of the invite code</li>
-<li>Alice consumes the invite code in their SSB app that supports being a room client</li>
-<li>The room checks whether the invite code is valid and has not yet been consumed
-<ol>
-<li>If it is invalid or has been consumed, reply to Alice with an error</li>
-<li>Else, proceed (below)</li>
-</ol>
-</li>
-<li>The room accepts the connection from Alice and immediately grants her a <a href="#tunnel-addresses">tunnel address</a></li>
+<li>A <a href="#moderator">moderator</a>, Carla, <a href="#sign-in-with-ssb">signs into</a> the room's <a href="#web-dashboard">web dashboard</a> where she creates a one-time invite code in the form of an <a href="#invites">invite link</a>, provided by the dashboard.</li>
+<li>Bob informs an <a href="#external-user">external user</a>, Alice, of the invite link</li>
+<li>Alice consumes the invite according to the <a href="#invites">invites specification</a></li>
 <li>Alice has become an <a href="#internal-user">internal user</a></li>
-<li>The room stores Alice's SSB ID in the <a href="#internal-user-registry">Internal user registry</a></li>
+<li>Alice has become an <a href="#internal-user">internal user</a></li>
 </ol>
 </li>
 </ul>
@@ -342,32 +327,121 @@ a[href^="#"] {
 <p>In the case of a room configured with <a href="#privacy-modes">privacy modes</a> <em>Restricted</em>, the internal users of this room may want to be shielded from any external user gathering data about them, such as resolving aliases via web endpoints. The room needs to allow the external user to call muxrpc APIs, because the external user may be trying to <a href="#joining">join</a> by consuming an invite. But in the case of a malicious external user, they may try to call other muxrpc APIs and so far this spec does not address how to protect against this possibility.</p>
 <h5 id="malicious-room-admin">Malicious <a href="#room-admin">room admin</a></h5>
 <p>The room software could be modified by the room admin to not authenticate some users as internal users.</p>
-<h3 id="invite-endpoint">Invite endpoint</h3>
-<p>When <a href="#joining">joining</a> a <em>Community</em> room or <em>Restricted</em> room, <a href="#internal-user">internal users</a> create invites. The invite code is originally just random bytes encoded as hex, but can be transformed into an <em>invite link</em>, i.e. an HTTPS endpoint URL on the room server.</p>
+<h3 id="invites">Invites</h3>
+<p>When <a href="#joining">joining</a> a <em>Community</em> room or <em>Restricted</em> room, <a href="#internal-user">internal users</a> create invites. An invite can be sent to anyone who is not yet an internal user, and who can then "claim" the invite in order to become a new internal user of the room.</p>
+<p>There are five parts in this system:</p>
+<ol>
+<li>Invite code</li>
+<li>Invite Web URL</li>
+<li>Invite façade</li>
+<li>Invite SSB URI</li>
+<li>ID submission</li>
+</ol>
+<p>The <em>invite code</em> (1) is a random sequence of bytes of unspecified length, which can be encoded as a parameter in the <em>invite web URL</em> (2), a URL on the room server, which responds with the <em>invite façade</em> (3) as an HTML page, which in turn contains the <em>invite SSB URI</em> (4) as an SSB URI. Finally, to consume the invite URI, the user's SSB ID is (5) <em>submitted</em> via a POST request. The user journey to claim an invite flows in the direction described above.</p>
 <h4 id="specification-7">Specification</h4>
 <ol>
-<li>Suppose the room is hosted at domain <code>roomHost</code> and it has generated an invite <code>inviteCode</code></li>
-<li>The invite URL <strong>SHOULD</strong> be <code>https://${roomHost}/join?invite=${inviteCode}</code></li>
-<li>Once a web visitor opens that link, then they <strong>MUST</strong> be presented with the SSB URI <code>ssb:experimental?action=join-room&#x26;invite=${inviteCode}&#x26;multiserverAddress=${roomMsAddr}</code> where <code>${roomMsAddr}</code> consititutes the room's multiserver address in an SSB URI friendly format
+<li>Suppose an SSB user (known as "the client") has the SSB ID <code>id</code> and has an SSB app supporting parsing SSB URIs</li>
+<li>Suppose the room is hosted at domain <code>roomHost</code> and has generated an invite <code>inviteCode</code></li>
+<li>The invite link corresponding to <code>inviteCode</code> <strong>SHOULD</strong> be a URL in the format <code>https://${roomHost}/join?invite=${inviteCode}</code></li>
+<li>When the client visits that URL in a browser:
 <ol>
-<li>If the operating system detects an installed SSB app that recognizes the <code>ssb</code> scheme, the SSB app handles this URI</li>
-<li>Else, the website at displays instructions how to install an SSB app</li>
+<li>If the <code>inviteCode</code> is already claimed or otherwise no longer valid, an error page <strong>SHOULD</strong> be rendered as response, and no further steps in this specification apply</li>
+<li>Otherwise, the <code>inviteCode</code> is <em>unclaimed</em>, and the following SSB URI <strong>MUST</strong> be rendered on the response page: <code>ssb:experimental?action=join-room&#x26;invite=${inviteCode}&#x26;postTo=${submissionUrl}</code> where <code>${submissionUrl}</code> is another URL on the room</li>
 </ol>
-<ul>
-<li>For instance, there could be an app store URL (see <a href="https://stackoverflow.com/questions/28744167/android-deep-linking-use-the-same-link-for-the-app-and-the-play-store">this technical possibility</a>) to install Manyverse which further redirects to this SSB URI, maybe may have to rely on a fixed URL (for Manyverse to register in its manifest) such as <code>join.manyver.se</code>. Same idea for other mobile apps, say "Imaginary App" using the fixed URL "join.imaginary.app". Desktop apps are different as they can be installed without an app store.</li>
-</ul>
 </li>
-<li>The SSB app knows how to parse the SSB URI into inputs necessary for <a href="#joining">joining the room</a></li>
-</ol>
-<h4 id="example">Example</h4>
+<li>The client's SSB app <strong>SHOULD</strong> parse the SSB URI and subsequently <strong>SHOULD</strong> send an HTTPS POST request to the endpoint <code>submissionUrl</code> with the header <code>Content-Type</code> equal <code>application/json</code> and the following body: <code>{"id":"${id}","invite":"${inviteCode}"}</code></li>
+<li>The room receives the POST request and:
 <ol>
-<li>Invite link is <code>https://scuttlebutt.eu/join?invite=39c0ac1850ec9af14f1bb73</code></li>
-<li>User opens that link in a browser, which redirects to the SSB URI <a href="ssb:experimental?action=join-room&#x26;invite=39c0ac1850ec9af14f1bb73&#x26;multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3A51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D">ssb:experimental?action=join-room&#x26;invite=39c0ac1850ec9af14f1bb73&#x26;multiserverAddress=net%3Ascuttlebutt.eu%3A8008~shs%3A51w4nYL0k7mRzDGw20KQqCjt35y8qLiBNtWk3MX7ppo%3D</a></li>
-<li>User's operating system opens that SSB URI in an SSB app, which then communicates with the room server via muxrpc (read more in <a href="#joining">Joining</a>)</li>
+<li>If the <code>inviteCode</code> is already claimed, the response <strong>SHOULD</strong> be an error, and no further steps in this specification apply</li>
+<li>Otherwise, the <code>inviteCode</code> is now considered <em>claimed</em> for the client with SSB ID <code>id</code>, which means:
+<ol>
+<li>The room <strong>SHOULD</strong> store the client's <code>id</code> in the <a href="#internal-user-registry">Internal user registry</a>, effectively making the client a new internal user</li>
+<li>The room <strong>MUST</strong> respond with header <code>Content-Type</code> equal <code>application/json</code> and body <code>{"multiserverAddress":"${roomMsAddr}"}</code> where <code>${roomMsAddr}</code> consititutes the room's multiserver address</li>
 </ol>
+</li>
+</ol>
+</li>
+<li>The client receives the <code>submissionUrl</code> response, parses <code>${roomMsAddr}</code> from the response body, and <strong>MAY</strong> use that multiserver address to create a muxrpc connection with the room</li>
+<li>If the room receives a muxrpc connection from the client, it <strong>MUST</strong> authorize it and grant them a <a href="#tunnel-addresses">tunnel address</a></li>
+<li>The client is now an Internal User</li>
+</ol>
+<p>As an additional endpoint for programmatic purposes, if the query parameter <code>encoding=json</code> is added to the invite link (for illustration: <code>https://${roomHost}/join?invite=${inviteCode}&#x26;encoding=json</code>), then, in successful responses, the JSON body <strong>MUST</strong> conform to the following schema:</p>
+<p>invite=${inviteCode}&#x26;postTo=${submissionUrl}</p>
+<pre><code class="language-json">{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ssb-ngi-pointer/rooms2#invite-json-endpoint-success",
+  "type": "object",
+  "properties": {
+    "status": {
+      "title": "Response status tag",
+      "description": "Indicates the completion status of this response",
+      "type": "string",
+      "pattern": "^(successful)$"
+    },
+    "invite": {
+      "title": "Invite code",
+      "description": "Sequence of bytes that acts as a token to accept the invite",
+      "type": "string"
+    },
+    "postTo": {
+      "title": "Submission URL",
+      "description": "URL where clients should submit POST requests with a JSON body",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "invite",
+    "postTo"
+  ]
+}
+</code></pre>
+<p>In failed responses, the JSON body <strong>MUST</strong> conform to the following schema:</p>
+<pre><code class="language-json">{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ssb-ngi-pointer/rooms2#invite-json-endpoint-error",
+  "type": "object",
+  "properties": {
+    "status": {
+      "title": "Response status tag",
+      "description": "Indicates the completion status of this response",
+      "type": "string"
+    },
+    "error": {
+      "title": "Response error",
+      "description": "Describes the specific error that occurred",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "error"
+  ]
+}
+</code></pre>
+<h4 id="example">Example</h4>
+<p>Suppose the client has the SSB ID <code>@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519</code> and the room is hosted at <code>scuttlebutt.eu</code>. Then the invite user journey is:</p>
+<ol>
+<li>Invite code <code>39c0ac1850ec9af14f1bb73</code> was generated by any internal user with the rights to generate such</li>
+<li>The corresponding invite link is <code>https://scuttlebutt.eu/join?invite=39c0ac1850ec9af14f1bb73</code></li>
+<li>When the client opens that link in a browser, it renders a link to the SSB URI <a href="ssb:experimental?action=join-room&#x26;invite=39c0ac1850ec9af14f1bb73&#x26;postTo=https%3A%2F%2Fscuttlebutt.eu%2Fclaiminvite">ssb:experimental?action=join-room&#x26;invite=39c0ac1850ec9af14f1bb73&#x26;postTo=https%3A%2F%2Fscuttlebutt.eu%2Fclaiminvite</a></li>
+<li>The client's SSB app processes the SSB URI and makes a POST request to <code>https://scuttlebutt.eu/claiminvite</code> with body <code>{"id":"@FlieaFef19uJ6jhHwv2CSkFrDLYKJd/SuIS71A5Y2as=.ed25519","invite":"39c0ac1850ec9af14f1bb73"}</code></li>
+<li>The room accepts the POST request, making the client a new internal user</li>
+</ol>
+<p>The JSON endpoint <code>https://scuttlebutt.eu/join?invite=39c0ac1850ec9af14f1bb73&#x26;encoding=json</code> is an alternative to the SSB URI, and would respond with the following JSON:</p>
+<pre><code class="language-json">{
+  "status": "successful",
+  "invite": "39c0ac1850ec9af14f1bb73",
+  "postTo": "https://scuttlebutt.eu/claiminvite"
+}
+</code></pre>
+<h4 id="implementation-notes">Implementation notes</h4>
+<p>The rendering of the invite façade is unspecified on purpose. Implementors can choose to present the SSB URI either as a link, or as a code to be copied and pasted, or as an automatic redirect.</p>
+<p>Furthermore, the invite page is a good place to render instructions on how to install an SSB app, in case the invitee is uninitiated in SSB and this is their entry point.</p>
+<p>Specifically, these instructions can also use mobile operating systems deep linking capabilities. For instance, suppose the page recommends installing Manyverse: the page could link to <code>join.manyver.se</code> (with additional query parameters to pass on the invite code), which in turn uses Android Deep Linking redirect (see <a href="https://stackoverflow.com/questions/28744167/android-deep-linking-use-the-same-link-for-the-app-and-the-play-store">this technical possibility</a>) to open Manyverse (if it's installed) or open Google Play Store (to install the app). Same idea should apply for mobile apps, say "Imaginary App" using the fixed URL "join.imaginary.app". Desktop apps are different as they can be installed without an app store. This paragraph was informed by Wouter Moraal's <a href="https://www.manyver.se/ux-research/">UX Research for Manyverse</a>.</p>
 <h4 id="security-considerations-2">Security considerations</h4>
 <h5 id="malicious-web-visitor">Malicious web visitor</h5>
-<p>A web visitor, either human or bot, could attempt brute force visiting all possible invite endpoints, in order to force themselves to become an <a href="#internal-user">internal user</a>. However, this could easily be mitigated by rate limiting requests by the same IP address.</p>
+<p>A web visitor, either human or bot, could attempt brute force visiting all possible invite URLs, in order to force themselves to become an <a href="#internal-user">internal user</a>. However, this could easily be mitigated by rate limiting requests by the same IP address.</p>
 <h3 id="tunnel-addresses">Tunnel addresses</h3>
 <p>To establish a <a href="#tunneled-connection">tunneled connection</a>, the peer initiating it must know the <em>tunnel address</em> of the peer at the other side of the tunnel.</p>
 <h4 id="specification-8">Specification</h4>
@@ -415,7 +489,7 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <p>Thus tunneled authentication <strong>requires mutual follows</strong> ("friendship") before establishing a functioning <a href="#tunneled-connection">tunneled connection</a>.</p>
 <p>When a denial of connection occurs, the peer that received the connection should be able to see (and thus locally log): (1) SSB ID of the intermediary peer (room) used, (2) SSB ID of the origin peer behind the intermediary, (3) (optionally) the address (<a href="#tunnel-addresses">tunnel address</a> or <a href="#web-endpoint">alias endpoint URL</a>) of the origin peer.</p>
 <p>The user that received the denied connection can then see this fact in their SSB app, and then they can make a conscious choice to either (1) follow the origin peer, or (2) connect to the origin peer (if (3) from the previous paragraph existed), or both.</p>
-<h4 id="implementation-notes">Implementation notes</h4>
+<h4 id="implementation-notes-1">Implementation notes</h4>
 <p>Note that in current room server implementation in JavaScript, <a href="https://github.com/staltz/ssb-room/blob/e78d54887682664def36d48ca9e648fc609478e9/tunnel/server.js#L100"><code>opts.origin</code></a> in the room is calculated from secret-handshake, so it can be trusted to be authentic.</p>
 <p>For the next version of rooms, if we want <code>opts.origin</code> to also contain the origin peer's address (ssb-tunnel address or alias endpoint), then we need other means of verifying that the origin address is authentic. E.g. if it's an <a href="#web-endpoint">alias endpoint URL</a>, maybe the receiving peer visits the alias JSON endpoint then <a href="#alias-consumption">consumes the alias</a>, or maybe the receiving peer takes the ssb-tunnel address and verifies that the ID matches with the secret-handshake-given ID.</p>
 <h2 id="alias">Alias</h2>
@@ -760,7 +834,7 @@ CSkFrDLYKJd/SuIS71A5Y2as=.ed25519:alice
 <h3 id="list-of-new-ssb-uris">List of new SSB URIs</h3>
 <ul>
 <li><code>ssb:experimental?action=consume-alias&#x26;alias=${alias}&#x26;userId=${userId}&#x26;signature=${signature}&#x26;roomId=${roomId}&#x26;multiserverAddress=${roomMsAddr}</code></li>
-<li><code>ssb:experimental?action=join-room&#x26;invite=${inviteCode}&#x26;multiserverAddress=${roomMsAddr}</code></li>
+<li><code>ssb:experimental?action=join-room&#x26;invite=${inviteCode}&#x26;postTo=${submissionUrl}</code></li>
 <li><code>ssb:experimental?action=start-http-auth&#x26;sid=${sid}&#x26;sc=${sc}</code></li>
 </ul>
 
