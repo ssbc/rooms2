@@ -15,5 +15,5 @@ A room server is defined by several components, which are systems that enable fe
 - [Internal user authentication](../Participation/Internal%20user%20authentication.md)
 - [Tunneled authentication](../Participation/Tunneled%20authentication.md)
 - [Invites](../Participation/Invites.md)
-- [Web Dashboard](Web%20Dashboard.md) and [Sign-in with SSB](Sign-in%20with%20SSB.md)
-- [Aliases](../Alias/Readme.md) (requires "Web Dashboard" and "Sign-in with SSB")
+- [Web Dashboard](Web%20Dashboard.md)
+- [Aliases](../Alias/Readme.md)

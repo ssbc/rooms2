@@ -1,6 +1,6 @@
 ## Web Dashboard
 
-This is a WWW interface that allows [moderators](../Stakeholders/Moderator.md) to [sign-in](Sign-in%20with%20SSB.md) and perform some privileged actions. [Internal users](../Stakeholders/Internal%20user.md) can also sign-in and perform basic actions such as [create invites for other users to join](Joining.md).
+This is a WWW interface that allows [moderators](../Stakeholders/Moderator.md) to sign-in and perform some privileged actions. The sign-in method can be username/password or [SSB HTTP Authentication](https://github.com/ssb-ngi-pointer/ssb-http-auth-spec) or other methods. [Internal users](../Stakeholders/Internal%20user.md) can also sign-in and perform basic actions such as [create invites for other users to join](Joining.md).
 
 ### Specification
 
