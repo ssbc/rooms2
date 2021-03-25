@@ -10,7 +10,6 @@
   - [Privacy modes](docs/Setup/Privacy%20modes.md)
   - [Config database](docs/Setup/Config%20database.md)
   - [Web Dashboard](docs/Setup/Web%20Dashboard.md)
-  - [Sign-in with SSB](docs/Setup/Sign-in%20with%20SSB.md)
 - [Participation](docs/Participation/Readme.md)
   - [Joining](docs/Participation/Joining.md)
   - [Internal user registry](docs/Participation/Internal%20user%20registry.md)
