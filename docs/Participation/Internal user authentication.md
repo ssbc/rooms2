@@ -6,7 +6,7 @@ In rooms where the [privacy mode](../Setup/Privacy%20modes.md) is not *open*, no
 
 When the room receives an incoming secret-handshake connection from Alice, it checks the [internal user registry](Internal%20user%20registry.md), looking for the entry corresponding to Alice's ID. If there is an entry, Alice is recognized as an internal user, granting her a [tunnel address](Tunnel%20addresses.md). Otherwise, the room recognizes Alice as an [external user](../Stakeholders/External%20user.md) and does not grant Alice a tunnel address.
 
-In either case, whether Alice is an internal or external user, the secret-handshake and muxrpc connection is allowed to remain up, because external users are allowed to [consume aliases](../Alias/Alias%20consumption.md) and create [tunneled connections](Tunneled%20connection.md) with internal users. Unless the room is in [*Restricted* mode](../Setup/Privacy%20modes.md), in which case only internal users are allowed to connect.
+In either case, whether Alice is an internal or external user, the secret-handshake and muxrpc connection is allowed to remain up, because external users are allowed to [consume aliases](../Alias/Alias%20consumption.md) and create [tunneled connections](Tunneled%20connection.md) with internal users. The exception to the above is when the room is in [*Restricted* mode](../Setup/Privacy%20modes.md), in which case only internal users are allowed to maintain a secret-handshake and muxrpc connection.
 
 ### Security considerations
 
