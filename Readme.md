@@ -26,6 +26,5 @@
   - [Alias web endpoint](docs/Alias/Web%20endpoint.md)
   - [Alias database](docs/Alias/Alias%20database.md)
 - [Appendix](docs/Appendix/Readme.md)
-  - [List of HTTP endpoints](docs/Appendix/urls.md)
   - [List of new muxrpc APIs](docs/Appendix/muxrpc.md)
   - [List of new SSB URIs](docs/Appendix/ssb-uris.md)
