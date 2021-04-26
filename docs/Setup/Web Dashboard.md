@@ -24,6 +24,12 @@ The dashboard grants [internal users](../Stakeholders/Internal%20user.md) basic 
 
 ### Security considerations
 
+#### HTTPS vulnerabilities
+
+Typically SSB has not relied on the certificate architecture underlying TLS, and has had no interoperability with HTTPS. Since rooms 2.0 rely on HTTPS, then the vulnerabilities inherent in TLS, such weak certificate authorities that can enable man-in-the-middle attacks. In such scenarios, with room servers there would be possibility for man-in-the-middle attacks when claiming invites (redirecting to another multiserver address), when [resolving aliases](../Alias/Alias%20consumption.md) (impersonating the alias owner), or when performing sign-in with SSB identities.
+
+To mitigate these types of attacks, implementations and deployments of rooms should make a conscious choice of a trustworthy certificate authority.
+
 #### Malicious [moderator](../Stakeholders/Moderator.md)
 
 Moderators obviously hold some power, and this power may be abused through unfair blocks, unfair revoking of aliases. In many cases, fairness is subjective, and is understood to be an essential compromise of having moderation to begin with. So in this section we will focus our attention on unusual security issues with moderation.
