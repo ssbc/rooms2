@@ -42,7 +42,7 @@ pre, code {
 <body>
 
 <h1 id="ssb-rooms-20">SSB Rooms 2.0</h1>
-<p><strong>Revision:</strong> <code>2021-04-22</code></p>
+<p><strong>Revision:</strong> <code>2021-04-26</code></p>
 <p><strong>Author:</strong> Andre Medeiros <a href="mailto:contact@staltz.com">contact@staltz.com</a></p>
 <p><strong>License:</strong> This work is licensed under a <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
 <h2 id="abstract">Abstract</h2>
@@ -263,7 +263,6 @@ pre, code {
 <li>The client is now an Internal User</li>
 </ol>
 <p>As an additional endpoint for programmatic purposes, if the query parameter <code>encoding=json</code> is added to the invite link (for illustration: <code>https://${roomHost}/join?invite=${inviteCode}&#x26;encoding=json</code>), then, in successful responses, the JSON body <strong>MUST</strong> conform to the following schema:</p>
-<p>invite=${inviteCode}&#x26;postTo=${submissionUrl}</p>
 <pre><code class="language-json">{
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://github.com/ssb-ngi-pointer/rooms2#invite-json-endpoint-success",

@@ -32,7 +32,6 @@ The *invite code* (1) is a random sequence of bytes of unspecified length, which
 
 As an additional endpoint for programmatic purposes, if the query parameter `encoding=json` is added to the invite link (for illustration: `https://${roomHost}/join?invite=${inviteCode}&encoding=json`), then, in successful responses, the JSON body **MUST** conform to the following schema:
 
-invite=${inviteCode}&postTo=${submissionUrl}
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
