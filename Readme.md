@@ -18,6 +18,8 @@
   - [Tunnel addresses](docs/Participation/Tunnel%20addresses.md)
   - [Tunneled connection](docs/Participation/Tunneled%20connection.md)
   - [Tunneled authentication](docs/Participation/Tunneled%20authentication.md)
+  - [Metadata API](docs/Participation/Metadata.md)
+  - [Attendants API](docs/Participation/Attendants.md)
 - [User aliases](docs/Alias/Readme.md)
   - [Alias string](docs/Alias/Alias%20string.md)
   - [Registration](docs/Alias/Registration.md)
