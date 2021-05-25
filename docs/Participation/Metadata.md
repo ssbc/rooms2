@@ -36,7 +36,7 @@ The muxrpc API `room.metadata` is an `async` method that returns a JSON object l
       }
     }
   },
-  "required": []
+  "required": ["name", "membership", "features"]
 }
 ```
 
