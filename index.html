@@ -42,7 +42,7 @@ pre, code {
 <body>
 
 <h1 id="ssb-rooms-20">SSB Rooms 2.0</h1>
-<p><strong>Revision:</strong> <code>2021-04-26</code></p>
+<p><strong>Revision:</strong> <code>2021-05-25</code></p>
 <p><strong>Author:</strong> Andre Medeiros <a href="mailto:contact@staltz.com">contact@staltz.com</a></p>
 <p><strong>License:</strong> This work is licensed under a <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
 <h2 id="abstract">Abstract</h2>
@@ -76,6 +76,8 @@ pre, code {
 <li><a href="#tunnel-addresses">Tunnel addresses</a></li>
 <li><a href="#tunneled-connection">Tunneled connection</a></li>
 <li><a href="#tunneled-authentication">Tunneled authentication</a></li>
+<li><a href="#metadata-api">Metadata API</a></li>
+<li><a href="#attendants-api">Attendants API</a></li>
 </ul>
 </li>
 <li><a href="#alias">Alias</a>
@@ -279,6 +281,121 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <h4 id="implementation-notes">Implementation notes</h4>
 <p>Note that in current room server implementation in JavaScript, <a href="https://github.com/staltz/ssb-room/blob/e78d54887682664def36d48ca9e648fc609478e9/tunnel/server.js#L100"><code>opts.origin</code></a> in the room is calculated from secret-handshake, so it can be trusted to be authentic.</p>
 <p>For the next version of rooms, if we want <code>opts.origin</code> to also contain the origin peer's address (ssb-tunnel address or alias endpoint), then we need other means of verifying that the origin address is authentic. E.g. if it's an <a href="#web-endpoint">alias endpoint URL</a>, maybe the receiving peer visits the alias JSON endpoint then <a href="#alias-consumption">consumes the alias</a>, or maybe the receiving peer takes the ssb-tunnel address and verifies that the ID matches with the secret-handshake-given ID.</p>
+<h3 id="metadata-api">Metadata API</h3>
+<p>Clients, whether internal or external users, may need to know additional information about the room before interacting with it. For instance, they may need to know whether they are an internal user or not, and they may need to know what features the room has currently enabled.</p>
+<h4 id="specification-9">Specification</h4>
+<p>The muxrpc API <code>room.metadata</code> is an <code>async</code> method that returns a JSON object listing information about the room.</p>
+<p><strong>Input</strong>: zero arguments required</p>
+<p><strong>Output</strong>: JSON body type, with the following JSON schema</p>
+<pre><code class="language-json">{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ssb-ngi-pointer/rooms2#muxrpc-room-metadata",
+  "type": "object",
+  "properties": {
+    "name": {
+      "title": "Name of this room",
+      "description": "The domain or hostname or arbitrary name of the room server",
+      "type": "string"
+    },
+    "membership": {
+      "title": "Membership",
+      "description": "Whether or not the client calling this muxrpc method is recognized as an internal user",
+      "type": "boolean"
+    },
+    "features": {
+      "title": "Features",
+      "description": "A list of features supported by this room",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": ["tunnel", "room1", "room2", "alias", "httpAuth", "httpInvite"]
+      }
+    }
+  },
+  "required": []
+}
+</code></pre>
+<p>The <code>features</code> array is particularly important, as it flags which features clients can use on the room. The semantics of each value in the <em>enum</em> are listed below:</p>
+<ul>
+<li><code>"tunnel"</code>: <strong>MUST</strong> be included in <code>features</code> only if users can establish <a href="#tunneled-connection">tunneled connections</a> with other users</li>
+<li><code>"room1"</code>: <strong>MUST</strong> be included only if the room server is fully compatible with Room 1.0, i.e. clients can interact with it in the same manner they interact with Room 1.0 servers. This means the server <strong>MUST</strong> operate with its <a href="#privacy-modes">Privacy mode</a> set to "Open"</li>
+<li><code>"room2"</code>: <strong>MUST</strong> be included only if the room server supports muxrpc APIs under the namespace <code>room</code>, such as <code>room.metadata()</code> and <code>room.attendants</code></li>
+<li><code>"alias"</code>: <strong>MUST</strong> be included only if the room server supports <a href="#readme">Aliases</a>, i.e. muxrpc APIs <code>room.registerAlias</code>, <code>room.revokeAlias</code> and alias consumption</li>
+<li><code>"httpAuth"</code>: <strong>MUST</strong> be included only if the room server complies with the <a href="https://github.com/ssb-ngi-pointer/ssb-http-auth-spec">SSB HTTP Authentication</a> specification</li>
+<li><code>"httpInvite"</code>: <strong>MUST</strong> be included only if the room server complies with the <a href="https://ssb-ngi-pointer.github.io/ssb-http-invite-spec/">SSB HTTP Invites</a> specification</li>
+</ul>
+<h3 id="attendants-api">Attendants API</h3>
+<p>Internal users can discover about the presence of other internal users currently online at the room. This gives them the opportunity to choose to establish a <a href="#tunneled-connection">tunneled connection</a>.</p>
+<h4 id="specification-10">Specification</h4>
+<p>The muxrpc API <code>room.attendants</code> is a <code>source</code> method that streams JSON objects of three different schemas: <strong>state</strong> objects, <strong>joined</strong> objects, and <strong>left</strong> objects.</p>
+<p>There are no input arguments expected on this method.</p>
+<p><strong>State objects</strong></p>
+<p>When the user subscribes to the <code>room.attendants</code> stream, the first event <strong>MUST</strong> be of type "state", matching the JSON schema below:</p>
+<pre><code class="language-json">{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ssb-ngi-pointer/rooms2#muxrpc-room-attendants-state",
+  "type": "object",
+  "properties": {
+    "type": {
+      "title": "Event type",
+      "type": "string",
+      "pattern": "^(successful)$"
+    },
+    "ids": {
+      "title": "SSB IDs of attendants",
+      "description": "A list of SSB IDs of all internal users currently online",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": ["type", "ids"]
+}
+</code></pre>
+<p><strong>Joined objects</strong></p>
+<p>Whenever an internal user becomes online in the room, an event matching the following JSON schema below <strong>MUST</strong> be sent through the stream:</p>
+<pre><code class="language-json">{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ssb-ngi-pointer/rooms2#muxrpc-room-attendants-joined",
+  "type": "object",
+  "properties": {
+    "type": {
+      "title": "Event type",
+      "type": "string",
+      "pattern": "^(joined)$"
+    },
+    "id": {
+      "title": "SSB ID",
+      "description": "SSB ID of the attendant who just joined",
+      "type": "string"
+    }
+  },
+  "required": ["type", "id"]
+}
+</code></pre>
+<p><strong>Left objects</strong></p>
+<p>Whenever an internal user ceases to be online in the room, an event matching the following JSON schema below <strong>MUST</strong> be sent through the stream:</p>
+<pre><code class="language-json">{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ssb-ngi-pointer/rooms2#muxrpc-room-attendants-left",
+  "type": "object",
+  "properties": {
+    "type": {
+      "title": "Event type",
+      "type": "string",
+      "pattern": "^(left)$"
+    },
+    "id": {
+      "title": "SSB ID",
+      "description": "SSB ID of the attendant who just left",
+      "type": "string"
+    }
+  },
+  "required": ["type", "id"]
+}
+</code></pre>
 <h2 id="alias">Alias</h2>
 <p>An alias (also known as "room alias") is a string that identifies an <a href="#internal-user">internal user</a>, designed to be short and human-friendly, similar to <a href="https://en.wikipedia.org/wiki/Email_address">email addresses</a> and <a href="https://docs.joinmastodon.org/spec/webfinger/">Mastodon WebFinger addresses</a>. The purpose of aliases is to improve the user experience of accurately (1) <strong>identifying</strong> the internal user and (2) <strong>locating</strong> the internal user at a room server for the purpose of establishing a connection with them.</p>
 <p>As an example, suppose Alice is an internal user of the room "Scuttlebutt EU". The room's domain is <code>scuttlebutt.eu</code> and Alice's <a href="#alias-string">alias</a> is <code>alice</code>. Alice's <a href="#web-endpoint">alias endpoint</a> is thus <code>alice.scuttlebutt.eu</code>.</p>
@@ -299,11 +416,11 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <li><code>alice1994</code></li>
 <li><code>alice94</code></li>
 </ul>
-<h4 id="specification-9">Specification</h4>
+<h4 id="specification-11">Specification</h4>
 <p>The string should satisfy the same rules as domain "labels" as defined in <a href="https://tools.ietf.org/html/rfc1035">RFC 1035</a>.</p>
 <h3 id="alias-registration">Alias registration</h3>
 <p>An <a href="#internal-user">internal user</a> who does not have an alias in the current room server can choose to register an alias. Not all internal users need to have aliases, so the process described here is optional.</p>
-<h4 id="specification-10">Specification</h4>
+<h4 id="specification-12">Specification</h4>
 <ol>
 <li>An internal user with SSB ID <code>feedId</code> and a room server with SSB ID <code>roomId</code> are connected to each other via secret-handshake</li>
 <li>The internal user chooses a <code>alias</code> as a candidate <a href="#alias-string">alias string</a></li>
@@ -354,7 +471,7 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <p>The room admin could reply with errors when technically the muxrpc should have succeeded, e.g. pretending that the <code>alias</code> candidate is invalid or pretending that it's already registered.</p>
 <h3 id="alias-revocation">Alias revocation</h3>
 <p>When an <a href="#internal-user">internal user</a> who has <a href="#registration">registered</a> no longer wishes to have that alias associated with them anymore, they can perform <em>alias revocation</em> to remove that alias from the <a href="#alias-database">alias database</a>.</p>
-<h4 id="specification-11">Specification</h4>
+<h4 id="specification-13">Specification</h4>
 <ol>
 <li>An internal user with SSB ID <code>feedId</code> and a room server with SSB ID <code>roomId</code> are connected to each other via secret-handshake</li>
 <li>The internal user calls a specific <a href="https://github.com/ssb-js/muxrpc/">muxrpc</a> <code>async</code> API <code>room.revokeAlias(alias, callback)</code></li>
@@ -397,7 +514,7 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <p>The room admin could refuse to remove the database entry, or could delete the database entry at will (before the internal user performs revocation). In other words, the internal user does not ultimately have power over the deletion of the alias entry from the alias database, it must trust the room admin regarding deletion.</p>
 <h3 id="alias-consumption">Alias consumption</h3>
 <p>When an SSB user (<a href="#external-user">external</a> or <a href="#internal-user">internal</a>) is connected to the room, and knows of another <a href="#internal-user">internal user's</a> <a href="#alias-string">alias</a>, they can perform <em>alias consumption</em>. After consumption is completed successfully, they authentically obtain the target user's SSB ID and can use it to start a <a href="#tunneled-connection">tunneled connection</a>.</p>
-<h4 id="specification-12">Specification</h4>
+<h4 id="specification-14">Specification</h4>
 <p>The input for the consumption algorithm is the response from the <a href="#web-endpoint">web endpoint</a>, which is (either through JSON or SSB URI): the room's multiserver <code>address</code>, <code>roomId</code>, <code>userId</code>, <code>alias</code>, and <code>signature</code>.</p>
 <ol>
 <li>The SSB user verifies that the <code>signature</code> authentically matches <code>roomId</code>, <code>userId</code> and <code>alias</code>
@@ -414,7 +531,7 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <p>Once an alias is <a href="#registration">registered</a>, it enables any web user to visit a web endpoint on the room server dedicated to that alias, for the purpose of telling the visitor what SSB ID does the alias resolve to, and with instructions on how to install an SSB app if the visitor doesn't have it yet.</p>
 <p>The goal of this endpoint is to help any SSB user <em>locate and identify</em> the alias' owner by resolving the alias to: (1) the room's <a href="https://github.com/ssb-js/multiserver">multiserver address</a>, (2) the owner's SSB ID, and (3) a cryptographic signature that proves the owner associated themselves with that alias. This web endpoint is valuable to onboard new SSB users being invited by an <a href="#internal-user">internal user</a>.</p>
 <p><strong>Prior art:</strong> This endpoint should be in many ways similar to the <a href="https://telegram.org/">Telegram</a> <code>https://t.me/example</code> service for the username <code>@example</code>, also capable of redirecting the web visitor to a scheme <code>tg</code> URI <code>tg://resolve?domain=example</code>, which Telegram apps know how to parse and open the target user's profile screen.</p>
-<h4 id="specification-13">Specification</h4>
+<h4 id="specification-15">Specification</h4>
 <p>This specification does not apply if the <a href="#privacy-modes">privacy mode</a> is <em>Restricted</em>. This web endpoint is available only if the privacy mode is <em>Open</em> or <em>Community</em>.</p>
 <p>If the alias <code>${alias}</code> is registered at the room <code>${roomHost}</code> for a certain <code>${userId}</code>, then the room's HTTP endpoint reserved for the alias <strong>SHOULD</strong> be the wildcard subdomain URL <code>https://${alias}.${roomHost}</code> but it <strong>MAY</strong> be <code>https://${roomHost}/${alias}</code>.</p>
 <p>The HTML response then:</p>
@@ -550,7 +667,7 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 </tr>
 </tbody>
 </table>
-<h4 id="specification-14">Specification</h4>
+<h4 id="specification-16">Specification</h4>
 <p>This can be a simple persistent key-value store, such as Leveldb.</p>
 <ul>
 <li>Each <strong>Key</strong> is an <a href="#alias-string">alias string</a></li>
@@ -602,8 +719,14 @@ CSkFrDLYKJd/SuIS71A5Y2as=.ed25519:alice
 <ul>
 <li>async
 <ul>
+<li><code>room.metadata()</code></li>
 <li><code>room.registerAlias(alias, signature)</code></li>
 <li><code>room.revokeAlias(alias)</code></li>
+</ul>
+</li>
+<li>source
+<ul>
+<li><code>room.attendants()</code></li>
 </ul>
 </li>
 </ul>
