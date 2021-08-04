@@ -21,6 +21,5 @@ The joining process is different for each [Privacy mode](../Setup/Privacy%20mode
   1. Bob informs an [external user](../Stakeholders/External%20user.md), Alice, of the invite link
   1. Alice consumes the invite according to the [invites specification](Invites.md)
   1. Alice has become an [internal user](../Stakeholders/Internal%20user.md)
-  1. Alice has become an [internal user](../Stakeholders/Internal%20user.md)
 
 To summarize, in **Community** mode, all internal users can create invites while in **Restricted** mode only moderators can. **Open** mode means there always is an invite for all the users in the room.
