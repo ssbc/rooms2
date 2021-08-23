@@ -1,6 +1,6 @@
 ## Internal user
 
-SSB user who accesses the room server and is considered *internal* because they have already [joined](Joining.md) the room and may even have registered an [alias](../Alias/Readme.md) in the room.
+SSB user who accesses the room server and is considered *internal* because they have already [joined](../Participation/Joining.md) the room and may even have registered an [alias](../Alias/Readme.md) in the room.
 
 ### Specification
 
