@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+#
+# SPDX-License-Identifier: Unlicense
+
 .obsidian
 node_modules
 pnpm-lock.yaml

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 ## Web Dashboard
 
 This is a WWW interface that allows [moderators](../Stakeholders/Moderator.md) to sign-in and perform some privileged actions. The sign-in method **SHOULD** be [SSB HTTP Authentication](https://github.com/ssb-ngi-pointer/ssb-http-auth-spec) but it **MAY** be username/password or other methods. [Internal users](../Stakeholders/Internal%20user.md) can also sign-in and perform basic actions such as [create invites for other users to join](Joining.md).

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 ## Components
 
 A room server is defined by several components, which are systems that enable features, some of these are optional and some are required.

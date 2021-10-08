@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 ## Internal user
 
 SSB user who accesses the room server and is considered *internal* because they have already [joined](../Participation/Joining.md) the room and may even have registered an [alias](../Alias/Readme.md) in the room.

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 ## Attendants API
 
 Internal users can discover about the presence of other internal users currently online at the room. This gives them the opportunity to choose to establish a [tunneled connection](Tunneled%20connection.md).

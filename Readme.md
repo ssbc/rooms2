@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 
 - [Intro](Intro.md)
 - [Stakeholders](docs/Stakeholders/Readme.md)

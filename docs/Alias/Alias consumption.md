@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 ## Alias consumption
 
 When an SSB user ([external](../Stakeholders/External%20user.md) or [internal](../Stakeholders/Internal%20user.md)) is connected to the room, and knows of another [internal user's](../Stakeholders/Internal%20user.md) [alias](Alias%20string.md), they can perform *alias consumption*. After consumption is completed successfully, they authentically obtain the target user's SSB ID and can use it to start a [tunneled connection](../Participation/Tunneled%20connection.md).

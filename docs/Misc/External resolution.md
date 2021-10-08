@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 # External alias resolution
 
 (DEPRECATED DOCUMENT BUT KEPT HERE FOR ARCHIVAL PURPOSES)

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 ## Internal user authentication
 
 In rooms where the [privacy mode](../Setup/Privacy%20modes.md) is not *open*, not all SSB users who connect to the room are [internal users](../Stakeholders/Internal%20user.md). The room thus needs a way to authenticate the user before granting them a [tunnel address](Tunnel%20addresses.md).

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 ## Alias string
 
 An [internal user](../Stakeholders/Internal%20user.md)'s alias, also known as "alias string", is used to uniquely (unique within the room server only) identify that internal user. This string is useful only within the context of the room, i.e. not globally identifiable.

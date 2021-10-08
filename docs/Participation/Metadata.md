@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 ## Metadata API
 
 Clients, whether internal or external users, may need to know additional information about the room before interacting with it. For instance, they may need to know whether they are an internal user or not, and they may need to know what features the room has currently enabled.

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 ## Config database
 
 The configuration database holds basic administrative data, readable only by [admins](../Stakeholders/Room%20admin.md) and (indirectly via the [dashboard](Web%20Dashboard.md)) by [moderators](../Stakeholders/Moderator.md).

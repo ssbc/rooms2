@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 ## Tunnel addresses
 
 To establish a [tunneled connection](Tunneled%20connection.md), the peer initiating it must know the *tunnel address* of the peer at the other side of the tunnel.
