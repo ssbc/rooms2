@@ -27,7 +27,7 @@ When the user subscribes to the `room.attendants` stream, the first event **MUST
     "type": {
       "title": "Event type",
       "type": "string",
-      "pattern": "^(successful)$"
+      "pattern": "^(state)$"
     },
     "ids": {
       "title": "SSB IDs of attendants",
