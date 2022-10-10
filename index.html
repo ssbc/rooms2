@@ -1,9 +1,3 @@
-<!--
-SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
-
-SPDX-License-Identifier: CC-BY-4.0
--->
-
 <html>
 <head>
 <style>
@@ -44,11 +38,16 @@ pre, code {
 }
 </style>
 </head>
-<script crossorigin src="https://unpkg.com/mermaid@8.9.1/dist/mermaid.min.js"></script>
+<script crossorigin src="https://unpkg.com/mermaid@8.13.4/dist/mermaid.min.js"></script>
 <body>
 
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h1 id="ssb-rooms-20">SSB Rooms 2.0</h1>
-<p><strong>Revision:</strong> <code>2021-08-23</code></p>
+<p><strong>Revision:</strong> <code>2022-10-10</code></p>
 <p><strong>Author:</strong> Andre Medeiros <a href="mailto:contact@staltz.com">contact@staltz.com</a></p>
 <p><strong>License:</strong> This work is licensed under a <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
 <h2 id="abstract">Abstract</h2>
@@ -105,21 +104,51 @@ pre, code {
 </ul>
 <h2 id="stakeholders">Stakeholders</h2>
 <p>Persons or organizations that are involved or engaged in or around room servers. They may hold responsibilities or powers, and may cause harm to other stakeholders when their responsibilities or powers are abused. They hold interest in engaging with other stakeholders while managing the risk for harm associated with engagement. Harm mitigation such as <a href="#privacy-modes">Privacy modes</a> is important when discussing stakeholders.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="room-admin">Room admin</h3>
 <p>Person or organization responsible for operating the room server, and has full access rights over the server's resources such as logs, disk, memory, etc. In other words, this person or organization physically owns the room server or has SSH access to the remote server hosted in some PaaS cloud provider.</p>
 <p>Typically, the admin possesses an SSB ID (it's very common, but not necessarily always the case), and is also a <a href="#moderator">moderator</a> in the room.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="internal-user">Internal user</h3>
 <p>SSB user who accesses the room server and is considered <em>internal</em> because they have already <a href="#joining">joined</a> the room and may even have registered an <a href="#readme">alias</a> in the room.</p>
 <h4 id="specification">Specification</h4>
 <p><strong>Definition:</strong> an <em>internal user</em> of a room is any SSB ID for which the room grants a <a href="#tunnel-addresses">tunnel address</a>. In other words, if an SSB ID is <em>reachable</em> via a <a href="#tunneled-connection">tunneled connection</a> through a room server, then they are considered an internal user of that room.</p>
 <p><strong>Becoming an internal user:</strong> read more about that in <a href="#joining">Joining a room</a>.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="external-user">External user</h3>
 <p>Any SSB user who is not an <a href="#internal-user">internal user</a> of the room (i.e. do not have a usable <a href="#tunnel-addresses">tunnel address</a> referencing the room), but may still interact with the room server in meaningful ways, for instance with <a href="#tunneled-connection">tunneled connections</a>, <a href="#web-endpoint">alias endpoints</a> or <a href="#alias-consumption">alias consumption</a>.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="moderator">Moderator</h3>
 <p>A moderator is an <a href="#internal-user">internal user</a> that has acquired special privileges in the <a href="#web-dashboard">web dashboard</a> and actions allowed by the dashboard.</p>
 <p>Moderators can use sign-in to access the <a href="#web-dashboard">dashboard</a>.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h2 id="setup">Setup</h2>
 <p>There are different ways a room server can be configured.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="components">Components</h3>
 <p>A room server is defined by several components, which are systems that enable features, some of these are optional and some are required.</p>
 <h4 id="required">Required</h4>
@@ -138,6 +167,11 @@ pre, code {
 <li><a href="#web-dashboard">Web Dashboard</a></li>
 <li><a href="#readme">Aliases</a></li>
 </ul>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="privacy-modes">Privacy modes</h3>
 <p>A room server should allow the <a href="#room-admin">room admin</a> or a <a href="#moderator">moderator</a> to configure which users can become <a href="#internal-user">internal user</a>.</p>
 <h4 id="specification-1">Specification</h4>
@@ -148,6 +182,11 @@ pre, code {
 <li><strong>Restricted</strong>: only <a href="#room-admin">admins</a> and <a href="#moderator">moderators</a> can invite <a href="#external-user">external users</a> to become an internal users, and <a href="#readme">aliases</a> are not supported</li>
 </ul>
 <p><strong>Joining:</strong> To become a member of the room, peers need to <a href="#joining">join the room</a>.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="config-database">Config database</h3>
 <p>The configuration database holds basic administrative data, readable only by <a href="#room-admin">admins</a> and (indirectly via the <a href="#web-dashboard">dashboard</a>) by <a href="#moderator">moderators</a>.</p>
 <h4 id="specification-2">Specification</h4>
@@ -159,6 +198,11 @@ pre, code {
 <li>Name of the room (a short string)</li>
 <li>Description for the room (not too long string)</li>
 </ul>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="web-dashboard">Web Dashboard</h3>
 <p>This is a WWW interface that allows <a href="#moderator">moderators</a> to sign-in and perform some privileged actions. The sign-in method <strong>SHOULD</strong> be <a href="https://github.com/ssb-ngi-pointer/ssb-http-auth-spec">SSB HTTP Authentication</a> but it <strong>MAY</strong> be username/password or other methods. <a href="#internal-user">Internal users</a> can also sign-in and perform basic actions such as <a href="#joining">create invites for other users to join</a>.</p>
 <h4 id="specification-3">Specification</h4>
@@ -190,8 +234,18 @@ pre, code {
 <h5 id="malicious-moderator">Malicious <a href="#moderator">moderator</a></h5>
 <p>Moderators obviously hold some power, and this power may be abused through unfair blocks, unfair revoking of aliases. In many cases, fairness is subjective, and is understood to be an essential compromise of having moderation to begin with. So in this section we will focus our attention on unusual security issues with moderation.</p>
 <p>A moderator has the right to nominate other internal users to become moderators, and this could lead to a proliferation of moderators, which increases the possibility that one of these moderators abuses their powers. On the other hand, there has been many maintainers and npm owners in the <a href="https://github.com/ssbc/">SSBC</a> (e.g. 32 GitHub org members and 17 npm owners for the cornerstone <a href="https://www.npmjs.com/package/ssb-db"><code>ssb-db</code></a> package), we also know that the presence of many moderators may also help to <em>decrease</em> the possibility of abuse, because asymmetry of privilege is reduced.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h2 id="participation">Participation</h2>
 <p>Before peers can connect to each other via a room server, they first need to become members, i.e. <a href="#internal-user">internal users</a>. This section describes the different protocols used for establishing internal user participation.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="joining">Joining</h3>
 <p>"Joining a room" means the process where an <a href="#external-user">external user</a> becomes an <a href="#internal-user">internal user</a>.</p>
 <h4 id="specification-4">Specification</h4>
@@ -223,8 +277,18 @@ pre, code {
 </li>
 </ul>
 <p>To summarize, in <strong>Community</strong> mode, all internal users can create invites while in <strong>Restricted</strong> mode only moderators can. <strong>Open</strong> mode means there always is an invite for all the users in the room.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="internal-user-registry">Internal user registry</h3>
 <p>The <em>internal user registry</em> is a database the room manages, keeping records of which SSB users are <a href="#internal-user">internal users</a>. It is a simple list or table, where each entry refers to an internal user, and must contain at least the SSB ID for that user.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="internal-user-authentication">Internal user authentication</h3>
 <p>In rooms where the <a href="#privacy-modes">privacy mode</a> is not <em>open</em>, not all SSB users who connect to the room are <a href="#internal-user">internal users</a>. The room thus needs a way to authenticate the user before granting them a <a href="#tunnel-addresses">tunnel address</a>.</p>
 <h4 id="specification-5">Specification</h4>
@@ -233,9 +297,19 @@ pre, code {
 <h4 id="security-considerations-1">Security considerations</h4>
 <h5 id="malicious-room-admin">Malicious <a href="#room-admin">room admin</a></h5>
 <p>The room software could be modified by the room admin to not authenticate some users as internal users.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="invites">Invites</h3>
 <p>When <a href="#joining">joining</a> a <em>Community</em> room or <em>Restricted</em> room, <a href="#internal-user">internal users</a> create invites. An invite can be sent to anyone who is not yet an internal user, and who can then "claim" the invite in order to become a new internal user of the room.</p>
-<p>A room server <strong>SHOULD</strong> employ <a href="https://ssb-ngi-pointer.github.io/ssb-http-invite-spec/">SSB HTTP Invites</a>.</p>
+<p>A room server <strong>SHOULD</strong> employ <a href="https://github.com/ssbc/ssb-http-invite-spec">SSB HTTP Invites</a>.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="tunnel-addresses">Tunnel addresses</h3>
 <p>To establish a <a href="#tunneled-connection">tunneled connection</a>, the peer initiating it must know the <em>tunnel address</em> of the peer at the other side of the tunnel.</p>
 <h4 id="specification-6">Specification</h4>
@@ -258,6 +332,11 @@ pre, code {
 2ZabI/Re4bYF/Vh3hXasQ=.ed25519~shs:1b9KP8z
 nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 </code></pre>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="tunneled-connection">Tunneled connection</h3>
 <p>A tunneled connection is an indirect connection between two peers assisted by an intermediary peer. Ideally, two peers could always connect with each other directly, but they often have unstable IP addresses behind NATs and firewalls, making it difficult to consistently and reliably establish connections. The purpose of the intermediary peer is to improve connection reliability, because these intermediary peers can be privileged nodes with public IP addresses, such as from hosting services.</p>
 <h4 id="specification-7">Specification</h4>
@@ -275,6 +354,11 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <h5 id="malicious-room-admin-1">Malicious <a href="#room-admin">room admin</a></h5>
 <p>The room admin could log and track all connection sessions for every tunneled connection, thus tracking the <strong>IP addresses</strong>, <strong>timestamps</strong>, <strong>durations</strong>, and <strong>bandwidth</strong> of interactions between <a href="#internal-user">internal users</a>. The room admin could track which SSB users are interested in connecting with internal users, i.e. they can gather <strong>social interest metadata</strong>, which could be used to create a draft of a portion of the social graph.</p>
 <p>That said, because of encrypted tunneled secret-handshake channels, the room admin could not know the contents of data transmitted between the internal users.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="tunneled-authentication">Tunneled authentication</h3>
 <p>Tunneled authentication is about making sure that SSB peers on the opposite end of a <a href="#tunneled-connection">tunneled connection</a> only allow the connection to occur if they follow the peer on the other side. Thus we need a way for peers to know who wants to open a tunneled connection and we should facilitate mutual follows to occur so that peers only create tunneled connections imbued with mutual interest.</p>
 <h4 id="specification-8">Specification</h4>
@@ -286,6 +370,11 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <h4 id="implementation-notes">Implementation notes</h4>
 <p>Note that in current room server implementation in JavaScript, <a href="https://github.com/staltz/ssb-room/blob/e78d54887682664def36d48ca9e648fc609478e9/tunnel/server.js#L100"><code>opts.origin</code></a> in the room is calculated from secret-handshake, so it can be trusted to be authentic.</p>
 <p>For the next version of rooms, if we want <code>opts.origin</code> to also contain the origin peer's address (ssb-tunnel address or alias endpoint), then we need other means of verifying that the origin address is authentic. E.g. if it's an <a href="#web-endpoint">alias endpoint URL</a>, maybe the receiving peer visits the alias JSON endpoint then <a href="#alias-consumption">consumes the alias</a>, or maybe the receiving peer takes the ssb-tunnel address and verifies that the ID matches with the secret-handshake-given ID.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="metadata-api">Metadata API</h3>
 <p>Clients, whether internal or external users, may need to know additional information about the room before interacting with it. For instance, they may need to know whether they are an internal user or not, and they may need to know what features the room has currently enabled.</p>
 <h4 id="specification-9">Specification</h4>
@@ -329,6 +418,11 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <li><code>"httpAuth"</code>: <strong>MUST</strong> be included only if the room server complies with the <a href="https://github.com/ssb-ngi-pointer/ssb-http-auth-spec">SSB HTTP Authentication</a> specification</li>
 <li><code>"httpInvite"</code>: <strong>MUST</strong> be included only if the room server complies with the <a href="https://ssb-ngi-pointer.github.io/ssb-http-invite-spec/">SSB HTTP Invites</a> specification</li>
 </ul>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="attendants-api">Attendants API</h3>
 <p>Internal users can discover about the presence of other internal users currently online at the room. This gives them the opportunity to choose to establish a <a href="#tunneled-connection">tunneled connection</a>.</p>
 <h4 id="specification-10">Specification</h4>
@@ -344,7 +438,7 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
     "type": {
       "title": "Event type",
       "type": "string",
-      "pattern": "^(successful)$"
+      "pattern": "^(state)$"
     },
     "ids": {
       "title": "SSB IDs of attendants",
@@ -401,6 +495,11 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
   "required": ["type", "id"]
 }
 </code></pre>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h2 id="alias">Alias</h2>
 <p>An alias (also known as "room alias") is a string that identifies an <a href="#internal-user">internal user</a>, designed to be short and human-friendly, similar to <a href="https://en.wikipedia.org/wiki/Email_address">email addresses</a> and <a href="https://docs.joinmastodon.org/spec/webfinger/">Mastodon WebFinger addresses</a>. The purpose of aliases is to improve the user experience of accurately (1) <strong>identifying</strong> the internal user and (2) <strong>locating</strong> the internal user at a room server for the purpose of establishing a connection with them.</p>
 <p>As an example, suppose Alice is an internal user of the room "Scuttlebutt EU". The room's domain is <code>scuttlebutt.eu</code> and Alice's <a href="#alias-string">alias</a> is <code>alice</code>. Alice's <a href="#web-endpoint">alias endpoint</a> is thus <code>alice.scuttlebutt.eu</code>.</p>
@@ -412,6 +511,11 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <li><a href="#room-admin">Room admins</a> have read/write access to the <a href="#alias-database">alias database</a> but can't add cryptographically valid entries since they are signed by the owner</li>
 <li><a href="#moderator">Moderators</a> can remove alias entries from the <a href="#alias-database">alias database</a></li>
 </ul>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="alias-string">Alias string</h3>
 <p>An <a href="#internal-user">internal user</a>'s alias, also known as "alias string", is used to uniquely (unique within the room server only) identify that internal user. This string is useful only within the context of the room, i.e. not globally identifiable.</p>
 <h4 id="example-1">Example</h4>
@@ -423,6 +527,11 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 </ul>
 <h4 id="specification-11">Specification</h4>
 <p>The string should satisfy the same rules as domain "labels" as defined in <a href="https://tools.ietf.org/html/rfc1035">RFC 1035</a>.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="alias-registration">Alias registration</h3>
 <p>An <a href="#internal-user">internal user</a> who does not have an alias in the current room server can choose to register an alias. Not all internal users need to have aliases, so the process described here is optional.</p>
 <h4 id="specification-12">Specification</h4>
@@ -474,6 +583,11 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <p>A malicious internal user could take many or all possible aliases in case the room accidentally allows such malicious user to become an internal user. Arguably, some room implementations could choose to allow only one alias per internal user, and that would still be compliant with this spec.</p>
 <h4 id="malicious-room-admin-2">Malicious <a href="#room-admin">room admin</a></h4>
 <p>The room admin could reply with errors when technically the muxrpc should have succeeded, e.g. pretending that the <code>alias</code> candidate is invalid or pretending that it's already registered.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="alias-revocation">Alias revocation</h3>
 <p>When an <a href="#internal-user">internal user</a> who has <a href="#registration">registered</a> no longer wishes to have that alias associated with them anymore, they can perform <em>alias revocation</em> to remove that alias from the <a href="#alias-database">alias database</a>.</p>
 <h4 id="specification-13">Specification</h4>
@@ -517,6 +631,11 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <h4 id="security-considerations-4">Security considerations</h4>
 <h5 id="malicious-room-admin-3">Malicious <a href="#room-admin">room admin</a></h5>
 <p>The room admin could refuse to remove the database entry, or could delete the database entry at will (before the internal user performs revocation). In other words, the internal user does not ultimately have power over the deletion of the alias entry from the alias database, it must trust the room admin regarding deletion.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="alias-consumption">Alias consumption</h3>
 <p>When an SSB user (<a href="#external-user">external</a> or <a href="#internal-user">internal</a>) is connected to the room, and knows of another <a href="#internal-user">internal user's</a> <a href="#alias-string">alias</a>, they can perform <em>alias consumption</em>. After consumption is completed successfully, they authentically obtain the target user's SSB ID and can use it to start a <a href="#tunneled-connection">tunneled connection</a>.</p>
 <h4 id="specification-14">Specification</h4>
@@ -532,6 +651,11 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <li>The client can now use <code>userId</code> to initiate a <a href="#tunneled-connection">tunneled connection</a> with them</li>
 <li>(Optional and recommended) The client <em>follows</em> the <code>userId</code>, see <a href="#tunneled-authentication">tunneled authentication</a></li>
 </ol>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="web-endpoint">Web endpoint</h3>
 <p>Once an alias is <a href="#registration">registered</a>, it enables any web user to visit a web endpoint on the room server dedicated to that alias, for the purpose of telling the visitor what SSB ID does the alias resolve to, and with instructions on how to install an SSB app if the visitor doesn't have it yet.</p>
 <p>The goal of this endpoint is to help any SSB user <em>locate and identify</em> the alias' owner by resolving the alias to: (1) the room's <a href="https://github.com/ssb-js/multiserver">multiserver address</a>, (2) the owner's SSB ID, and (3) a cryptographic signature that proves the owner associated themselves with that alias. This web endpoint is valuable to onboard new SSB users being invited by an <a href="#internal-user">internal user</a>.</p>
@@ -644,6 +768,11 @@ nF7A4i8wnSevBSK2ZabI/Re4bYF/Vh3hXasQ=
 <p>A web visitor, either human or bot, could attempt brute force visiting all possible alias endpoints, in order to build a dataset of all SSB IDs and claimed aliases gathered at this room, potentially tracking profiles of these SSB IDs. Malicious web visitors can also attempt to connect with these target IDs as victims, and may use social engineering or impersonation tactics during <a href="#tunneled-authentication">tunneled authentication</a>.</p>
 <h5 id="malicious-room-admin-4">Malicious <a href="#room-admin">room admin</a></h5>
 <p>The room admin could tamper with the <a href="#alias-database">alias database</a> and provide fake information on this web endpoint, e.g. that a certain alias was claimed by a certain users. Although the <a href="#alias-database">database signature</a> exists to prevent this type of tampering, it is only verified when performing <a href="#alias-consumption">alias consumption</a>. For web visitors who only want to know which SSB ID corresponds to an alias, and only that, these visitors must trust the room administrator, who could provide inauthentic information.</p>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="alias-database">Alias database</h3>
 <p>This is a database that stores all aliases that were <a href="#registration">registered</a> by internal users.</p>
 <h4 id="example-3">Example</h4>
@@ -719,7 +848,17 @@ CSkFrDLYKJd/SuIS71A5Y2as=.ed25519:alice
 <ul>
 <li>Remove any registered key-value pairs from the database, essentially removing an alias</li>
 </ul>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h2 id="appendix">Appendix</h2>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="list-of-new-muxrpc-apis">List of new muxrpc APIs</h3>
 <ul>
 <li>async
@@ -735,6 +874,11 @@ CSkFrDLYKJd/SuIS71A5Y2as=.ed25519:alice
 </ul>
 </li>
 </ul>
+<!--
+SPDX-FileCopyrightText: 2021 Andre 'Staltz' Medeiros
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
 <h3 id="list-of-new-ssb-uris">List of new SSB URIs</h3>
 <ul>
 <li><code>ssb:experimental?action=consume-alias&#x26;alias=${alias}&#x26;userId=${userId}&#x26;signature=${signature}&#x26;roomId=${roomId}&#x26;multiserverAddress=${roomMsAddr}</code></li>
